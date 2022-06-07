@@ -13,6 +13,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
 import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
@@ -22,7 +23,6 @@ import 'dart:math' as math;
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
 
 // TODO: Oyun bitişi animasyonu yap
 // TODO: Hakkında penceresi yap
@@ -128,7 +128,6 @@ class MyApp extends StatelessWidget {
               width = width - width * 0.3;
             }
 
-
             return MyHomePage(
               title: title,
             );
@@ -146,10 +145,15 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    winController = AnimationController(
+        vsync: this,
+        duration: Duration(seconds: 2),
+        animationBehavior: AnimationBehavior.preserve,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isFirstBuild) {
         Future.delayed(Duration(milliseconds: 500), () => _afterBuild());
@@ -215,6 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, int>? newChosenWordColors;
   ConfettiController confettiController = ConfettiController();
   List<String> userWords = [];
+  late AnimationController winController;
 
   @override
   Widget build(BuildContext context) {
@@ -248,12 +253,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   AutoSizeText(
-                      title,
-                      style: TextStyle(
-                        fontSize: height * 6,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                    title,
+                    style: TextStyle(
+                      fontSize: height * 6,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                     maxLines: 1,
                   ),
                   IconButton(
@@ -302,6 +307,34 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+                Align(
+                  child: ConfettiWidget(
+                    confettiController: confettiController,
+                    maximumSize: Size(height * 3, height * 3),
+                    minimumSize: Size(height * 0.5, height * 0.5),
+                    blastDirectionality: BlastDirectionality.explosive,
+                    particleDrag: 0.09,
+                    emissionFrequency: 0.6,
+                    numberOfParticles: 2,
+                    gravity: 0.02,
+                    colors: const [
+                      green3,
+                      Colors.blue,
+                      Colors.pink,
+                      Colors.yellow,
+                      Colors.purple,
+                    ],
+                  ),
+                ),
+                Align(
+                  child: Lottie.asset('assets/win.json',
+                    height: height * 50,
+                    width: width * 75.67,
+                    controller: winController,
+                    repeat: false,
+
                   ),
                 ),
               ]),
@@ -620,20 +653,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<void> enterButtonFunc() async {
-
     if (isGameEnd == null &&
         isAnimationCompleted &&
         chosenLetter % 5 == 0 &&
         chosenLetter != 0) {
       bool isConnected = await checkInternet();
       if (!isConnected) {
-        showDialog(
-            context: context,
-            builder: (context) => ConnectionDialog());
+        showDialog(context: context, builder: (context) => ConnectionDialog());
         return;
       }
       if (chosenWord == 0) {
-
         try {
           var now = await NTP.now();
           prefs.setString('startTime', now.toString());
@@ -846,10 +875,10 @@ class _MyHomePageState extends State<MyHomePage> {
               maximumSize: Size(height * 3, height * 3),
               minimumSize: Size(height * 0.5, height * 0.5),
               blastDirectionality: BlastDirectionality.explosive,
-              particleDrag: 0.09,
+              particleDrag: 0.04,
               emissionFrequency: 0.6,
               numberOfParticles: 2,
-              gravity: 0.02,
+              gravity: 0.08,
               colors: const [
                 green3,
                 Colors.blue,
@@ -962,6 +991,9 @@ class _MyHomePageState extends State<MyHomePage> {
       whichWordUserFound = prefs.getInt('whichWordUserFound')!;
       bool? isWin = prefs.getBool('isWin');
       if (isWin!) {
+        confettiController.play();
+        await _controlThwWinAnimation();
+        confettiController.stop();
         _goEndPage();
 /*        await Future.delayed(const Duration(seconds: 1));
         confettiController.play();
@@ -976,15 +1008,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _goEndPage() {
-   showDialog(context: context, builder: (context) =>
-       EndGame()
-   );
+    showDialog(context: context, builder: (context) => EndGame());
   }
 
   Future<void> _gameEnd(bool isWon) async {
     if (isWon) {
+      await _controlThwWinAnimation();
       await _updateDatabase(true);
-
       prefs.setBool('isGameEnd', true);
       prefs.setBool('isWin', true);
       isGameEnd = true;
@@ -1239,6 +1269,16 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Future<void> _controlThwWinAnimation() async {
+    winController.forward();
+    await Future.delayed(Duration(milliseconds: 1500), () {
+      winController.reverse();
+    });
+    await Future.delayed(Duration(milliseconds: 1500), () {
+      winController.dispose();
+    });
+  }
+
   void _showInternetAlert() {
     showDialog(
       context: context,
@@ -1289,7 +1329,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 height: height * 7,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                       setState(() {
+                                      setState(() {
                                         showAnimation = true;
                                         checkInternet().then((internet) {
                                           if (internet) {
@@ -1304,16 +1344,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                           }
                                         });
                                       });
-
                                     },
                                     style: ElevatedButton.styleFrom(
                                       primary: white,
                                     ),
-                                    child:   Text("Tekrar Dene",
+                                    child: Text("Tekrar Dene",
                                         style: TextStyle(
                                             fontSize: height * 3.64,
-                                            color: green))
-                                ),
+                                            color: green))),
                               )
                       ],
                     ),
@@ -1327,7 +1365,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
 
 const starPoints = 5;
 

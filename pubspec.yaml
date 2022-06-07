@@ -53,6 +53,7 @@ dependencies:
   loading_animation_widget: ^1.2.0+1
   share_plus: ^4.0.5
   auto_size_text: ^3.0.0
+  lottie: ^1.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -82,6 +83,7 @@ flutter:
 
   assets:
     - assets/icon.jpeg
+    - assets/win.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
