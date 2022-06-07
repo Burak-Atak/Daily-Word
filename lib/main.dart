@@ -28,6 +28,7 @@ import 'firebase_options.dart';
 // TODO: Hakkında penceresi yap
 // TODO: Genel istatistik ekle
 
+Color squaresMainColor = Colors.white38;
 late SharedPreferences prefs;
 String? userName;
 String wordOfDay = "-----";
@@ -47,8 +48,9 @@ late int whichWordUserFound;
 /// Ana renkler
 
 List<dynamic> squaresColors = [
-  for (int i = 0; i < 6; i++) [for (int a = 0; a < 5; a++) 0]
+  for (int i = 0; i < 6; i++) [for (int a = 0; a < 5; a++) squaresMainColor]
 ];
+
 const colorScoreTable = Colors.black;
 const green = Color.fromRGBO(106, 170, 100, 1);
 const green3 = Color(0xff39FF14);
@@ -145,14 +147,15 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
     winController = AnimationController(
-        vsync: this,
-        duration: Duration(seconds: 2),
-        animationBehavior: AnimationBehavior.preserve,
+      vsync: this,
+      duration: Duration(seconds: 2),
+      animationBehavior: AnimationBehavior.preserve,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isFirstBuild) {
@@ -329,12 +332,12 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   ),
                 ),
                 Align(
-                  child: Lottie.asset('assets/win.json',
+                  child: Lottie.asset(
+                    'assets/win.json',
                     height: height * 50,
                     width: width * 75.67,
                     controller: winController,
                     repeat: false,
-
                   ),
                 ),
               ]),
@@ -387,6 +390,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   /// Harf girilen Kutucukları oluşturuyor
   List<Widget> createLittleSquares() {
     List<Widget> littleSquares = [];
+    choseSquaresColor();
     for (int i = 0; i < 5; i++) {
       var box = Padding(
         padding: EdgeInsets.only(right: i != 20 ? width * 1.2 : 0),
@@ -415,7 +419,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             back: Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: choseSquaresColor(i),
+                color: squaresColors[squareRowCount][i],
               ),
               child: Text(
                 textBoxes[squareRowCount][i],
@@ -725,27 +729,25 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
 
   /// Kutucukların rengini kontrol eden fonksiyon
-  Color choseSquaresColor(int i) {
-    if (i == 0) {
-      newChosenWordColors = {for (int i = 0; i < 5; i++) wordOfDay[i]: 0};
-    }
+  void choseSquaresColor() {
+    for (int i = 0; i < 5; i++) {
+      if (i == 0) {
+        newChosenWordColors = {for (int i = 0; i < 5; i++) wordOfDay[i]: 0};
+      }
+      String chosenLetter = turkish.toLowerCase(textBoxes[squareRowCount][i]);
+      String wordOfUser = turkish.toLowerCase(textBoxes[squareRowCount].join());
 
-    String chosenLetter = turkish.toLowerCase(textBoxes[squareRowCount][i]);
-    String wordOfUser = turkish.toLowerCase(textBoxes[squareRowCount].join());
-
-    if (chosenLetter == wordOfDay[i]) {
-      newChosenWordColors![chosenLetter] =
-          newChosenWordColors![chosenLetter]! + 1;
-      squaresColors[squareRowCount][i] = 2;
-      return green;
-    } else if (isYellow(wordOfUser, chosenLetter)) {
-      newChosenWordColors![chosenLetter] =
-          newChosenWordColors![chosenLetter]! + 1;
-      squaresColors[squareRowCount][i] = 1;
-      return yellow;
-    } else {
-      squaresColors.add(2);
-      return Colors.black54;
+      if (chosenLetter == wordOfDay[i]) {
+        newChosenWordColors![chosenLetter] =
+            newChosenWordColors![chosenLetter]! + 1;
+        squaresColors[squareRowCount][i] = green;
+      } else if (isYellow(wordOfUser, chosenLetter)) {
+        newChosenWordColors![chosenLetter] =
+            newChosenWordColors![chosenLetter]! + 1;
+        squaresColors[squareRowCount][i] = yellow;
+      } else {
+        squaresColors[squareRowCount][i] = Colors.black54;
+      }
     }
   }
 
@@ -782,9 +784,20 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       return false;
     }
 
+    List<int> allIndexes = [];
+    int startIndex = 0;
+    Iterable allMatches = chosenLetter.allMatches(wordOfUser);
+    for (int i = 0; i < allMatches.length ; i ++) {
+      int index = wordOfUser.indexOf(chosenLetter, startIndex);
+      allIndexes.add(index);
+      startIndex = index + 1;
+    }
+
+    List<bool> isThereGreen = [for (int i = 0; i < allIndexes.length; i ++) wordOfUser[allIndexes[i]] == wordOfDay[allIndexes[i]]];
+
     if (wordOfDay.contains(chosenLetter) &&
         newChosenWordColors![chosenLetter]! <
-            chosenLetter.allMatches(wordOfDay).length) {
+            chosenLetter.allMatches(wordOfDay).length && !isThereGreen.contains(true)) {
       return true;
     }
     return false;

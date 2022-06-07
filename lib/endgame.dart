@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/my_flutter_app_icons.dart';
@@ -340,9 +339,9 @@ class _EndGamePageState extends State<EndGame> {
     String shareText = " T O K A T L A N D I N\n\n";
     for (int i = 0; i < whichWordUserFound + 1; i++) {
         for (int j = 0; j < 5 ; j++) {
-          if (squaresColors[i][j] == 2) {
+          if (squaresColors[i][j] == green) {
             shareText += "🟩";
-          } else if (squaresColors[i][j] == 1) {
+          } else if (squaresColors[i][j] == yellow) {
             shareText += "🟨";
           } else {
             shareText += "⬛";
