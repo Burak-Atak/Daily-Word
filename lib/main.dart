@@ -27,7 +27,8 @@ import 'generalStatistic.dart';
 
 // TODO: Oyun bitişi animasyonu yap
 // TODO: Hakkında penceresi yap
-// TODO: Genel istatistik ekle
+// TODO: Belirli sürüm atlını kullanan kullanıcıları güncellemeye yönlendir
+// TODO: Paylaşı storede yayınlandıktan sonra düzenle
 
 Color squaresMainColor = Colors.white38;
 late SharedPreferences prefs;
