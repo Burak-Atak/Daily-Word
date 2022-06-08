@@ -23,6 +23,7 @@ import 'dart:math' as math;
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'generalStatistic.dart';
 
 // TODO: Oyun bitişi animasyonu yap
 // TODO: Hakkında penceresi yap
@@ -51,7 +52,7 @@ List<dynamic> squaresColors = [
   for (int i = 0; i < 6; i++) [for (int a = 0; a < 5; a++) squaresMainColor]
 ];
 
-const colorScoreTable = Colors.black;
+const colorBlack = Colors.black;
 const green = Color.fromRGBO(106, 170, 100, 1);
 const green3 = Color(0xff39FF14);
 const green2 = Color(0xff00ff00);
@@ -657,6 +658,10 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<void> enterButtonFunc() async {
+    showDialog(
+      context: context,
+      builder: (context) => const GeneralStatistic(),
+    );
     if (isGameEnd == null &&
         isAnimationCompleted &&
         chosenLetter % 5 == 0 &&

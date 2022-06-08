@@ -10,12 +10,12 @@ Map? weeklyScoreTable;
 double playerHeight = height * 4;
 double playerWidth = width * 50;
 TextStyle scoreStyle = TextStyle(
-    color: colorScoreTable,
+    color: colorBlack,
     fontSize: height * 3.64,
     fontWeight: FontWeight.bold);
 
 TextStyle scoreStyleMedals = TextStyle(
-    color: colorScoreTable,
+    color: colorBlack,
     fontSize: height * 4.25,
     fontWeight: FontWeight.bold);
 
@@ -136,7 +136,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
       builder: (context, setState) => AlertDialog(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(0))),
-        backgroundColor: Colors.black.withOpacity(0.8),
+        backgroundColor: Colors.transparent,
         contentPadding: EdgeInsets.only(
             top: height * 5,
             bottom: height * 5,
@@ -192,7 +192,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                     spreadRadius: 1,
                                   ),
                                 ],
-                                color: colorScoreTable,
+                                color: colorBlack,
                                 size: height * 5,
                               ),
                               onPressed: () {
@@ -219,7 +219,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                 child: Text(
                               "#",
                               style: TextStyle(
-                                  color: colorScoreTable, fontSize: height * 3),
+                                  color: colorBlack, fontSize: height * 3),
                             ))),
                         SizedBox(
                           height: height * 5,
@@ -228,7 +228,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             child: Text(
                               "İsim",
                               style: TextStyle(
-                                  color: colorScoreTable, fontSize: height * 3),
+                                  color: colorBlack, fontSize: height * 3),
                             ),
                           ),
                         ),
@@ -239,7 +239,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             child: Text(
                               "Puan",
                               style: TextStyle(
-                                  color: colorScoreTable, fontSize: height * 3),
+                                  color: colorBlack, fontSize: height * 3),
                             ),
                           ),
                         ),
@@ -250,7 +250,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             child: Text(
                               selectedDaily ? "Süre" : "Ort.Süre",
                               style: TextStyle(
-                                  color: colorScoreTable, fontSize: height * 3),
+                                  color: colorBlack, fontSize: height * 3),
                             ),
                           ),
                         )
@@ -537,7 +537,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                           child: Text(
                             'Günlük',
                             style: TextStyle(
-                                color: colorScoreTable,
+                                color: colorBlack,
                                 fontSize: selectedDaily
                                     ? height * 4.86
                                     : height * 3.64),
@@ -570,7 +570,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                           child: Text(
                             'Haftalık',
                             style: TextStyle(
-                                color: colorScoreTable,
+                                color: colorBlack,
                                 fontSize: selectedDaily
                                     ? height * 3.64
                                     : height * 4.86),

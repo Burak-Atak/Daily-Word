@@ -24,7 +24,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
         child: AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(0))),
-            backgroundColor: Colors.black.withOpacity(0.7),
+            backgroundColor: Colors.black.withOpacity(0.5),
             contentPadding: EdgeInsets.only(
                 top: height * 5,
                 bottom: height * 10,
