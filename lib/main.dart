@@ -692,11 +692,11 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<bool> enterButtonFunc() async {
+    print((0 / 0).round());
     if (isGameEnd == null &&
         isAnimationCompleted &&
         chosenLetter % 5 == 0 &&
         chosenLetter != 0) {
-      isAnimationCompleted = false;
       bool isConnected = await checkInternet();
       if (!isConnected) {
         showDialog(context: context, builder: (context) => ConnectionDialog());
@@ -720,11 +720,13 @@ class _MyHomePageState extends State<MyHomePage>
 
         return false;
       } else {
+        isAnimationCompleted = false;
         if (chosenWord == 0) {
           try {
             var now = await NTP.now();
             prefs.setString('startTime', now.toString());
           } catch (e) {
+            isAnimationCompleted = true;
             return false;
           }
         }

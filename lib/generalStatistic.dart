@@ -219,9 +219,10 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                       style: TextStyle(color: colorBlack, fontSize: height * 3),
                     ),
                   ),
+                  generalStatistic!["totalGame"] != 0 ?
                   Text(timeFormat((generalStatistic!["totalSeconds"] /
-                          generalStatistic!["totalWin"])
-                      .round())),
+                          generalStatistic!["totalGame"])
+                      .round())) : Text(timeFormat(0)),
                   Padding(
                     padding:
                         EdgeInsets.only(top: height * 3, bottom: height * 3),
@@ -263,7 +264,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                             animationDuration: 1000,
                             radius: 25.0,
                             lineWidth: 5.0,
-                            percent: (generalStatistic!["totalWin"] / generalStatistic!["totalGame"])
+                            percent: generalStatistic!["totalGame"] != 0 ? (generalStatistic!["totalWin"] / generalStatistic!["totalGame"]) : 0
                             ,
                             header: Padding(
                               padding: EdgeInsets.only(bottom: height * 0.5),
@@ -329,7 +330,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                             animationDuration: 1000,
                             radius: 25.0,
                             lineWidth: 5.0,
-                            percent: (series!["gameSeries"] /series!["seriesRecord"]),
+                            percent: series!["seriesRecord"] != 0 ? (series!["gameSeries"] /series!["seriesRecord"]) : 0,
                             header: Padding(
                               padding: EdgeInsets.only(bottom: height * 0.5),
                               child: AutoSizeText(
@@ -391,7 +392,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                           animationDuration: 1000,
                           radius: 25.0,
                           lineWidth: 5.0,
-                          percent: series!["winSeries"] / series!["winSeriesRecord"],
+                          percent: series!["winSeriesRecord"] != 0 ? series!["winSeries"] / series!["winSeriesRecord"] : 0,
                           header: Padding(
                             padding: EdgeInsets.only(bottom: height * 0.5),
                             child: AutoSizeText(
