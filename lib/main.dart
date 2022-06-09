@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:first_project/endgame.dart';
 import 'package:first_project/helper.dart';
 import 'package:first_project/internetConnectionDialog.dart';
+import 'package:first_project/my_flutter_app_icons.dart';
 import 'package:first_project/register.dart';
 import 'package:first_project/scorePage.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -16,6 +17,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:math';
 import 'package:turkish/turkish.dart';
 import 'package:confetti/confetti.dart';
@@ -29,6 +31,8 @@ import 'generalStatistic.dart';
 // TODO: Hakkında penceresi yap
 // TODO: Belirli sürüm atlını kullanan kullanıcıları güncellemeye yönlendir
 // TODO: Paylaşı storede yayınlandıktan sonra düzenle
+// TODO: kÜFÜR FİLTRESİ
+// TODO: Kelime çıkma süresini netten çek
 
 Color squaresMainColor = Colors.white38;
 late SharedPreferences prefs;
@@ -247,40 +251,63 @@ class _MyHomePageState extends State<MyHomePage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onPressed: () {},
-                    iconSize: height * 5,
-                    icon: Icon(
-                      Icons.info_outline_rounded,
-                      color: Colors.black45,
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => const GeneralStatistic(),
+                          );
+                        },
+                        iconSize: height * 6,
+                        icon: Icon(
+                          Icons.bar_chart_rounded,
+                          color: Colors.black45,
+                        ),
+                      ),
+         /*             IconButton(
+                        onPressed: () {},
+                        iconSize: height * 5,
+                        icon: Icon(
+                          Icons.info_outline_rounded,
+                          color: Colors.black45,
+                        ),
+                      ),*/
+                    ],
+                  ),
+                  SizedBox(
+                    height: height * 7.4,
+                    child: AutoSizeText(
+                      title,
+                      style: TextStyle(
+                        fontSize: height * 6,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      maxLines: 1,
                     ),
                   ),
-                  AutoSizeText(
-                    title,
-                    style: TextStyle(
-                      fontSize: height * 6,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    maxLines: 1,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => const MyAlertDialog(),
+                          );
+                        },
+                        iconSize: height * 4,
+                        icon: Icon(
+                          MyFlutterApp.cup,
+                          color: Colors.black45,
+                        ),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const MyAlertDialog(),
-                      );
-                    },
-                    iconSize: height * 6,
-                    icon: Icon(
-                      Icons.bar_chart,
-                      color: Colors.black45,
-                    ),
-                  ),
+
                 ],
               ),
             ),
@@ -599,27 +626,33 @@ class _MyHomePageState extends State<MyHomePage>
       child: SizedBox(
         height: height * 10,
         width: width * 14.584,
-        child: ElevatedButton(
-            style: ButtonStyle(
-              enableFeedback: false,
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              padding: MaterialStateProperty.all(
-                const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-              ),
-              backgroundColor: MaterialStateProperty.all(grey),
-            ),
-            onPressed: enterButtonFunc,
-            child: Text(
-              "ENTER",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: width * 3.9,
-              ),
-            )),
+        child: TapDebouncer(
+            onTap: () async => await enterButtonFunc(),
+            cooldown: const Duration(milliseconds: 200),
+            builder: (BuildContext context, TapDebouncerFunc? onTap) {
+              return ElevatedButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                    enableFeedback: false,
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                    ),
+                    backgroundColor: MaterialStateProperty.all(grey),
+                  ),
+                  onPressed: onTap,
+                  child: Text(
+                    "ENTER",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: width * 3.9,
+                    ),
+                  ));
+            }),
       ),
     );
   }
@@ -658,27 +691,16 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
-  Future<void> enterButtonFunc() async {
-    showDialog(
-      context: context,
-      builder: (context) => const GeneralStatistic(),
-    );
+  Future<bool> enterButtonFunc() async {
     if (isGameEnd == null &&
         isAnimationCompleted &&
         chosenLetter % 5 == 0 &&
         chosenLetter != 0) {
+      isAnimationCompleted = false;
       bool isConnected = await checkInternet();
       if (!isConnected) {
         showDialog(context: context, builder: (context) => ConnectionDialog());
-        return;
-      }
-      if (chosenWord == 0) {
-        try {
-          var now = await NTP.now();
-          prefs.setString('startTime', now.toString());
-        } catch (e) {
-          return;
-        }
+        return false;
       }
 
       String wordOfUser = "";
@@ -695,8 +717,18 @@ class _MyHomePageState extends State<MyHomePage>
             isWordExist = false;
           });
         });
+
+        return false;
       } else {
-        isAnimationCompleted = false;
+        if (chosenWord == 0) {
+          try {
+            var now = await NTP.now();
+            prefs.setString('startTime', now.toString());
+          } catch (e) {
+            return false;
+          }
+        }
+
         userWords.add(turkish.toUpperCase(wordOfUser));
         prefs.setStringList('userWords', userWords);
 
@@ -720,7 +752,10 @@ class _MyHomePageState extends State<MyHomePage>
           chosenWord += 1;
         }
         isAnimationCompleted = true;
+        return true;
       }
+    } else {
+      return true;
     }
   }
 
@@ -793,17 +828,21 @@ class _MyHomePageState extends State<MyHomePage>
     List<int> allIndexes = [];
     int startIndex = 0;
     Iterable allMatches = chosenLetter.allMatches(wordOfUser);
-    for (int i = 0; i < allMatches.length ; i ++) {
+    for (int i = 0; i < allMatches.length; i++) {
       int index = wordOfUser.indexOf(chosenLetter, startIndex);
       allIndexes.add(index);
       startIndex = index + 1;
     }
 
-    List<bool> isThereGreen = [for (int i = 0; i < allIndexes.length; i ++) wordOfUser[allIndexes[i]] == wordOfDay[allIndexes[i]]];
+    List<bool> isThereGreen = [
+      for (int i = 0; i < allIndexes.length; i++)
+        wordOfUser[allIndexes[i]] == wordOfDay[allIndexes[i]]
+    ];
 
     if (wordOfDay.contains(chosenLetter) &&
         newChosenWordColors![chosenLetter]! <
-            chosenLetter.allMatches(wordOfDay).length && !isThereGreen.contains(true)) {
+            chosenLetter.allMatches(wordOfDay).length &&
+        !isThereGreen.contains(true)) {
       return true;
     }
     return false;
@@ -954,6 +993,16 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Future<void> _afterBuild() async {
+/*    String u1 = "";
+    List? l = prefs.getStringList("userWords");
+    for (int i = 0; i < l!.length; i ++) {
+      u1 += "${l[i]},";
+    }
+
+    String?  lwic = prefs.getString("lastWordInLocal");
+    int? ii = prefs.getInt("whichWordUserFound");
+    throw (u1 + "\n" + lwic! + "\n" + ii.toString());*/
+
     /// checks internet connection
     bool isConnected = await checkInternet();
     if (!isConnected) {
@@ -975,6 +1024,10 @@ class _MyHomePageState extends State<MyHomePage>
     database.ref('word').onChildChanged.listen((event) {
       isFirstBuild = true;
       if (mounted) {
+        squaresColors = [
+          for (int i = 0; i < 6; i++)
+            [for (int a = 0; a < 5; a++) squaresMainColor]
+        ];
         _showTimeIsUpAlert();
       }
     });
@@ -983,6 +1036,7 @@ class _MyHomePageState extends State<MyHomePage>
     isGameEnd = prefs.getBool('isGameEnd');
     if (userSavedWords.length != 0) {
       for (int i = 0; i < userSavedWords.length; i++) {
+        userWords.add(userSavedWords[i]);
         for (int j = 0; j < 5; j++) {
           textBoxes[i][j] = userSavedWords[i][j];
         }
@@ -1010,9 +1064,13 @@ class _MyHomePageState extends State<MyHomePage>
       whichWordUserFound = prefs.getInt('whichWordUserFound')!;
       bool? isWin = prefs.getBool('isWin');
       if (isWin!) {
+/*
         confettiController.play();
+*/
         await _controlThwWinAnimation();
+/*
         confettiController.stop();
+*/
         _goEndPage();
 /*        await Future.delayed(const Duration(seconds: 1));
         confettiController.play();

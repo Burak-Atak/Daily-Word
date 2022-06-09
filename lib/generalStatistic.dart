@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'main.dart';
@@ -134,8 +133,6 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                 SizedBox(
                   width: width * 10,
                   child: IconButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
                     icon: Icon(
                       Icons.cancel_rounded,
                       shadows: [
@@ -182,20 +179,18 @@ class _GeneralStatisticState extends State<GeneralStatistic>
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.8),
+                    padding: EdgeInsets.only(bottom: width * 2),
                     child: Text(
                       "Tahmin Dağılımı",
                       style:
-                          TextStyle(color: colorBlack, fontSize: height * 3.64),
+                          TextStyle(color: colorBlack, fontSize: height * 3.2),
                     ),
                   ),
                   for (int i = 0; i < 6; i++)
                     Padding(
                       padding: EdgeInsets.only(bottom: height * 0.8),
                       child: LinearPercentIndicator(
-                        width: whichWord![keys[i]] /
-                                whichWord!.values.toList().reduce(
-                                    (value, element) => value + element) *
+                        width: whichWord![keys[i]] / whichWord!.values.reduce((value, element) => value > element ? value : element)*
                                 width *
                                 60 +
                             width * 10,
@@ -217,9 +212,12 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                         backgroundColor: Colors.transparent,
                       ),
                     ),
-                  Text(
-                    "Ortalama Süre",
-                    style: TextStyle(color: colorBlack, fontSize: height * 3),
+                  Padding(
+                    padding: EdgeInsets.only(top: height * 3.0),
+                    child: Text(
+                      "Ortalama Süre",
+                      style: TextStyle(color: colorBlack, fontSize: height * 3),
+                    ),
                   ),
                   Text(timeFormat((generalStatistic!["totalSeconds"] /
                           generalStatistic!["totalWin"])
@@ -238,17 +236,22 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                             radius: 25.0,
                             lineWidth: 5.0,
                             percent: 1,
-                            header: Text(
-                              "Oynanan",
-                              style: TextStyle(
-                                  color: colorBlack, fontSize: height * 3),
+                            header: Padding(
+                              padding: EdgeInsets.only(bottom: height * 0.5),
+                              child: AutoSizeText(
+                                "Oynanan",
+                                maxLines: 1,
+                                group: textGroup,
+                                style: TextStyle(
+                                    color: colorBlack, fontSize: height * 3),
+                              ),
                             ),
                             center: new Text(
                               generalStatistic!["totalGame"].toString(),
                               style: TextStyle(
                                   color: colorBlack, fontSize: height * 3),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.4),
+                            backgroundColor: Colors.white.withOpacity(0.3),
                             progressColor: green,
                             circularStrokeCap: CircularStrokeCap.butt,
                           ),
@@ -260,21 +263,24 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                             animationDuration: 1000,
                             radius: 25.0,
                             lineWidth: 5.0,
-                            percent: generalStatistic!["totalGame"] /
-                                100 *
-                                generalStatistic!["totalWin"] /
-                                10,
-                            header: Text(
-                              "Kazanılan",
-                              style: TextStyle(
-                                  color: colorBlack, fontSize: height * 3),
+                            percent: (generalStatistic!["totalWin"] / generalStatistic!["totalGame"])
+                            ,
+                            header: Padding(
+                              padding: EdgeInsets.only(bottom: height * 0.5),
+                              child: AutoSizeText(
+                                "Kazanılan",
+                                maxLines: 1,
+                                group: textGroup,
+                                style: TextStyle(
+                                    color: colorBlack, fontSize: height * 3),
+                              ),
                             ),
                             center: new Text(
                               generalStatistic!["totalWin"].toString(),
                               style: TextStyle(
                                   color: colorBlack, fontSize: height * 3),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.4),
+                            backgroundColor: Colors.white.withOpacity(0.3),
                             progressColor: green,
                             circularStrokeCap: CircularStrokeCap.butt,
                           ),
@@ -287,47 +293,6 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Stack(children: [
-                          Padding(
-                            padding:
-                                EdgeInsets.only(left: width * 10),
-                            child: Lottie.asset('assets/fire.json',
-                                height: height * 13,
-                                width: height * 13,
-                                controller: seriesController,
-                                onLoaded: (composition) {
-                              // Configure the AnimationController with the duration of the
-                              // Lottie file and start the animation.
-                              seriesController.. repeat().. forward();
-                            }),
-                          ),
-                          SizedBox(
-                            width: width * 38,
-                            child: CircularPercentIndicator(
-                              animation: true,
-                              animationDuration: 1000,
-                              radius: 25.0,
-                              lineWidth: 5.0,
-                              percent: series!["seriesRecord"] /
-                                  100 *
-                                  series!["gameSeries"] /
-                                  10,
-                              header: Text(
-                                "Seri",
-                                style: TextStyle(
-                                    color: colorBlack, fontSize: height * 3),
-                              ),
-                              center: new Text(
-                                series!["gameSeries"].toString(),
-                                style: TextStyle(
-                                    color: colorBlack, fontSize: height * 3),
-                              ),
-                              backgroundColor: Colors.white.withOpacity(0.4),
-                              progressColor: green,
-                              circularStrokeCap: CircularStrokeCap.butt,
-                            ),
-                          ),
-                        ]),
                         SizedBox(
                           width: width * 38,
                           child: CircularPercentIndicator(
@@ -336,17 +301,51 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                             radius: 25.0,
                             lineWidth: 5.0,
                             percent: 1,
-                            header: Text(
-                              "Seri Rekoru",
-                              style: TextStyle(
-                                  color: colorBlack, fontSize: height * 3),
+                            header: Padding(
+                              padding: EdgeInsets.only(bottom: height * 0.5),
+                              child: AutoSizeText(
+                                "Seri Rekoru",
+                                maxLines: 1,
+                                group: textGroup,
+                                style: TextStyle(
+                                    color: colorBlack, fontSize: height * 3),
+                              ),
                             ),
                             center: new Text(
                               series!["seriesRecord"].toString(),
                               style: TextStyle(
                                   color: colorBlack, fontSize: height * 3),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.4),
+                            backgroundColor: Colors.white.withOpacity(0.3),
+                            progressColor: green,
+                            circularStrokeCap: CircularStrokeCap.butt,
+                          ),
+                        ),
+
+                        SizedBox(
+                          width: width * 38,
+                          child: CircularPercentIndicator(
+                            animation: true,
+                            animationDuration: 1000,
+                            radius: 25.0,
+                            lineWidth: 5.0,
+                            percent: (series!["gameSeries"] /series!["seriesRecord"]),
+                            header: Padding(
+                              padding: EdgeInsets.only(bottom: height * 0.5),
+                              child: AutoSizeText(
+                                "Seri",
+                                maxLines: 1,
+                                group: textGroup,
+                                style: TextStyle(
+                                    color: colorBlack, fontSize: height * 3),
+                              ),
+                            ),
+                            center: new Text(
+                              series!["gameSeries"].toString(),
+                              style: TextStyle(
+                                  color: colorBlack, fontSize: height * 3),
+                            ),
+                            backgroundColor: Colors.white.withOpacity(0.3),
                             progressColor: green,
                             circularStrokeCap: CircularStrokeCap.butt,
                           ),
@@ -364,21 +363,23 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                           animationDuration: 1000,
                           radius: 25.0,
                           lineWidth: 5.0,
-                          percent: series!["winSeriesRecord"] /
-                              100 *
-                              series!["winSeries"] /
-                              10,
-                          header: Text(
-                            "Galibiyet Serisi",
-                            style: TextStyle(
-                                color: colorBlack, fontSize: height * 3),
+                          percent: 1,
+                          header: Padding(
+                            padding: EdgeInsets.only(bottom: height * 0.5),
+                            child: AutoSizeText(
+                              "Galibiyet S. Rekoru",
+                              maxLines: 1,
+                              group: textGroup,
+                              style: TextStyle(
+                                  color: colorBlack, fontSize: height * 3),
+                            ),
                           ),
                           center: new Text(
-                            series!["winSeries"].toString(),
+                            series!["winSeriesRecord"].toString(),
                             style: TextStyle(
                                 color: colorBlack, fontSize: height * 3),
                           ),
-                          backgroundColor: Colors.white.withOpacity(0.4),
+                          backgroundColor: Colors.white.withOpacity(0.3),
                           progressColor: green,
                           circularStrokeCap: CircularStrokeCap.butt,
                         ),
@@ -390,22 +391,29 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                           animationDuration: 1000,
                           radius: 25.0,
                           lineWidth: 5.0,
-                          percent: 1,
-                          header: Text(
-                            "Galibiyet S. Rekoru",
-                            style: TextStyle(
-                                color: colorBlack, fontSize: height * 3),
+                          percent: series!["winSeries"] / series!["winSeriesRecord"],
+                          header: Padding(
+                            padding: EdgeInsets.only(bottom: height * 0.5),
+                            child: AutoSizeText(
+
+                              "Galibiyet Serisi",
+                              maxLines: 1,
+                              group: textGroup,
+                              style: TextStyle(
+                                  color: colorBlack, fontSize: height * 3),
+                            ),
                           ),
                           center: new Text(
-                            series!["winSeriesRecord"].toString(),
+                            series!["winSeries"].toString(),
                             style: TextStyle(
                                 color: colorBlack, fontSize: height * 3),
                           ),
-                          backgroundColor: Colors.white.withOpacity(0.4),
+                          backgroundColor: Colors.white.withOpacity(0.3),
                           progressColor: green,
                           circularStrokeCap: CircularStrokeCap.butt,
                         ),
                       ),
+
                     ],
                   ),
                 ],

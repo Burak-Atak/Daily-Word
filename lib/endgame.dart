@@ -8,6 +8,7 @@ import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:turkish/turkish.dart';
+import 'generalStatistic.dart';
 import 'main.dart';
 import 'helper.dart';
 
@@ -102,7 +103,7 @@ class _EndGamePageState extends State<EndGame> {
                 ),
                 Container(
                   width: width * 70,
-                  height: height * 40,
+                  height: height * 47,
                   padding: EdgeInsets.only(bottom: height * 5),
                   decoration: BoxDecoration(
                     color: green,
@@ -146,7 +147,7 @@ class _EndGamePageState extends State<EndGame> {
                         ),
                       ),
                       SizedBox(
-                        width: width * 40,
+                        width: width * 42,
                         height: height * 7,
                         child: ElevatedButton(
                             onPressed: () {
@@ -165,7 +166,7 @@ class _EndGamePageState extends State<EndGame> {
                               backgroundColor: MaterialStateProperty.all(white),
                               padding: MaterialStateProperty.all(
                                 EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 0),
+                                    horizontal: 2, vertical: 0),
                               ),
                             ),
                             child: Row(
@@ -173,9 +174,9 @@ class _EndGamePageState extends State<EndGame> {
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Icon(
-                                  Icons.bar_chart,
+                                  MyFlutterApp.cup,
                                   color: green,
-                                  size: width * 6.5,
+                                  size: width * 5.2,
                                 ),
                                 SizedBox(
                                   width: width * 33.5,
@@ -195,7 +196,59 @@ class _EndGamePageState extends State<EndGame> {
                             )),
                       ),
                       SizedBox(
-                        width: width * 40,
+                        width: width * 42,
+                        height: height * 7,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => const GeneralStatistic(),
+                              );
+                            },
+                            style: ButtonStyle(
+                              overlayColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(width * 2),
+                                  ),
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.all(white),
+                              padding: MaterialStateProperty.all(
+                                EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 0),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Icon(
+                                  Icons.bar_chart_rounded,
+                                  color: green,
+                                  size: width * 7,
+                                ),
+                                SizedBox(
+                                  width: width * 33.5,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: AutoSizeText(
+                                      "İstatistik ",
+                                      style: TextStyle(
+                                          fontSize: height * 3.64, color: green),
+                                      maxLines: 1,
+                                      group: textSizeGroup,
+
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
+                      ),
+                      SizedBox(
+                        width: width * 42,
                         height: height * 7,
                         child: ElevatedButton(
                             onPressed: () async {
@@ -244,7 +297,7 @@ class _EndGamePageState extends State<EndGame> {
                             )),
                       ),
                       SizedBox(
-                        width: width * 40,
+                        width: width * 42,
                         height: height * 7,
                         child: ElevatedButton(
                             onPressed: () {

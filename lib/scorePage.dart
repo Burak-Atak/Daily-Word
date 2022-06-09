@@ -181,8 +181,6 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                           SizedBox(
                             width: width * 10,
                             child: IconButton(
-                              splashColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
                               icon: Icon(
                                 Icons.cancel_rounded,
                                 shadows: [
