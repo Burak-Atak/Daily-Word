@@ -1,10 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'helper.dart';
+import 'howToPlay.dart';
 import 'internetConnectionDialog.dart';
 import 'main.dart';
 
-/* This page used to create new players */
+/// This page used to create new players
 
 TextEditingController _controller = TextEditingController();
 
@@ -22,11 +23,12 @@ class _AddPlayerPageState extends State<AddPlayer> {
       onWillPop: () async => false,
       child: SingleChildScrollView(
         child: AlertDialog(
+            elevation: 0,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(0))),
-            backgroundColor: Colors.black.withOpacity(0.5),
+            backgroundColor: Colors.transparent,
             contentPadding: EdgeInsets.only(
-                top: height * 5,
+                top: height * 9,
                 bottom: height * 10,
                 left: width * 10,
                 right: width * 10),
@@ -79,7 +81,8 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                     onChanged: (value) {
                                       setState(() {});
                                     },
-                                    textCapitalization: TextCapitalization.sentences,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
                                     maxLines: 1,
                                     autofocus: true,
                                     textAlign: TextAlign.center,
@@ -137,39 +140,121 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
-                                                  title: Text(
-                                                    'Bu kullanıcı adı daha önceden alınmış.',
-                                                    style: TextStyle(
-                                                      fontSize: width * 5,
-                                                      color: green,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  actions: [
-                                                    Center(
-                                                      child: ElevatedButton(
-                                                        child: Text(
-                                                          'Tamam',
-                                                          style: TextStyle(
-                                                            fontSize: width * 5,
-                                                            color: white,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  0))),
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  contentPadding:
+                                                      EdgeInsets.only(
+                                                          top: height * 5,
+                                                          bottom: height * 5,
+                                                          left: width * 10,
+                                                          right: width * 10),
+                                                  insetPadding:
+                                                      EdgeInsets.all(0),
+                                                  content: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Container(
+                                                        padding: EdgeInsets.all(
+                                                            width * 3),
+                                                        width: width * 70,
+                                                        height: height * 30,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: green,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                            Radius.circular(
+                                                                width * 5),
                                                           ),
-                                                          textAlign:
-                                                              TextAlign.center,
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: white
+                                                                  .withOpacity(
+                                                                      0.3),
+                                                              blurRadius: 25,
+                                                              spreadRadius: 1,
+                                                            ),
+                                                          ],
                                                         ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: width * 40,
+                                                              child: AutoSizeText(
+                                                                  "Bu kullanıcı adı kullanılıyor.",
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          white,
+                                                                      fontSize:
+                                                                          height *
+                                                                              3,)),
+                                                            ),
+                                                            ElevatedButton(
+                                                              style: ButtonStyle(
+                                                                overlayColor: MaterialStateProperty.all(
+                                                                    Colors.transparent),
+                                                                shape: MaterialStateProperty.all(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.all(
+                                                                      Radius.circular(width * 2),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                backgroundColor:
+                                                                MaterialStateProperty.all(white),
+                                                                padding: MaterialStateProperty.all(
+                                                                  EdgeInsets.symmetric(
+                                                                      horizontal: 0, vertical: 0),
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: SizedBox(
+                                                                width:
+                                                                    width * 20,
+                                                                child:
+                                                                    AutoSizeText(
+                                                                  "Tamam",
+                                                                  textAlign: TextAlign.center,
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          green,
+                                                                      fontSize:
+                                                                          height *
+                                                                              3),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
                                           } else {
                                             _RegisterUser(_controller.text);
                                             Navigator.of(context).pop();
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                              const HowToPlay(),
+                                            );
                                           }
                                         });
                                       },
@@ -190,126 +275,6 @@ class _AddPlayerPageState extends State<AddPlayer> {
     );
   }
 
-  Widget RegisterScreen() {
-    return SingleChildScrollView(
-      child: AlertDialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.only(bottom: height * 35),
-        contentPadding: EdgeInsets.all(15),
-        content: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(width * 3),
-            color: white,
-            border: Border.all(
-              color: green,
-              width: 10,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.4),
-                blurRadius: 15,
-                spreadRadius: 15,
-              ),
-            ],
-          ),
-          width: width * 80,
-          height: height * 50,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text("Kullanıcı Adı",
-                  style: TextStyle(fontSize: width * 10, color: green)),
-              Padding(
-                padding: EdgeInsets.only(right: width * 5, left: width * 5),
-                child: SizedBox(
-                  width: width * 80,
-                  height: height * 10,
-                  child: Align(
-                    child: TextField(
-                      maxLength: 8,
-                      onChanged: (value) {
-                        setState(() {});
-                      },
-                      textCapitalization: TextCapitalization.sentences,
-                      maxLines: 1,
-                      autofocus: true,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: height * 6),
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.all(0),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: green,
-                            width: 50,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: _controller.text.isEmpty
-                    ? null
-                    : () async {
-                        bool isConnected = await checkInternet();
-                        if (!isConnected) {
-                          showDialog(
-                              context: context,
-                              builder: (context) => ConnectionDialog());
-                          return;
-                        }
-                        database.ref('userNames').get().then((value) {
-                          Map userName = value.value as Map;
-                          if (userName.keys.contains(_controller.text)) {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    'Bu kullanıcı adı daha önceden alınmış.',
-                                    style: TextStyle(
-                                      fontSize: width * 5,
-                                      color: green,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  actions: [
-                                    Center(
-                                      child: ElevatedButton(
-                                        child: Text(
-                                          'Tamam',
-                                          style: TextStyle(
-                                            fontSize: width * 5,
-                                            color: white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          } else {
-                            _RegisterUser(_controller.text);
-                            Navigator.of(context).pop();
-                          }
-                        });
-                      },
-                child: Text("Kaydet",
-                    style: TextStyle(fontSize: width * 10, color: white)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Future<void> _RegisterUser(String chosenName) async {
     prefs.setString('userName', chosenName);

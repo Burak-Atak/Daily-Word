@@ -11,13 +11,11 @@ double playerHeight = height * 4;
 double playerWidth = width * 50;
 TextStyle scoreStyle = TextStyle(
     color: colorBlack,
-    fontSize: height * 3.64,
-    fontWeight: FontWeight.bold);
+    fontSize: height * 3.64,);
 
 TextStyle scoreStyleMedals = TextStyle(
     color: colorBlack,
-    fontSize: height * 4.25,
-    fontWeight: FontWeight.bold);
+    fontSize: height * 4.25,);
 
 const chosenColor = green;
 const playerColor = Color(0xff53d952);
@@ -134,6 +132,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
 
     return StatefulBuilder(
       builder: (context, setState) => AlertDialog(
+        elevation: 0,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(0))),
         backgroundColor: Colors.transparent,
@@ -177,7 +176,10 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                               selectedDaily
                                   ? "Günlük Sıralama"
                                   : "Haftalık Sıralama",
-                              style: scoreStyle),
+                              style: TextStyle(
+                                  color: colorBlack,
+                                  fontSize: height * 3.64,
+                                  fontWeight: FontWeight.bold)),
                           SizedBox(
                             width: width * 10,
                             child: IconButton(
@@ -537,7 +539,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             style: TextStyle(
                                 color: colorBlack,
                                 fontSize: selectedDaily
-                                    ? height * 4.86
+                                    ? height * 4.50
                                     : height * 3.64),
                           ),
                         ),
@@ -571,7 +573,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                 color: colorBlack,
                                 fontSize: selectedDaily
                                     ? height * 3.64
-                                    : height * 4.86),
+                                    : height * 4.5),
                           ),
                         ),
                       ),

@@ -95,7 +95,9 @@ class _GeneralStatisticState extends State<GeneralStatistic>
   }
 
   Widget mainStatisticPage() {
+    var longestBar = whichWord!.values.reduce((value, element) => value > element ? value : element);
     return AlertDialog(
+        elevation: 0,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(0))),
         backgroundColor: Colors.transparent,
@@ -179,7 +181,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: width * 2),
+                    padding: EdgeInsets.only(bottom: height),
                     child: Text(
                       "Tahmin Dağılımı",
                       style:
@@ -190,7 +192,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                     Padding(
                       padding: EdgeInsets.only(bottom: height * 0.8),
                       child: LinearPercentIndicator(
-                        width: whichWord![keys[i]] / whichWord!.values.reduce((value, element) => value > element ? value : element)*
+                        width: whichWord![keys[i]] / (longestBar == 0 ? 1 : longestBar)  *
                                 width *
                                 60 +
                             width * 10,
@@ -213,7 +215,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                       ),
                     ),
                   Padding(
-                    padding: EdgeInsets.only(top: height * 3.0),
+                    padding: EdgeInsets.only(top: height),
                     child: Text(
                       "Ortalama Süre",
                       style: TextStyle(color: colorBlack, fontSize: height * 3),
@@ -225,7 +227,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                       .round())) : Text(timeFormat(0)),
                   Padding(
                     padding:
-                        EdgeInsets.only(top: height * 3, bottom: height * 3),
+                        EdgeInsets.only(top: height, bottom: height),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -290,7 +292,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: height * 3),
+                    padding: EdgeInsets.only(bottom: height),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [

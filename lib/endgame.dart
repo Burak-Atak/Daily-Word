@@ -39,6 +39,7 @@ class _EndGamePageState extends State<EndGame> {
     bool isWin = prefs.getBool("isWin")!;
     var textSizeGroup = AutoSizeGroup();
     return AlertDialog(
+      elevation: 0,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(0))),
       backgroundColor: Colors.black.withOpacity(0.5),

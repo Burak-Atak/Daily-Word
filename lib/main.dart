@@ -4,10 +4,12 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:first_project/endgame.dart';
 import 'package:first_project/helper.dart';
+import 'package:first_project/howToPlay.dart';
 import 'package:first_project/internetConnectionDialog.dart';
 import 'package:first_project/my_flutter_app_icons.dart';
 import 'package:first_project/register.dart';
 import 'package:first_project/scorePage.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:first_project/new_deneme.dart';
 import 'package:flip_card/flip_card.dart';
@@ -239,6 +241,7 @@ class _MyHomePageState extends State<MyHomePage>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
+              padding: EdgeInsets.only(left: height, right: height),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -251,30 +254,24 @@ class _MyHomePageState extends State<MyHomePage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
+                  SizedBox(
+                    width: width * 25,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: InkWell(
+                        onTap: () {
                           showDialog(
                             context: context,
-                            builder: (context) => const GeneralStatistic(),
+                            builder: (context) => const HowToPlay(),
                           );
                         },
-                        iconSize: height * 6,
-                        icon: Icon(
-                          Icons.bar_chart_rounded,
-                          color: Colors.black45,
-                        ),
-                      ),
-         /*             IconButton(
-                        onPressed: () {},
-                        iconSize: height * 5,
-                        icon: Icon(
+                        child: Icon(
                           Icons.info_outline_rounded,
                           color: Colors.black45,
+                          size: height * 5,
                         ),
-                      ),*/
-                    ],
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: height * 7.4,
@@ -282,32 +279,56 @@ class _MyHomePageState extends State<MyHomePage>
                       title,
                       style: TextStyle(
                         fontSize: height * 6,
-                        fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                       maxLines: 1,
                     ),
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => const MyAlertDialog(),
-                          );
-                        },
-                        iconSize: height * 4,
-                        icon: Icon(
-                          MyFlutterApp.cup,
-                          color: Colors.black45,
+                  SizedBox(
+                    width: width * 25,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: height * 1.5, right: height * 1.5),
+                          child: InkWell(
+                            onTap: () {
+                              if (isAnimationCompleted) {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) =>
+                                      const GeneralStatistic(),
+                                );
+                              }
+                            },
+                            child: Icon(
+                              Icons.bar_chart_rounded,
+                              color: Colors.black45,
+                              size: height * 6,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                        InkWell(
+                          onTap: () {
+                            if (isAnimationCompleted) {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) => const MyAlertDialog(),
+                              );
+                            }
+                          },
+                          child: Icon(
+                            MyFlutterApp.cup,
+                            color: Colors.black45,
+                            size: height * 4,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-
                 ],
               ),
             ),
@@ -323,19 +344,20 @@ class _MyHomePageState extends State<MyHomePage>
                     duration: const Duration(milliseconds: 500),
                     // The green box must be a child of the AnimatedOpacity widget.
                     child: Padding(
-                      padding: EdgeInsets.only(top: height * 29),
+                      padding: EdgeInsets.only(top: height * 25),
                       child: Container(
-                        width: width * 75.67,
-                        height: height * 10,
+                        width: width * 60,
+                        height: height * 8,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(
-                          'Kelime Listesinde yok',
+                        child: AutoSizeText(
+                          'Kelime Listesinde yok.',
+                          maxLines: 1,
                           style: TextStyle(
-                              fontSize: width * 7, color: Colors.white),
+                              fontSize: height * 3.64, color: Colors.white),
                         ),
                       ),
                     ),
@@ -845,7 +867,9 @@ class _MyHomePageState extends State<MyHomePage>
     /// sayısı toplamı günün kelimesindeki
     /// toplam harf sayısından küçük ise
     if (wordOfDay.contains(chosenLetter) &&
-        (isThereGreen.where((element) => element == true).length + newChosenWordColors![chosenLetter]! < chosenLetter.allMatches(wordOfDay).length)) {
+        (isThereGreen.where((element) => element == true).length +
+                newChosenWordColors![chosenLetter]! <
+            chosenLetter.allMatches(wordOfDay).length)) {
       return true;
     }
     return false;
@@ -861,6 +885,7 @@ class _MyHomePageState extends State<MyHomePage>
               Navigator.of(context).pop();
             },
             child: AlertDialog(
+                elevation: 0,
                 contentPadding: EdgeInsets.all(0),
                 insetPadding: EdgeInsets.zero,
                 backgroundColor: Colors.transparent,
@@ -1067,13 +1092,6 @@ class _MyHomePageState extends State<MyHomePage>
       whichWordUserFound = prefs.getInt('whichWordUserFound')!;
       bool? isWin = prefs.getBool('isWin');
       if (isWin!) {
-/*
-        confettiController.play();
-*/
-        await _controlThwWinAnimation();
-/*
-        confettiController.stop();
-*/
         _goEndPage();
 /*        await Future.delayed(const Duration(seconds: 1));
         confettiController.play();
@@ -1093,11 +1111,11 @@ class _MyHomePageState extends State<MyHomePage>
 
   Future<void> _gameEnd(bool isWon) async {
     if (isWon) {
-      await _controlThwWinAnimation();
       await _updateDatabase(true);
       prefs.setBool('isGameEnd', true);
       prefs.setBool('isWin', true);
       isGameEnd = true;
+      await _controlWinAnimation();
       _goEndPage();
 /*      await Future.delayed(const Duration(seconds: 1));
       confettiController.play();
@@ -1295,9 +1313,10 @@ class _MyHomePageState extends State<MyHomePage>
         return WillPopScope(
           onWillPop: () async => false,
           child: AlertDialog(
+            elevation: 0,
             backgroundColor: Colors.transparent,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(0))),
+                borderRadius: BorderRadius.all(Radius.circular(width *2))),
             contentPadding: EdgeInsets.only(
                 top: height * 5,
                 bottom: height * 5,
@@ -1309,8 +1328,9 @@ class _MyHomePageState extends State<MyHomePage>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: EdgeInsets.only(bottom: height * 2, top: height * 2),
+                  padding: EdgeInsets.all(height * 2),
                   height: height * 50,
+                  width: width * 80,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: green,
@@ -1320,24 +1340,40 @@ class _MyHomePageState extends State<MyHomePage>
                     children: <Widget>[
                       Text("Süre Doldu!",
                           style:
-                              TextStyle(fontSize: height * 4.86, color: white),
+                              TextStyle(fontSize: height * 4.5, color: white),
                           textAlign: TextAlign.center),
                       Text("Yeni kelimeyle oyuna devam edebilirsiniz.",
                           style:
                               TextStyle(fontSize: height * 3.64, color: white),
                           textAlign: TextAlign.center),
-                      ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              Phoenix.rebirth(context);
-                            });
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(white),
-                          ),
-                          child: Text("Tamam",
-                              style: TextStyle(
-                                  fontSize: height * 3.64, color: green)))
+                      SizedBox(
+                        height: height * 6,
+                        width: width * 24,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                Phoenix.rebirth(context);
+                              });
+                            },
+                            style: ButtonStyle(
+                              overlayColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(width * 2),
+                                  ),
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.all(white),
+                              padding: MaterialStateProperty.all(
+                                EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                              ),
+                            ),
+                            child: Text("Tamam",
+                                style: TextStyle(
+                                    fontSize: height * 3.64, color: green))),
+                      )
                     ],
                   ),
                 ),
@@ -1349,7 +1385,8 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  Future<void> _controlThwWinAnimation() async {
+  Future<void> _controlWinAnimation() async {
+    isAnimationCompleted = false;
     winController.forward();
     await Future.delayed(Duration(milliseconds: 1500), () {
       winController.reverse();
@@ -1357,6 +1394,7 @@ class _MyHomePageState extends State<MyHomePage>
     await Future.delayed(Duration(milliseconds: 1500), () {
       winController.dispose();
     });
+    isAnimationCompleted = true;
   }
 
   void _showInternetAlert() {
@@ -1369,6 +1407,7 @@ class _MyHomePageState extends State<MyHomePage>
           onWillPop: () async => false,
           child: StatefulBuilder(
             builder: (context, setState) => AlertDialog(
+              elevation: 0,
               backgroundColor: Colors.transparent,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(0))),
