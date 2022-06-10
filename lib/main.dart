@@ -692,7 +692,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<bool> enterButtonFunc() async {
-    print((0 / 0).round());
     if (isGameEnd == null &&
         isAnimationCompleted &&
         chosenLetter % 5 == 0 &&
@@ -841,10 +840,12 @@ class _MyHomePageState extends State<MyHomePage>
         wordOfUser[allIndexes[i]] == wordOfDay[allIndexes[i]]
     ];
 
+    /// Kelimede harf var ise
+    /// && harfin girilen kelimede bilinen yeşil sayısı ile harfin açılan renk
+    /// sayısı toplamı günün kelimesindeki
+    /// toplam harf sayısından küçük ise
     if (wordOfDay.contains(chosenLetter) &&
-        newChosenWordColors![chosenLetter]! <
-            chosenLetter.allMatches(wordOfDay).length &&
-        !isThereGreen.contains(true)) {
+        (isThereGreen.where((element) => element == true).length + newChosenWordColors![chosenLetter]! < chosenLetter.allMatches(wordOfDay).length)) {
       return true;
     }
     return false;
