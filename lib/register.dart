@@ -26,7 +26,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
             elevation: 0,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(0))),
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white.withOpacity(0.8),
             contentPadding: EdgeInsets.only(
                 top: height * 9,
                 bottom: height * 10,
@@ -124,6 +124,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                             await checkInternet();
                                         if (!isConnected) {
                                           showDialog(
+                                              barrierColor: Colors.transparent,
                                               context: context,
                                               builder: (context) =>
                                                   ConnectionDialog());
@@ -137,6 +138,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                           if (userName.keys
                                               .contains(_controller.text)) {
                                             showDialog(
+                                              barrierColor: Colors.transparent,
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
@@ -146,8 +148,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                                           BorderRadius.all(
                                                               Radius.circular(
                                                                   0))),
-                                                  backgroundColor:
-                                                      Colors.transparent,
+                                                  backgroundColor: Colors.white.withOpacity(0.8),
                                                   contentPadding:
                                                       EdgeInsets.only(
                                                           top: height * 5,
@@ -161,6 +162,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
+                                                      SizedBox(width: width * 100,),
                                                       Container(
                                                         padding: EdgeInsets.all(
                                                             width * 3),
@@ -196,10 +198,10 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                                                           .center,
                                                                   style: TextStyle(
                                                                       color:
-                                                                          white,
+                                                                          colorBlack,
                                                                       fontSize:
                                                                           height *
-                                                                              3,)),
+                                                                              3.64)),
                                                             ),
                                                             ElevatedButton(
                                                               style: ButtonStyle(
@@ -235,7 +237,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                                                           green,
                                                                       fontSize:
                                                                           height *
-                                                                              3),
+                                                                              3.64),
                                                                 ),
                                                               ),
                                                             ),
@@ -251,6 +253,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                             _RegisterUser(_controller.text);
                                             Navigator.of(context).pop();
                                             showDialog(
+                                              barrierColor: Colors.transparent,
                                               context: context,
                                               builder: (context) =>
                                               const HowToPlay(),

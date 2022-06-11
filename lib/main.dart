@@ -107,7 +107,9 @@ Future<void> main() async {
     // The following lines are the same as previously explained in "Handling uncaught errors"
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
-    runApp(Phoenix(child: MyApp()));
+    await Future.delayed(Duration(seconds: 1), () {
+      runApp(Phoenix(child: MyApp()));
+    });
   },
       (error, stack) =>
           FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
@@ -241,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding: EdgeInsets.only(left: height, right: height),
+              padding: EdgeInsets.only(left: width, right: width),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -261,24 +263,35 @@ class _MyHomePageState extends State<MyHomePage>
                       child: InkWell(
                         onTap: () {
                           showDialog(
+                            barrierColor: Colors.transparent,
                             context: context,
                             builder: (context) => const HowToPlay(),
                           );
                         },
-                        child: Icon(
-                          Icons.info_outline_rounded,
-                          color: Colors.black45,
-                          size: height * 5,
+                        customBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            height * 2,
+                          ),
+                        ),
+                        child: SizedBox(
+                          height: height * 5,
+                          width: height * 5,
+                          child: Icon(
+                            Icons.info_outline_rounded,
+                            color: Colors.black45,
+                            size: height * 4,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: height * 7.4,
+                    height: height * 7,
                     child: AutoSizeText(
                       title,
                       style: TextStyle(
                         fontSize: height * 6,
+                        fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                       maxLines: 1,
@@ -290,23 +303,28 @@ class _MyHomePageState extends State<MyHomePage>
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                              left: height * 1.5, right: height * 1.5),
+                          padding:
+                              EdgeInsets.only(left: width * 2, right: width),
                           child: InkWell(
                             onTap: () {
                               if (isAnimationCompleted) {
                                 showDialog(
-                                  barrierDismissible: false,
+                                  barrierColor: Colors.transparent,
                                   context: context,
                                   builder: (context) =>
                                       const GeneralStatistic(),
                                 );
                               }
                             },
+                            customBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                height * 2,
+                              ),
+                            ),
                             child: Icon(
                               Icons.bar_chart_rounded,
                               color: Colors.black45,
-                              size: height * 6,
+                              size: height * 5,
                             ),
                           ),
                         ),
@@ -314,16 +332,25 @@ class _MyHomePageState extends State<MyHomePage>
                           onTap: () {
                             if (isAnimationCompleted) {
                               showDialog(
-                                barrierDismissible: false,
+                                barrierColor: Colors.transparent,
                                 context: context,
                                 builder: (context) => const MyAlertDialog(),
                               );
                             }
                           },
-                          child: Icon(
-                            MyFlutterApp.cup,
-                            color: Colors.black45,
-                            size: height * 4,
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              height * 2,
+                            ),
+                          ),
+                          child: SizedBox(
+                            height: height * 5,
+                            width: height * 5,
+                            child: Icon(
+                              MyFlutterApp.cup,
+                              color: Colors.black45,
+                              size: height * 3,
+                            ),
                           ),
                         ),
                       ],
@@ -720,7 +747,11 @@ class _MyHomePageState extends State<MyHomePage>
         chosenLetter != 0) {
       bool isConnected = await checkInternet();
       if (!isConnected) {
-        showDialog(context: context, builder: (context) => ConnectionDialog());
+        showDialog(
+            barrierColor: Colors.transparent,
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => ConnectionDialog());
         return false;
       }
 
@@ -888,7 +919,7 @@ class _MyHomePageState extends State<MyHomePage>
                 elevation: 0,
                 contentPadding: EdgeInsets.all(0),
                 insetPadding: EdgeInsets.zero,
-                backgroundColor: Colors.transparent,
+                backgroundColor: Colors.white.withOpacity(0.8),
                 content: finalColumn(isWon)),
           );
         }));
@@ -1106,10 +1137,14 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _goEndPage() {
-    showDialog(context: context, builder: (context) => EndGame());
+    showDialog(
+        barrierColor: Colors.transparent,
+        context: context,
+        builder: (context) => EndGame());
   }
 
   Future<void> _gameEnd(bool isWon) async {
+    isGameEnd = true;
     if (isWon) {
       await _updateDatabase(true);
       prefs.setBool('isGameEnd', true);
@@ -1130,7 +1165,11 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   _registerScreen() {
-    showDialog(context: context, builder: (context) => AddPlayer());
+    showDialog(
+        barrierColor: Colors.transparent,
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => AddPlayer());
   }
 
   void _startNewGame() {
@@ -1307,16 +1346,17 @@ class _MyHomePageState extends State<MyHomePage>
 
   void _showTimeIsUpAlert() {
     showDialog(
-      context: context,
       barrierDismissible: false,
+      context: context,
+      barrierColor: Colors.transparent,
       builder: (BuildContext context) {
         return WillPopScope(
           onWillPop: () async => false,
           child: AlertDialog(
             elevation: 0,
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white.withOpacity(0.8),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(width *2))),
+                borderRadius: BorderRadius.all(Radius.circular(width * 2))),
             contentPadding: EdgeInsets.only(
                 top: height * 5,
                 bottom: height * 5,
@@ -1324,27 +1364,48 @@ class _MyHomePageState extends State<MyHomePage>
                 right: width * 10),
             insetPadding: EdgeInsets.all(0),
             content: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(
+                  width: width * 100,
+                ),
+                Container(
+                  padding: EdgeInsets.all(0),
+                  height: height * 8,
+                  width: width * 70,
+                  decoration: BoxDecoration(
+                    color: green,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(width * 3),
+                      topRight: Radius.circular(width * 3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Süre Doldu!",
+                          style: TextStyle(fontSize: height * 4, color: colorBlack, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
                 Container(
                   padding: EdgeInsets.all(height * 2),
-                  height: height * 50,
-                  width: width * 80,
+                  height: height * 30,
+                  width: width * 70,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: green,
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(width * 3),
+                        bottomRight: Radius.circular(width * 3)),
+                    color: Color(0xffbbe7bb),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text("Süre Doldu!",
-                          style:
-                              TextStyle(fontSize: height * 4.5, color: white),
-                          textAlign: TextAlign.center),
                       Text("Yeni kelimeyle oyuna devam edebilirsiniz.",
                           style:
-                              TextStyle(fontSize: height * 3.64, color: white),
+                              TextStyle(fontSize: height * 3.64, color: colorBlack),
                           textAlign: TextAlign.center),
                       SizedBox(
                         height: height * 6,
@@ -1367,7 +1428,8 @@ class _MyHomePageState extends State<MyHomePage>
                               ),
                               backgroundColor: MaterialStateProperty.all(white),
                               padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 0),
                               ),
                             ),
                             child: Text("Tamam",
@@ -1400,6 +1462,7 @@ class _MyHomePageState extends State<MyHomePage>
   void _showInternetAlert() {
     showDialog(
       context: context,
+      barrierColor: Colors.transparent,
       barrierDismissible: false,
       builder: (BuildContext context) {
         bool showAnimation = false;
@@ -1408,7 +1471,7 @@ class _MyHomePageState extends State<MyHomePage>
           child: StatefulBuilder(
             builder: (context, setState) => AlertDialog(
               elevation: 0,
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.white.withOpacity(0.8),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(0))),
               contentPadding: EdgeInsets.only(

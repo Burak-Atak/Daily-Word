@@ -42,12 +42,12 @@ class _EndGamePageState extends State<EndGame> {
       elevation: 0,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(0))),
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.white.withOpacity(0.8),
       contentPadding: EdgeInsets.only(
           top: height * 5,
           bottom: height * 5,
-          left: width * 10,
-          right: width * 10),
+          left: width * 8,
+          right: width * 8),
       insetPadding: EdgeInsets.all(0),
       content: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -62,7 +62,7 @@ class _EndGamePageState extends State<EndGame> {
                     ? Text(
                         'Tebrikler!',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: green, fontSize: height * 7),
+                        style: TextStyle(color: green, fontSize: height * 7, fontWeight: FontWeight.bold),
                       )
                     : Text(
                         turkish.toUpperCase(wordOfDay),
@@ -71,7 +71,7 @@ class _EndGamePageState extends State<EndGame> {
                             TextStyle(color: Colors.red, fontSize: height * 7),
                       ),
                 Padding(
-                  padding: EdgeInsets.only(left: width * 5, right: width * 5),
+                  padding: EdgeInsets.only(left: width * 8, right: width * 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -108,7 +108,7 @@ class _EndGamePageState extends State<EndGame> {
                   padding: EdgeInsets.only(bottom: height * 5),
                   decoration: BoxDecoration(
                     color: green,
-                    borderRadius: BorderRadius.circular(width * 5),
+                    borderRadius: BorderRadius.circular(width * 3),
                     boxShadow: [
                       BoxShadow(
                         color: white.withOpacity(0.3),
@@ -202,6 +202,7 @@ class _EndGamePageState extends State<EndGame> {
                         child: ElevatedButton(
                             onPressed: () {
                               showDialog(
+                                barrierColor: Colors.transparent,
                                 context: context,
                                 builder: (context) => const GeneralStatistic(),
                               );
@@ -355,7 +356,7 @@ class _EndGamePageState extends State<EndGame> {
                   padding: EdgeInsets.only(top: height * 5),
                   child: Text(
                     "Sonraki kelimeye kalan süre",
-                    style: TextStyle(color: white, fontSize: height * 3.64),
+                    style: TextStyle(color: green, fontSize: height * 4, fontWeight: FontWeight.bold),
                   ),
                 ),
                 CountdownTimer(
@@ -370,7 +371,7 @@ class _EndGamePageState extends State<EndGame> {
                     }
                     return Text(
                       '${time.hours == null ? "00" : time.hours.toString().length < 2 ? "0${time.hours}" : time.hours}:${time.min == null ? "00" : time.min.toString().length < 2 ? "0${time.min}" : time.min}:${time.sec == null ? "00" : time.sec.toString().length < 2 ? "0${time.sec}" : time.sec}',
-                      style: TextStyle(color: white, fontSize: height * 4.86),
+                      style: TextStyle(color: green, fontSize: height * 4.86, fontWeight: FontWeight.bold),
                     );
                   },
                 ),
@@ -384,6 +385,7 @@ class _EndGamePageState extends State<EndGame> {
 
   void _goScorePage() async {
     showDialog(
+      barrierColor: Colors.transparent,
       context: context,
       builder: (context) => const MyAlertDialog(),
     );

@@ -100,12 +100,12 @@ class _GeneralStatisticState extends State<GeneralStatistic>
         elevation: 0,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(0))),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white.withOpacity(0.8),
         contentPadding: EdgeInsets.only(
             top: height * 5,
             bottom: height * 5,
-            left: width * 10,
-            right: width * 10),
+            left: width * 8,
+            right: width * 8),
         insetPadding: EdgeInsets.all(0),
         content: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
@@ -113,8 +113,8 @@ class _GeneralStatisticState extends State<GeneralStatistic>
             decoration: BoxDecoration(
               color: green,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(width * 5),
-                topRight: Radius.circular(width * 5),
+                topLeft: Radius.circular(width * 3),
+                topRight: Radius.circular(width *3),
               ),
             ),
             child: Row(
@@ -139,12 +139,12 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                       Icons.cancel_rounded,
                       shadows: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.7),
+                          color: Colors.black.withOpacity(0.5),
                           blurRadius: 25,
                           spreadRadius: 1,
                         ),
                       ],
-                      color: colorBlack,
+                      color: white,
                       size: height * 5,
                     ),
                     onPressed: () {
@@ -159,7 +159,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
             ),
           ),
           Container(
-              padding: EdgeInsets.all(width * 2),
+              padding: EdgeInsets.only(top: height, bottom: height * 2, left: width * 2, right: width * 2),
               width: width * 100,
               height: height * 90,
               decoration: BoxDecoration(
@@ -167,8 +167,8 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.zero,
                   topRight: Radius.zero,
-                  bottomLeft: Radius.circular(width * 5),
-                  bottomRight: Radius.circular(width * 5),
+                  bottomLeft: Radius.circular(width * 3),
+                  bottomRight: Radius.circular(width * 3),
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -179,6 +179,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                 ],
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(bottom: height),
@@ -254,7 +255,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                               style: TextStyle(
                                   color: colorBlack, fontSize: height * 3),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.3),
+                            backgroundColor: Colors.white.withOpacity(0.9),
                             progressColor: green,
                             circularStrokeCap: CircularStrokeCap.butt,
                           ),
@@ -283,7 +284,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                               style: TextStyle(
                                   color: colorBlack, fontSize: height * 3),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.3),
+                            backgroundColor: Colors.white.withOpacity(0.9),
                             progressColor: green,
                             circularStrokeCap: CircularStrokeCap.butt,
                           ),
@@ -319,7 +320,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                               style: TextStyle(
                                   color: colorBlack, fontSize: height * 3),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.3),
+                            backgroundColor: Colors.white.withOpacity(0.9),
                             progressColor: green,
                             circularStrokeCap: CircularStrokeCap.butt,
                           ),
@@ -348,7 +349,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                               style: TextStyle(
                                   color: colorBlack, fontSize: height * 3),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.3),
+                            backgroundColor: Colors.white.withOpacity(0.9),
                             progressColor: green,
                             circularStrokeCap: CircularStrokeCap.butt,
                           ),
@@ -382,7 +383,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                             style: TextStyle(
                                 color: colorBlack, fontSize: height * 3),
                           ),
-                          backgroundColor: Colors.white.withOpacity(0.3),
+                          backgroundColor: Colors.white.withOpacity(0.9),
                           progressColor: green,
                           circularStrokeCap: CircularStrokeCap.butt,
                         ),
@@ -411,7 +412,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                             style: TextStyle(
                                 color: colorBlack, fontSize: height * 3),
                           ),
-                          backgroundColor: Colors.white.withOpacity(0.3),
+                          backgroundColor: Colors.white.withOpacity(0.9),
                           progressColor: green,
                           circularStrokeCap: CircularStrokeCap.butt,
                         ),

@@ -17,7 +17,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
       child: StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white.withOpacity(0.8),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(0))),
           contentPadding: EdgeInsets.only(

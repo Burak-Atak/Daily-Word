@@ -11,11 +11,11 @@ double playerHeight = height * 4;
 double playerWidth = width * 50;
 TextStyle scoreStyle = TextStyle(
     color: colorBlack,
-    fontSize: height * 3.64,);
+    fontSize: height * 3,);
 
 TextStyle scoreStyleMedals = TextStyle(
     color: colorBlack,
-    fontSize: height * 4.25,);
+    fontSize: height * 3.5,);
 
 const chosenColor = green;
 const playerColor = Color(0xff53d952);
@@ -135,7 +135,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
         elevation: 0,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(0))),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white.withOpacity(0.8),
         contentPadding: EdgeInsets.only(
             top: height * 5,
             bottom: height * 5,
@@ -162,8 +162,8 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                       decoration: BoxDecoration(
                         color: chosenColor,
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(width * 5),
-                          topRight: Radius.circular(width * 5),
+                          topLeft: Radius.circular(width * 3),
+                          topRight: Radius.circular(width * 3),
                         ),
                       ),
                       child: Row(
@@ -187,12 +187,12 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                 Icons.cancel_rounded,
                                 shadows: [
                                   BoxShadow(
-                                    color: Colors.grey.withOpacity(0.7),
+                                    color: Colors.black.withOpacity(0.5),
                                     blurRadius: 25,
                                     spreadRadius: 1,
                                   ),
                                 ],
-                                color: colorBlack,
+                                color: white,
                                 size: height * 5,
                               ),
                               onPressed: () {
@@ -219,7 +219,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                 child: Text(
                               "#",
                               style: TextStyle(
-                                  color: colorBlack, fontSize: height * 3),
+                                  color: colorBlack, fontSize: height * 2.5),
                             ))),
                         SizedBox(
                           height: height * 5,
@@ -228,7 +228,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             child: Text(
                               "İsim",
                               style: TextStyle(
-                                  color: colorBlack, fontSize: height * 3),
+                                  color: colorBlack, fontSize: height * 2.5),
                             ),
                           ),
                         ),
@@ -239,7 +239,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             child: Text(
                               "Puan",
                               style: TextStyle(
-                                  color: colorBlack, fontSize: height * 3),
+                                  color: colorBlack, fontSize: height * 2.5),
                             ),
                           ),
                         ),
@@ -250,7 +250,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             child: Text(
                               selectedDaily ? "Süre" : "Ort.Süre",
                               style: TextStyle(
-                                  color: colorBlack, fontSize: height * 3),
+                                  color: colorBlack, fontSize: height * 2.5),
                             ),
                           ),
                         )
@@ -521,7 +521,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(width * 5),
+                                  bottomLeft: Radius.circular(width * 3),
                                 ),
                               ),
                             ),
@@ -539,8 +539,8 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             style: TextStyle(
                                 color: colorBlack,
                                 fontSize: selectedDaily
-                                    ? height * 4.50
-                                    : height * 3.64),
+                                    ? height * 3.64
+                                    : height * 3),
                           ),
                         ),
                       ),
@@ -560,7 +560,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(width * 5),
+                                  bottomRight: Radius.circular(width * 3),
                                 ),
                               ),
                             ),
@@ -572,8 +572,8 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             style: TextStyle(
                                 color: colorBlack,
                                 fontSize: selectedDaily
-                                    ? height * 3.64
-                                    : height * 4.5),
+                                    ? height * 3
+                                    : height * 3.64),
                           ),
                         ),
                       ),
