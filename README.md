@@ -1,5 +1,31 @@
 # Wordle-Clone
 
+```
+This is the a word prediction game that I developed with using flutter. (Idea is not mine. this is a popular game in the world.)
+Every day word is updated and users trying to predict this word, by wrting words.
+If square is green, this mean is this letter in the word of the day and it is in right place. 
+If square is yellow, this mean is this letter in the word of the day but it's place is wrong. 
+If square is grey this mean is this letter not in the word.
+
+I used Firebase Realtime Database for saving word, user's statisticks and ranks. 
+I used Firebase Cloud Functions for change word every day and updata database every day and week.
+I used Firebase Authentication for authenticate users.
+I used Firebase Crashlytics for tracking bugs.
+```
+___
+```
+Bu flutter kullarak geliştirdiğim bir kelime tahmin oyunu. (Fikir bana ait değil. Bu, Dünyada popüler bir oyun.)
+Her gün kelime güncellenir ve kullanıcılar kelimeler yazarak bu kelimeyi tahmin etmeye çalışırlar.
+Kare yeşil ise, harf kelimede var ve doğru yerde demektir.
+Kare sarı ise harf kelimede var fakat yeri yanlış demektir.
+Kare gri ise harf kelimede yok demektir.
+
+Kelimeyi, kullanıcı istatistiklerini ve sıralamalarını kaydetmek için I used Firebase Realtime Database kullandım.
+Kelimeyi her gün değiştirmek ve veritabanını her gün ve her hafta güncellemek için Firebase Cloud Function kullandım.
+Kullanıcıları yetkilendirmek için Firebase Authenticatio kullandım.
+Hataları takip etmek için Firebase Crashlytics kullandım.
+```
+---
 <p float="left">
   <img src="https://user-images.githubusercontent.com/71793345/173344402-e930dc02-c3a9-426a-bdbe-edc42f7733fe.jpeg" width="220" height="400" />
   <img src="https://user-images.githubusercontent.com/71793345/173346354-74a426a6-9559-40de-a995-7f6c39ca512c.jpeg" width="220" height="400" />
