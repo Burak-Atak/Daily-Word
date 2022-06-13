@@ -26,6 +26,8 @@ Kullanıcıları yetkilendirmek için Firebase Authenticatio kullandım.
 Hataları takip etmek için Firebase Crashlytics kullandım.
 ```
 ---
+[![Daily Word](https://res.cloudinary.com/marcomontalbano/image/upload/v1655123348/video_to_markdown/images/youtube--d0obxKo8LVA-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://youtu.be/d0obxKo8LVA "Daily Word")
+---
 <p float="left">
   <img src="https://user-images.githubusercontent.com/71793345/173344402-e930dc02-c3a9-426a-bdbe-edc42f7733fe.jpeg" width="220" height="400" />
   <img src="https://user-images.githubusercontent.com/71793345/173346354-74a426a6-9559-40de-a995-7f6c39ca512c.jpeg" width="220" height="400" />
