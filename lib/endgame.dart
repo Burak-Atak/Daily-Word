@@ -42,7 +42,7 @@ class _EndGamePageState extends State<EndGame> {
       elevation: 0,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(0))),
-      backgroundColor: Colors.white.withOpacity(0.8),
+      backgroundColor: Colors.transparent,
       contentPadding: EdgeInsets.only(
           top: height * 5,
           bottom: height * 5,
@@ -52,331 +52,351 @@ class _EndGamePageState extends State<EndGame> {
       content: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: width * 100,
-            color: Colors.transparent,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                isWin
-                    ? Text(
-                        'Tebrikler!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: green, fontSize: height * 7, fontWeight: FontWeight.bold),
-                      )
-                    : Text(
-                        turkish.toUpperCase(wordOfDay),
-                        textAlign: TextAlign.center,
-                        style:
-                            TextStyle(color: Colors.red, fontSize: height * 7),
-                      ),
-                Padding(
-                  padding: EdgeInsets.only(left: width * 8, right: width * 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(Icons.hourglass_bottom_rounded,
-                              color: Colors.white, size: height * 4.86),
-                          Text(
-                            myTime,
-                            style: TextStyle(
-                                color: Colors.white, fontSize: height * 4.25),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Icon(MyFlutterApp.medal,
-                              color: Colors.white, size: height * 4),
-                          Text(
-                            userScore.toString(),
-                            style: TextStyle(
-                                color: Colors.white, fontSize: height * 4.25),
-                          ),
-                        ],
-                      )
-                    ],
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+
+              Container(
+                padding: EdgeInsets.all(width * 3),
+                width: width * 80,
+                height: height * 70,
+                decoration: BoxDecoration(
+                  color: Color(0xffbbe7bb),
+                  borderRadius: BorderRadius.all(
+               Radius.circular(width * 3),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: white.withOpacity(0.3),
+                      blurRadius: 25,
+                      spreadRadius: 1,
+                    ),
+                  ],
                 ),
-                Container(
-                  width: width * 70,
-                  height: height * 47,
-                  padding: EdgeInsets.only(bottom: height * 5),
-                  decoration: BoxDecoration(
-                    color: green,
-                    borderRadius: BorderRadius.circular(width * 3),
-                    boxShadow: [
-                      BoxShadow(
-                        color: white.withOpacity(0.3),
-                        blurRadius: 25,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: SizedBox(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
                           width: width * 10,
-                          height: height * 5,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.cancel_rounded,
-                              shadows: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.5),
-                                  blurRadius: 25,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                              color: white,
-                              size: height * 5,
+                        ),
+                        isWin
+                            ? Text(
+                          'Tebrikler!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Color(0xff2bb429), fontSize: height * 7, fontFamily: "DMSans"),
+                        )
+                            : Text(
+                          '"${turkish.toUpperCase(wordOfDay)}"',
+                          textAlign: TextAlign.center,
+                          style:
+                          TextStyle(color: Colors.red, fontSize: height * 6, fontFamily: "DMSans"),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: SizedBox(
+                            width: width * 10,
+                            height: height * 5,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.cancel_rounded,
+                                shadows: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    blurRadius: 25,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                                color: white,
+                                size: height * 5,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  Navigator.pop(context);
+                                });
+                              },
+                              padding: EdgeInsets.all(0),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                Navigator.pop(context);
-                              });
-                            },
-                            padding: EdgeInsets.all(0),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: width * 42,
-                        height: height * 7,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              _goScorePage();
-                            },
-                            style: ButtonStyle(
-                              overlayColor:
+                      ],
+                    ),
+                    SizedBox(
+                      height: height * 40,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only( bottom: height *2, left: width * 8, right: width * 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Icon(Icons.hourglass_bottom_rounded,
+                                        color: colorBlack, size: height * 4),
+                                    Text(
+                                      myTime,
+                                      style: TextStyle(
+                                          color: colorBlack, fontSize: height * 4, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Icon(MyFlutterApp.medal,
+                                      color: colorBlack, size: height * 3.5,),
+                                    Text(
+                                      userScore.toString(),
+                                      style: TextStyle(
+                                          color: colorBlack, fontSize: height * 4, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: width * 44,
+                            height: height * 7,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  _goScorePage();
+                                },
+                                style: ButtonStyle(
+                                  overlayColor:
                                   MaterialStateProperty.all(Colors.transparent),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(width * 2),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(width * 2),
+                                      ),
+                                    ),
+                                  ),
+                                  backgroundColor: MaterialStateProperty.all(white),
+                                  padding: MaterialStateProperty.all(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 5, vertical: 0),
                                   ),
                                 ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all(white),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    horizontal: 2, vertical: 0),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Icon(
-                                  MyFlutterApp.cup,
-                                  color: green,
-                                  size: width * 5.2,
-                                ),
-                                SizedBox(
-                                  width: width * 33.5,
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: AutoSizeText(
-                                     "Skor Tablosu ",
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      MyFlutterApp.cup,
+                                      color: green,
+                                      size: width * 4.5,
+                                    ),
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Skor Tablosu ",
                                           style: TextStyle(
                                               fontSize: height * 3.64, color: green),
-                                      maxLines: 1,
-                                      group: textSizeGroup,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
 
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ),
-                      SizedBox(
-                        width: width * 42,
-                        height: height * 7,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                barrierColor: Colors.transparent,
-                                context: context,
-                                builder: (context) => const GeneralStatistic(),
-                              );
-                            },
-                            style: ButtonStyle(
-                              overlayColor:
-                              MaterialStateProperty.all(Colors.transparent),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(width * 2),
-                                  ),
-                                ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all(white),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 0),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Icon(
-                                  Icons.bar_chart_rounded,
-                                  color: green,
-                                  size: width * 7,
-                                ),
-                                SizedBox(
-                                  width: width * 33.5,
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: AutoSizeText(
-                                      "İstatistik ",
-                                      style: TextStyle(
-                                          fontSize: height * 3.64, color: green),
-                                      maxLines: 1,
-                                      group: textSizeGroup,
-
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ),
-                      SizedBox(
-                        width: width * 42,
-                        height: height * 7,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              Share.share(_prepareShareText());
-                            },
-                            style: ButtonStyle(
-                              overlayColor:
+                                  ],
+                                )),
+                          ),
+                          SizedBox(
+                            width: width * 44,
+                            height: height * 7,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    barrierColor: Colors.black.withOpacity(0.5),
+                                    context: context,
+                                    builder: (context) => const GeneralStatistic(),
+                                  );
+                                },
+                                style: ButtonStyle(
+                                  overlayColor:
                                   MaterialStateProperty.all(Colors.transparent),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(width * 2),
-                                  ),
-                                ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all(white),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 0),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Icon(
-                                  Icons.share,
-                                  color: green,
-                                  size: width * 6.5,
-                                ),
-                                SizedBox(
-                                  width: width * 33.5,
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: AutoSizeText(
-                                      "Paylaş",
-                                      style: TextStyle(
-                                          fontSize: height * 3.64, color: green),
-                                      maxLines: 1,
-                                      group: textSizeGroup,
-
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(width * 2),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            )),
-                      ),
-                      SizedBox(
-                        width: width * 42,
-                        height: height * 7,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              SystemChannels.platform
-                                  .invokeMethod('SystemNavigator.pop');
-                            },
-                            style: ButtonStyle(
-                              overlayColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(width * 2),
+                                  backgroundColor: MaterialStateProperty.all(white),
+                                  padding: MaterialStateProperty.all(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 3, vertical: 0),
                                   ),
                                 ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all(white),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 0),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Transform.rotate(
-                                    angle: 180 * pi / 180,
-                                    child: Icon(
-                                      Icons.exit_to_app_rounded,
-                                      size: width * 6.5,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      Icons.bar_chart_rounded,
                                       color: green,
-                                    )),
-                                SizedBox(
-                                  width: width * 33.5,
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: AutoSizeText(
-                                      "Çıkış ",
-                                      style: TextStyle(
-                                          fontSize: height * 3.64, color: green),
-                                      maxLines: 1,
-                                      group: textSizeGroup,
+                                      size: width * 7,
+                                    ),
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "İstatistik ",
+                                          style: TextStyle(
+                                              fontSize: height * 3.64, color: green),
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                          SizedBox(
+                            width: width * 44,
+                            height: height * 7,
+                            child: ElevatedButton(
+                                onPressed: () async {
+                                  Share.share(_prepareShareText());
+                                },
+                                style: ButtonStyle(
+                                  overlayColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(width * 2),
+                                      ),
                                     ),
                                   ),
+                                  backgroundColor: MaterialStateProperty.all(white),
+                                  padding: MaterialStateProperty.all(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 3, vertical: 0),
+                                  ),
                                 ),
-                              ],
-                            )),
-                      )
-                    ],
-                  ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      Icons.share,
+                                      color: green,
+                                      size: width * 5.5,
+                                    ),
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Paylaş",
+                                          style: TextStyle(
+                                              fontSize: height * 3.64, color: green),
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                          SizedBox(
+                            width: width * 44,
+                            height: height * 7,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  SystemChannels.platform
+                                      .invokeMethod('SystemNavigator.pop');
+                                },
+                                style: ButtonStyle(
+                                  overlayColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(width * 2),
+                                      ),
+                                    ),
+                                  ),
+                                  backgroundColor: MaterialStateProperty.all(white),
+                                  padding: MaterialStateProperty.all(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 3, vertical: 0),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Transform.rotate(
+                                        angle: 180 * pi / 180,
+                                        child: Icon(
+                                          Icons.exit_to_app_rounded,
+                                          size: width * 5.5,
+                                          color: green,
+                                        )),
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Çıkış ",
+                                          style: TextStyle(
+                                              fontSize: height * 3.64, color: green),
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          "Sonraki kelimeye kalan süre\n",
+                          style: TextStyle(color: colorBlack, fontSize: height * 3, fontWeight: FontWeight.bold),
+                        ),
+                        CountdownTimer(
+                          endTime: after.millisecondsSinceEpoch,
+                          onEnd: () {},
+                          widgetBuilder: (_, CurrentRemainingTime? time) {
+                            if (time == null) {
+                              return Text(
+                                '',
+                                style: TextStyle(color: colorBlack, fontSize: height * 3.64),
+                              );
+                            }
+                            return Text(
+                              '${time.hours == null ? "00" : time.hours.toString().length < 2 ? "0${time.hours}" : time.hours}:${time.min == null ? "00" : time.min.toString().length < 2 ? "0${time.min}" : time.min}:${time.sec == null ? "00" : time.sec.toString().length < 2 ? "0${time.sec}" : time.sec}',
+                              style: TextStyle(color: colorBlack, fontSize: height * 4, fontWeight: FontWeight.bold),
+                            );
+                          },
+                        ),
+                      ],
+                    )
+
+
+                  ],
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: height * 5),
-                  child: Text(
-                    "Sonraki kelimeye kalan süre",
-                    style: TextStyle(color: green, fontSize: height * 4, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                CountdownTimer(
-                  endTime: after.millisecondsSinceEpoch,
-                  onEnd: () {},
-                  widgetBuilder: (_, CurrentRemainingTime? time) {
-                    if (time == null) {
-                      return Text(
-                        '',
-                        style: TextStyle(color: white, fontSize: height * 3.64),
-                      );
-                    }
-                    return Text(
-                      '${time.hours == null ? "00" : time.hours.toString().length < 2 ? "0${time.hours}" : time.hours}:${time.min == null ? "00" : time.min.toString().length < 2 ? "0${time.min}" : time.min}:${time.sec == null ? "00" : time.sec.toString().length < 2 ? "0${time.sec}" : time.sec}',
-                      style: TextStyle(color: green, fontSize: height * 4.86, fontWeight: FontWeight.bold),
-                    );
-                  },
-                ),
-              ],
-            ),
+              ),
+
+            ],
           ),
         ],
       ),
@@ -385,7 +405,7 @@ class _EndGamePageState extends State<EndGame> {
 
   void _goScorePage() async {
     showDialog(
-      barrierColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.5),
       context: context,
       builder: (context) => const MyAlertDialog(),
     );

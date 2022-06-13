@@ -100,7 +100,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
         elevation: 0,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(0))),
-        backgroundColor: Colors.white.withOpacity(0.8),
+        backgroundColor: Colors.transparent,
         contentPadding: EdgeInsets.only(
             top: height * 5,
             bottom: height * 5,
@@ -112,6 +112,13 @@ class _GeneralStatisticState extends State<GeneralStatistic>
             height: height * 8,
             decoration: BoxDecoration(
               color: green,
+              boxShadow: [
+                BoxShadow(
+                  color: white.withOpacity(0.3),
+                  blurRadius: 25,
+                  spreadRadius: 1,
+                ),
+              ],
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(width * 3),
                 topRight: Radius.circular(width *3),

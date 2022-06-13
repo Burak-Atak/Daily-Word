@@ -40,11 +40,12 @@ class _HowToPlayState extends State<HowToPlay>
   Widget build(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
         child: AlertDialog(
             elevation: 0,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(0))),
-            backgroundColor: Colors.white.withOpacity(0.8),
+            backgroundColor: Colors.transparent,
             insetPadding: EdgeInsets.all(0),
 contentPadding: EdgeInsets.only(
                 top: height * 5,
@@ -58,6 +59,13 @@ contentPadding: EdgeInsets.only(
               Container(
                 height: height * 8,
                 decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: white.withOpacity(0.3),
+                      blurRadius: 25,
+                      spreadRadius: 1,
+                    ),
+                  ],
                   color: green,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(width * 3),

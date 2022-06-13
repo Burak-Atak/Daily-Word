@@ -135,7 +135,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
         elevation: 0,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(0))),
-        backgroundColor: Colors.white.withOpacity(0.8),
+        backgroundColor: Colors.transparent,
         contentPadding: EdgeInsets.only(
             top: height * 5,
             bottom: height * 5,

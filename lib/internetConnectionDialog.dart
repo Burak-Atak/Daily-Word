@@ -17,7 +17,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
       child: StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           elevation: 0,
-          backgroundColor: Colors.white.withOpacity(0.8),
+          backgroundColor: Colors.transparent,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(0))),
           contentPadding: EdgeInsets.only(
@@ -31,21 +31,29 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.only(bottom: height * 4, top: height * 4),
+                padding: EdgeInsets.only(bottom: height * 4, top: height * 4, left: width * 2, right: width * 2),
                 height: height * 30,
+                width: width * 70,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: green,
+                  borderRadius: BorderRadius.circular(width *3),
+                  color: Color(0xffbbe7bb),
+                  boxShadow: [
+                    BoxShadow(
+                      color: white.withOpacity(0.3),
+                      blurRadius: 25,
+                      spreadRadius: 1,
+                    ),
+                  ],
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text("Lütfen internet bağlantınızı kontrol ediniz.",
                         style:
-                            TextStyle(fontSize: height * 3.64, color: white),
+                            TextStyle(fontSize: height * 3, color: colorBlack),
                         textAlign: TextAlign.center),
                     Container(
-                      height: height * 7,
+                      height: height * 6,
                       child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -55,7 +63,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
                           ),
                           child: Text("Tamam",
                               style: TextStyle(
-                                  fontSize: height * 3.64, color: green))),
+                                  fontSize: height * 3, color: green))),
                     )
                   ],
                 ),

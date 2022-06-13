@@ -22,7 +22,7 @@ String timeFormat(int time) {
   }
   sec = time;
   if (hour != null) {
-    return "${hour}+";
+    return "+${hour}s";
   }
   return "${min == null ? "00" : min.toString().length < 2 ? "0${min}" : min}:${sec.toString().length < 2 ? "0${sec}" : sec}";
 }

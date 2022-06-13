@@ -9,7 +9,7 @@ import 'package:first_project/internetConnectionDialog.dart';
 import 'package:first_project/my_flutter_app_icons.dart';
 import 'package:first_project/register.dart';
 import 'package:first_project/scorePage.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:first_project/new_deneme.dart';
 import 'package:flip_card/flip_card.dart';
@@ -29,12 +29,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'generalStatistic.dart';
 
-// TODO: Oyun bitişi animasyonu yap
-// TODO: Hakkında penceresi yap
+
 // TODO: Belirli sürüm atlını kullanan kullanıcıları güncellemeye yönlendir
 // TODO: Paylaşı storede yayınlandıktan sonra düzenle
 // TODO: kÜFÜR FİLTRESİ
 // TODO: Kelime çıkma süresini netten çek
+// TODO: KullANNIcı kaydolurken aynı isim varsa çıkan dialogu sil
 
 Color squaresMainColor = Colors.white38;
 late SharedPreferences prefs;
@@ -99,6 +99,7 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    await FirebaseAuth.instance.signInAnonymously();
     prefs = await SharedPreferences.getInstance();
 
     /// Read word of day from firebase
@@ -169,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isFirstBuild) {
-        Future.delayed(Duration(milliseconds: 500), () => _afterBuild());
+        _afterBuild();
       }
     });
   }
@@ -263,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage>
                       child: InkWell(
                         onTap: () {
                           showDialog(
-                            barrierColor: Colors.transparent,
+                            barrierColor: Colors.black.withOpacity(0.5),
                             context: context,
                             builder: (context) => const HowToPlay(),
                           );
@@ -309,7 +310,7 @@ class _MyHomePageState extends State<MyHomePage>
                             onTap: () {
                               if (isAnimationCompleted) {
                                 showDialog(
-                                  barrierColor: Colors.transparent,
+                                  barrierColor: Colors.black.withOpacity(0.5),
                                   context: context,
                                   builder: (context) =>
                                       const GeneralStatistic(),
@@ -332,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage>
                           onTap: () {
                             if (isAnimationCompleted) {
                               showDialog(
-                                barrierColor: Colors.transparent,
+                                barrierColor: Colors.black.withOpacity(0.5),
                                 context: context,
                                 builder: (context) => const MyAlertDialog(),
                               );
@@ -381,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage>
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: AutoSizeText(
-                          'Kelime Listesinde yok.',
+                          'Kelime listesinde yok.',
                           maxLines: 1,
                           style: TextStyle(
                               fontSize: height * 3.64, color: Colors.white),
@@ -748,7 +749,7 @@ class _MyHomePageState extends State<MyHomePage>
       bool isConnected = await checkInternet();
       if (!isConnected) {
         showDialog(
-            barrierColor: Colors.transparent,
+            barrierColor: Colors.black.withOpacity(0.5),
             barrierDismissible: false,
             context: context,
             builder: (context) => ConnectionDialog());
@@ -1138,7 +1139,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   void _goEndPage() {
     showDialog(
-        barrierColor: Colors.transparent,
+        barrierColor: Colors.black.withOpacity(0.5),
         context: context,
         builder: (context) => EndGame());
   }
@@ -1166,7 +1167,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   _registerScreen() {
     showDialog(
-        barrierColor: Colors.transparent,
+        barrierColor: Colors.black.withOpacity(0.5),
         barrierDismissible: false,
         context: context,
         builder: (context) => AddPlayer());
@@ -1348,13 +1349,13 @@ class _MyHomePageState extends State<MyHomePage>
     showDialog(
       barrierDismissible: false,
       context: context,
-      barrierColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.5),
       builder: (BuildContext context) {
         return WillPopScope(
           onWillPop: () async => false,
           child: AlertDialog(
             elevation: 0,
-            backgroundColor: Colors.white.withOpacity(0.8),
+            backgroundColor: Colors.transparent,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(width * 2))),
             contentPadding: EdgeInsets.only(
@@ -1385,14 +1386,14 @@ class _MyHomePageState extends State<MyHomePage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("Süre Doldu!",
-                          style: TextStyle(fontSize: height * 4, color: colorBlack, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: height * 3.5, color: colorBlack, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center),
                     ],
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.all(height * 2),
-                  height: height * 30,
+                  height: height * 21,
                   width: width * 70,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -1405,7 +1406,7 @@ class _MyHomePageState extends State<MyHomePage>
                     children: <Widget>[
                       Text("Yeni kelimeyle oyuna devam edebilirsiniz.",
                           style:
-                              TextStyle(fontSize: height * 3.64, color: colorBlack),
+                              TextStyle(fontSize: height * 3, color: colorBlack),
                           textAlign: TextAlign.center),
                       SizedBox(
                         height: height * 6,
@@ -1434,7 +1435,7 @@ class _MyHomePageState extends State<MyHomePage>
                             ),
                             child: Text("Tamam",
                                 style: TextStyle(
-                                    fontSize: height * 3.64, color: green))),
+                                    fontSize: height * 3, color: green))),
                       )
                     ],
                   ),
@@ -1462,7 +1463,7 @@ class _MyHomePageState extends State<MyHomePage>
   void _showInternetAlert() {
     showDialog(
       context: context,
-      barrierColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.5),
       barrierDismissible: false,
       builder: (BuildContext context) {
         bool showAnimation = false;
@@ -1471,7 +1472,7 @@ class _MyHomePageState extends State<MyHomePage>
           child: StatefulBuilder(
             builder: (context, setState) => AlertDialog(
               elevation: 0,
-              backgroundColor: Colors.white.withOpacity(0.8),
+              backgroundColor: Colors.transparent,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(0))),
               contentPadding: EdgeInsets.only(
