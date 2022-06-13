@@ -2,7 +2,7 @@
 
 ```
 This is the a word prediction game that I developed with using flutter. (Idea is not mine. this is a popular game in the world.)
-Every day word is updated and users trying to predict this word, by wrting words.
+Every day word is updated and users trying to predict this word, by writing words.
 If square is green, this mean is this letter in the word of the day and it is in right place. 
 If square is yellow, this mean is this letter in the word of the day but it's place is wrong. 
 If square is grey this mean is this letter not in the word.
@@ -20,7 +20,7 @@ Kare yeşil ise, harf kelimede var ve doğru yerde demektir.
 Kare sarı ise harf kelimede var fakat yeri yanlış demektir.
 Kare gri ise harf kelimede yok demektir.
 
-Kelimeyi, kullanıcı istatistiklerini ve sıralamalarını kaydetmek için I used Firebase Realtime Database kullandım.
+Kelimeyi, kullanıcı istatistiklerini ve sıralamalarını kaydetmek için Firebase Realtime Database kullandım.
 Kelimeyi her gün değiştirmek ve veritabanını her gün ve her hafta güncellemek için Firebase Cloud Function kullandım.
 Kullanıcıları yetkilendirmek için Firebase Authenticatio kullandım.
 Hataları takip etmek için Firebase Crashlytics kullandım.
