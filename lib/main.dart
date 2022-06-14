@@ -230,6 +230,7 @@ class _MyHomePageState extends State<MyHomePage>
   bool isWordExist = false;
   bool isAnimationCompleted = true;
   Map<String, int>? newChosenWordColors;
+  late Map<String,bool>mapOfSetUserWord;
   ConfettiController confettiController = ConfettiController();
   List<String> userWords = [];
   late AnimationController winController;
@@ -829,6 +830,8 @@ class _MyHomePageState extends State<MyHomePage>
     for (int i = 0; i < 5; i++) {
       if (i == 0) {
         newChosenWordColors = {for (int i = 0; i < 5; i++) wordOfDay[i]: 0};
+        List<String> setUserWord = {...textBoxes[squareRowCount] as List<String>}.toList();
+        mapOfSetUserWord = {for (int i = 0; i < setUserWord.length; i++)  turkish.toLowerCase(setUserWord[i]): false};
       }
       String chosenLetter = turkish.toLowerCase(textBoxes[squareRowCount][i]);
       String wordOfUser = turkish.toLowerCase(textBoxes[squareRowCount].join());
@@ -849,6 +852,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   void choseButtonsColor() {
     newChosenWordColors = {for (int i = 0; i < 5; i++) wordOfDay[i]: 0};
+
 
     String wordOfUser = turkish.toLowerCase(textBoxes[chosenWord].join());
 
@@ -896,14 +900,14 @@ class _MyHomePageState extends State<MyHomePage>
     ];
 
     if (isSquare) {
-      int count = 0;
       int matchedIndex = allIndexes.toList().indexOf(letterIndex);
       for (int i = 0; i < isThereGreen.length; i++) {
-        if (isThereGreen[i] == true && i > matchedIndex) {
+        if (isThereGreen[i] == true && i > matchedIndex && mapOfSetUserWord[chosenLetter] == false) {
           newChosenWordColors![chosenLetter] =
               newChosenWordColors![chosenLetter]! + 1;
         }
       }
+      mapOfSetUserWord[chosenLetter] = true;
     }
 
     /// Kelimede harf var ise
