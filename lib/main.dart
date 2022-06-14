@@ -99,7 +99,6 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    await FirebaseAuth.instance.signInAnonymously();
     prefs = await SharedPreferences.getInstance();
 
     /// Read word of day from firebase
@@ -288,6 +287,7 @@ class _MyHomePageState extends State<MyHomePage>
                   ),
                   SizedBox(
                     height: height * 7,
+                    width: width * 44,
                     child: AutoSizeText(
                       title,
                       style: TextStyle(
@@ -900,7 +900,7 @@ class _MyHomePageState extends State<MyHomePage>
     /// toplam harf sayısından küçük ise
     if (wordOfDay.contains(chosenLetter) &&
         (isThereGreen.where((element) => element == true).length +
-                newChosenWordColors![chosenLetter]! <
+                newChosenWordColors![chosenLetter]! <=
             chosenLetter.allMatches(wordOfDay).length)) {
       return true;
     }
@@ -1069,6 +1069,7 @@ class _MyHomePageState extends State<MyHomePage>
       _showInternetAlert();
       return;
     }
+    await FirebaseAuth.instance.signInAnonymously();
     var snapshot = await database.ref('word/word').get();
     wordOfDay = snapshot.value.toString();
     String? lastWordInLocal = prefs.getString('lastWordInLocal');
