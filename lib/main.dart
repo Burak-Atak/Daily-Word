@@ -15,6 +15,7 @@ import 'package:first_project/new_deneme.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ntp/ntp.dart';
@@ -28,7 +29,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'generalStatistic.dart';
-
 
 // TODO: Belirli sürüm atlını kullanan kullanıcıları güncellemeye yönlendir
 // TODO: Paylaşı storede yayınlandıktan sonra düzenle
@@ -837,7 +837,7 @@ class _MyHomePageState extends State<MyHomePage>
         newChosenWordColors![chosenLetter] =
             newChosenWordColors![chosenLetter]! + 1;
         squaresColors[squareRowCount][i] = green;
-      } else if (isYellow(wordOfUser, chosenLetter)) {
+      } else if (isYellow(wordOfUser, chosenLetter, i, true)) {
         newChosenWordColors![chosenLetter] =
             newChosenWordColors![chosenLetter]! + 1;
         squaresColors[squareRowCount][i] = yellow;
@@ -861,7 +861,7 @@ class _MyHomePageState extends State<MyHomePage>
               newChosenWordColors![chosenLetter]! + 1;
 
           rowLettersMap[turkish.toUpperCase(chosenLetter)] = green;
-        } else if (isYellow(wordOfUser, chosenLetter)) {
+        } else if (isYellow(wordOfUser, chosenLetter, 0, false)) {
           newChosenWordColors![chosenLetter] =
               newChosenWordColors![chosenLetter]! + 1;
           rowLettersMap[turkish.toUpperCase(chosenLetter)] = yellow;
@@ -875,8 +875,9 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   /// Girilen harfin renginin sarı olup olmayacağını kontrol ediyor
-  bool isYellow(String wordOfUser, String chosenLetter) {
-    if (wordOfUser.length != 5) {
+  bool isYellow(
+      String wordOfUser, String chosenLetter, int letterIndex, bool isSquare) {
+    if (wordOfUser.length != 5 || !wordOfDay.contains(chosenLetter)) {
       return false;
     }
 
@@ -894,14 +895,24 @@ class _MyHomePageState extends State<MyHomePage>
         wordOfUser[allIndexes[i]] == wordOfDay[allIndexes[i]]
     ];
 
+    if (isSquare) {
+      int count = 0;
+      int matchedIndex = allIndexes.toList().indexOf(letterIndex);
+      for (int i = 0; i < isThereGreen.length; i++) {
+        if (isThereGreen[i] == true && i > matchedIndex) {
+          newChosenWordColors![chosenLetter] =
+              newChosenWordColors![chosenLetter]! + 1;
+        }
+      }
+    }
+
     /// Kelimede harf var ise
     /// && harfin girilen kelimede bilinen yeşil sayısı ile harfin açılan renk
     /// sayısı toplamı günün kelimesindeki
     /// toplam harf sayısından küçük ise
     if (wordOfDay.contains(chosenLetter) &&
-        (isThereGreen.where((element) => element == true).length +
-                newChosenWordColors![chosenLetter]! <=
-            chosenLetter.allMatches(wordOfDay).length)) {
+        newChosenWordColors![chosenLetter]! <
+            chosenLetter.allMatches(wordOfDay).length) {
       return true;
     }
     return false;
@@ -1069,6 +1080,12 @@ class _MyHomePageState extends State<MyHomePage>
       _showInternetAlert();
       return;
     }
+    // TODO: check here
+/*    AppUpdateInfo isThereUpdate = await InAppUpdate.checkForUpdate();
+    if (isThereUpdate.updateAvailability == UpdateAvailability.updateAvailable) {
+      InAppUpdate.performImmediateUpdate();
+    }*/
+
     await FirebaseAuth.instance.signInAnonymously();
     var snapshot = await database.ref('word/word').get();
     wordOfDay = snapshot.value.toString();
@@ -1387,7 +1404,10 @@ class _MyHomePageState extends State<MyHomePage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("Süre Doldu!",
-                          style: TextStyle(fontSize: height * 3.5, color: colorBlack, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: height * 3.5,
+                              color: colorBlack,
+                              fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center),
                     ],
                   ),
@@ -1406,8 +1426,8 @@ class _MyHomePageState extends State<MyHomePage>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text("Yeni kelimeyle oyuna devam edebilirsiniz.",
-                          style:
-                              TextStyle(fontSize: height * 3, color: colorBlack),
+                          style: TextStyle(
+                              fontSize: height * 3, color: colorBlack),
                           textAlign: TextAlign.center),
                       SizedBox(
                         height: height * 6,
