@@ -45,8 +45,9 @@ late double width;
 late double height;
 String title = 'Daily Word';
 bool isFirstBuild = true;
+bool isFirstBuildCompleted = false;
+bool isWordExist = false;
 bool? isGameEnd;
-bool isAnimationCompleted = true;
 late FirebaseDatabase database;
 String? lastWordInLocal;
 late int totalSeconds;
@@ -227,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage>
     "Ç": grey,
   };
 
-  bool isWordExist = false;
+
   bool isAnimationCompleted = true;
   Map<String, int>? newChosenWordColors;
   late Map<String, bool> mapOfSetUserWord;
@@ -263,11 +264,13 @@ class _MyHomePageState extends State<MyHomePage>
                       alignment: Alignment.centerLeft,
                       child: InkWell(
                         onTap: () {
-                          showDialog(
-                            barrierColor: Colors.black.withOpacity(0.5),
-                            context: context,
-                            builder: (context) => const HowToPlay(),
-                          );
+                          if (isAnimationCompleted && isFirstBuildCompleted) {
+                            showDialog(
+                              barrierColor: Colors.black.withOpacity(0.5),
+                              context: context,
+                              builder: (context) => const HowToPlay(),
+                            );
+                          }
                         },
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
@@ -309,7 +312,8 @@ class _MyHomePageState extends State<MyHomePage>
                               EdgeInsets.only(left: width * 2, right: width),
                           child: InkWell(
                             onTap: () {
-                              if (isAnimationCompleted) {
+                              if (isAnimationCompleted &&
+                                  isFirstBuildCompleted) {
                                 showDialog(
                                   barrierColor: Colors.black.withOpacity(0.5),
                                   context: context,
@@ -332,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage>
                         ),
                         InkWell(
                           onTap: () {
-                            if (isAnimationCompleted) {
+                            if (isAnimationCompleted && isFirstBuildCompleted) {
                               showDialog(
                                 barrierColor: Colors.black.withOpacity(0.5),
                                 context: context,
@@ -390,25 +394,6 @@ class _MyHomePageState extends State<MyHomePage>
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Align(
-                  child: ConfettiWidget(
-                    confettiController: confettiController,
-                    maximumSize: Size(height * 3, height * 3),
-                    minimumSize: Size(height * 0.5, height * 0.5),
-                    blastDirectionality: BlastDirectionality.explosive,
-                    particleDrag: 0.09,
-                    emissionFrequency: 0.6,
-                    numberOfParticles: 2,
-                    gravity: 0.02,
-                    colors: const [
-                      green3,
-                      Colors.blue,
-                      Colors.pink,
-                      Colors.yellow,
-                      Colors.purple,
-                    ],
                   ),
                 ),
                 Align(
@@ -817,7 +802,10 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Harf butunlarına basınca gerçeklleşek işlemler
   void letterButtonFunc(int i, Map<String, Color> rowLettersMap) {
-    if (chosenLetter < 5 && isGameEnd == null && isAnimationCompleted) {
+    if (chosenLetter < 5 &&
+        isGameEnd == null &&
+        isAnimationCompleted &&
+        isFirstBuildCompleted) {
       setState(() {
         textBoxes[chosenWord][chosenLetter] = rowLettersMap.keys.toList()[i];
         chosenLetter += 1;
@@ -1168,6 +1156,7 @@ class _MyHomePageState extends State<MyHomePage>
     }
 
     isFirstBuild = false;
+    isFirstBuildCompleted = true;
   }
 
   void _goEndPage() {
