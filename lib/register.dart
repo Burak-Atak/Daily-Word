@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'design.dart';
 import 'helper.dart';
 import 'howToPlay.dart';
 import 'internetConnectionDialog.dart';
@@ -68,7 +69,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Kaydol",
+                                  "Kayıt Ol",
                                   style: TextStyle(
                                       color: colorBlack,
                                       fontSize: height * 4,
@@ -82,7 +83,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                             width: width * 80,
                             height: height * 32,
                             decoration: BoxDecoration(
-                              color: Color(0xffbbe7bb),
+                              color: lightGreen,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.zero,
                                 topRight: Radius.zero,
@@ -231,7 +232,7 @@ class _AddPlayerPageState extends State<AddPlayer> {
                                                 }
                                               });
                                             },
-                                      child: AutoSizeText("Kaydol",
+                                      child: AutoSizeText("Kaydet",
                                           style: TextStyle(
                                               fontSize: height * 3.64,
                                               color: green)),

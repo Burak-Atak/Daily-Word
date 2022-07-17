@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/helper.dart';
 import 'package:flutter/material.dart';
+import 'design.dart';
 import 'main.dart';
 
 Map? scoreTable;
@@ -21,7 +22,7 @@ const chosenColor = green;
 const playerColor = Color(0xff53d952);
 const notChosen = Color(0xff5e5e5e);
 const userColorOne = Color(0xffa1cba1);
-const userColorTwo = Color(0xffbbe7bb);
+const userColorTwo = lightGreen;
 
 class MyAlertDialog extends StatefulWidget {
   const MyAlertDialog({Key? key}) : super(key: key);

@@ -1,18 +1,21 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:first_project/my_flutter_app_icons.dart';
-import 'package:first_project/scorePage.dart';
+import 'package:first_project/dictAlertDialog.dart';
+import 'package:first_project/homePage/homePage.dart';
+import 'package:first_project/training_mode/training_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_countdown_timer/current_remaining_time.dart';
-import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:turkish/turkish.dart';
-import 'design.dart';
-import 'dictAlertDialog.dart';
-import 'generalStatistic.dart';
-import 'main.dart';
-import 'helper.dart';
+
+import '../design.dart';
+import '../main.dart';
+import '../my_flutter_app_icons.dart';
+import '../wordsMeanings.dart';
+import 'trainingHomePage.dart';
+
+bool startNewTrainingGame = false;
 
 class EndGame extends StatefulWidget {
   const EndGame({Key? key}) : super(key: key);
@@ -24,6 +27,7 @@ class EndGame extends StatefulWidget {
 class _EndGamePageState extends State<EndGame>
     with SingleTickerProviderStateMixin {
   bool isButtonPressed = false;
+  bool isDictOpen = true;
   late Animation<double> animation;
   late AnimationController controller;
 
@@ -60,22 +64,7 @@ class _EndGamePageState extends State<EndGame>
 
   @override
   Widget build(BuildContext context) {
-    // todo: check internet connection
-    var now = DateTime.now();
-    /*var after = DateTime.parse("2022-05-${now.day + 1} 15:00:00+03:00");*/
-    String month = now.month.toString().length == 1
-        ? "0${now.month}"
-        : now.month.toString();
-    String day =
-        now.day.toString().length == 1 ? "0${now.day}" : now.day.toString();
-    String hour = (now.hour + 1).toString().length == 1
-        ? "0${now.hour + 1}"
-        : (now.hour + 1).toString();
-
-    var after = DateTime.parse("${now.year}-${month}-${day} ${hour}:00:00");
-    String myTime = timeFormat(totalSeconds);
     var textSizeGroup = AutoSizeGroup();
-
     return StatefulBuilder(
       builder: (context, setState) => AlertDialog(
         elevation: 0,
@@ -92,11 +81,10 @@ class _EndGamePageState extends State<EndGame>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.only(top: height, bottom: height),
               width: width * 80,
-              height: height * 70,
+              height: height * 55,
               decoration: BoxDecoration(
-                color: lightGreen,
+                color: Color(0xffbbe7bb),
                 borderRadius: BorderRadius.all(
                   Radius.circular(width * 3),
                 ),
@@ -109,28 +97,26 @@ class _EndGamePageState extends State<EndGame>
                 ],
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: width * 10,
-                      ),
-
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: SizedBox(
+                  SizedBox(
+                    height: height * 7,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: width * 10,
+                        ),
+                        SizedBox(
                           width: width * 10,
                           height: height * 5,
                           child: IconButton(
-
                             icon: Icon(
                               Icons.cancel_rounded,
                               shadows: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.5),
-                                  blurRadius: 10,
+                                  blurRadius: 25,
                                   spreadRadius: 1,
                                 ),
                               ],
@@ -143,8 +129,8 @@ class _EndGamePageState extends State<EndGame>
                             padding: EdgeInsets.all(0),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -152,29 +138,25 @@ class _EndGamePageState extends State<EndGame>
                       SizedBox(
                         width: width * 10,
                       ),
-
                       Text(
-                        '${turkish.toUpperCase(wordOfDay)}',
+                        '${turkish.toUpperCase(wordOfDayTraining)}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Color(0xff2bb429),
                             fontSize: height * 6,
                             fontFamily: "DMSans"),
                       ),
-
                       SizedBox(
                         width: width * 10,
-                        child: DictButton(
+                        child: TrainingDictButton(
                           onTap: buttonPressed,
                           size: scale,
                         ),
                       ),
-
-
                     ],
                   ),
                   SizedBox(
-                    height: height * 40,
+                    height: height * 28,
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,108 +166,14 @@ class _EndGamePageState extends State<EndGame>
                               bottom: height * 2,
                               left: width * 8,
                               right: width * 8),
-                          child: Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceAround,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Icon(Icons.watch_later_outlined,
-                                      color: colorBlack,
-                                      size: height * 3.5),
-                                  Text(
-                                    " " + myTime,
-                                    style: TextStyle(
-                                        color: colorBlack,
-                                        fontSize: height * 3.5,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Icon(
-                                    MyFlutterApp.medal,
-                                    color: colorBlack,
-                                    size: height * 2.8,
-                                  ),
-                                  Text(
-                                    " " + userScore.toString(),
-                                    style: TextStyle(
-                                        color: colorBlack,
-                                        fontSize: height * 3.5,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
                         ),
                         SizedBox(
                           width: width * 44,
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
-                                _goScorePage();
-                              },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
-                                    ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    MyFlutterApp.cup,
-                                    color: green,
-                                    size: width * 4.5,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Skor Tablosu ",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        ),
-                        SizedBox(
-                          width: width * 44,
-                          height: height * 7,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  barrierColor:
-                                      Colors.black.withOpacity(0.5),
-                                  context: context,
-                                  builder: (context) =>
-                                      const GeneralStatistic(),
-                                );
+                                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                                    HomePage()), (Route<dynamic> route) => false);
                               },
                               style: ButtonStyle(
                                 overlayColor: MaterialStateProperty.all(
@@ -310,16 +198,16 @@ class _EndGamePageState extends State<EndGame>
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Icon(
-                                    Icons.bar_chart_rounded,
-                                    color: green,
+                                    Icons.home,
                                     size: width * 7,
+                                    color: green,
                                   ),
                                   SizedBox(
                                     width: width * 33.5,
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: AutoSizeText(
-                                        "İstatistik ",
+                                        "Ana Menü",
                                         style: TextStyle(
                                             fontSize: height * 3.64,
                                             color: green),
@@ -335,8 +223,9 @@ class _EndGamePageState extends State<EndGame>
                           width: width * 44,
                           height: height * 7,
                           child: ElevatedButton(
-                              onPressed: () async {
-                                Share.share(_prepareShareText());
+                              onPressed: () {
+                                startNewTrainingGame = true;
+                                Navigator.pop(context);
                               },
                               style: ButtonStyle(
                                 overlayColor: MaterialStateProperty.all(
@@ -361,16 +250,16 @@ class _EndGamePageState extends State<EndGame>
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Icon(
-                                    Icons.share,
+                                    Icons.refresh,
+                                    size: width * 7,
                                     color: green,
-                                    size: width * 5.5,
                                   ),
                                   SizedBox(
                                     width: width * 33.5,
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: AutoSizeText(
-                                        "Paylaş",
+                                        "Yeni Oyun",
                                         style: TextStyle(
                                             fontSize: height * 3.64,
                                             color: green),
@@ -387,8 +276,8 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
-                                SystemChannels.platform
-                                    .invokeMethod('SystemNavigator.pop');
+                                SystemChannels.platform.invokeMethod(
+                                    'SystemNavigator.pop');
                               },
                               style: ButtonStyle(
                                 overlayColor: MaterialStateProperty.all(
@@ -424,7 +313,7 @@ class _EndGamePageState extends State<EndGame>
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: AutoSizeText(
-                                        "Çıkış ",
+                                        "Çıkış",
                                         style: TextStyle(
                                             fontSize: height * 3.64,
                                             color: green),
@@ -439,38 +328,7 @@ class _EndGamePageState extends State<EndGame>
                       ],
                     ),
                   ),
-                  Column(
-                    children: [
-                      Text(
-                        "Sonraki kelimeye kalan süre\n",
-                        style: TextStyle(
-                            color: colorBlack,
-                            fontSize: height * 2.5,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      CountdownTimer(
-                        endTime: after.millisecondsSinceEpoch,
-                        onEnd: () {},
-                        widgetBuilder: (_, CurrentRemainingTime? time) {
-                          if (time == null) {
-                            return Text(
-                              '',
-                              style: TextStyle(
-                                  color: colorBlack,
-                                  fontSize: height * 3.64),
-                            );
-                          }
-                          return Text(
-                            '${time.hours == null ? "00" : time.hours.toString().length < 2 ? "0${time.hours}" : time.hours}:${time.min == null ? "00" : time.min.toString().length < 2 ? "0${time.min}" : time.min}:${time.sec == null ? "00" : time.sec.toString().length < 2 ? "0${time.sec}" : time.sec}',
-                            style: TextStyle(
-                                color: colorBlack,
-                                fontSize: height * 3.5,
-                                fontWeight: FontWeight.bold),
-                          );
-                        },
-                      ),
-                    ],
-                  )
+
                 ],
               ),
             ),
@@ -480,41 +338,15 @@ class _EndGamePageState extends State<EndGame>
     );
   }
 
-  void _goScorePage() async {
-    showDialog(
-      barrierColor: Colors.black.withOpacity(0.5),
-      context: context,
-      builder: (context) => const MyAlertDialog(),
-    );
-  }
-
-  String _prepareShareText() {
-    String shareText = " T O K A T L A N D I N\n\n";
-    for (int i = 0; i < whichWordUserFound + 1; i++) {
-      for (int j = 0; j < 5; j++) {
-        if (lastSquaresColors[i][j] == green) {
-          shareText += "🟩";
-        } else if (lastSquaresColors[i][j] == yellow) {
-          shareText += "🟨";
-        } else {
-          shareText += "⬛";
-        }
-      }
-      shareText += "\n";
-    }
-    return shareText;
-  }
-
   void buttonPressed() {
     setState(() {
 
         controller.forward();
-        isButtonPressed = true;
         showDialog(
           barrierColor: Colors.transparent,
           context: context,
           builder: (context) =>
-              DictAlertDialog(wordOfDay),
+           DictAlertDialog(wordOfDayTraining),
         ).then((value) => setState(() {
           isButtonPressed = false;
           controller.reverse();
@@ -524,11 +356,11 @@ class _EndGamePageState extends State<EndGame>
   }
 }
 
-class DictButton extends StatelessWidget {
+class TrainingDictButton extends StatelessWidget {
   final onTap;
   final size;
 
-  DictButton({this.onTap, this.size});
+  TrainingDictButton({this.onTap, this.size});
 
   @override
   Widget build(BuildContext context) {

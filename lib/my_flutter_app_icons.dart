@@ -28,4 +28,14 @@ class MyFlutterApp {
   static const IconData trophy = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData cup = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData medal = IconData(0xf5a2, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+
+}
+
+class MyFlutterApp2 {
+  MyFlutterApp2._();
+
+  static const _kFontFam = 'MyFlutterApp2';
+  static const String? _kFontPkg = null;
+
+  static const IconData dictionary2 = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

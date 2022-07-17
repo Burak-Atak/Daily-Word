@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'design.dart';
 import 'main.dart';
 
 class ConnectionDialog extends StatefulWidget {
@@ -36,7 +37,7 @@ class _ConnectionDialogState extends State<ConnectionDialog> {
                 width: width * 70,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(width *3),
-                  color: Color(0xffbbe7bb),
+                  color: lightGreen,
                   boxShadow: [
                     BoxShadow(
                       color: white.withOpacity(0.3),

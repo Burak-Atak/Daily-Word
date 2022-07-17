@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.8+9
+version: 1.2.0+9
 
 environment:
   sdk: ">=2.15.1 <3.0.0"
@@ -59,12 +59,18 @@ dependencies:
   flutter_native_splash: ^2.2.3
   firebase_auth: ^3.3.19
   in_app_update: ^3.0.0
+  get: ^4.6.5
+  dart_jsonwebtoken: ^2.4.1
+  flutter_dotenv: ^5.0.2
+  flutter_secure_storage: ^5.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
 flutter_native_splash:
-  background_image: assets/splash.png
+  color: "#ffffff"
+  image: assets/logoss3.png
 
 flutter_icons:
   android: "launcher_icon"
@@ -91,6 +97,9 @@ flutter:
 
   assets:
     - assets/win.json
+    - assets/images/animation.gif
+    - assets/images/ezgif-3-c189523e62.gif
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -112,6 +121,10 @@ flutter:
     - family: MyFlutterApp
       fonts:
         - asset: fonts/MyFlutterApp.ttf
+
+    - family: MyFlutterApp2
+      fonts:
+        - asset: fonts/MyFlutterApp2.ttf
 
     - family: DMSans
       fonts:

@@ -3,6 +3,7 @@ import 'package:first_project/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'design.dart';
 import 'main.dart';
 
 List<String> keys = ["first", "second", "third", "fourth", "fifth", "sixth"];
@@ -170,7 +171,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
               width: width * 100,
               height: height * 90,
               decoration: BoxDecoration(
-                color: Color(0xffbbe7bb),
+                color: lightGreen,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.zero,
                   topRight: Radius.zero,

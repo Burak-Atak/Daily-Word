@@ -1,20 +1,27 @@
 import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:first_project/endgame.dart';
 import 'package:first_project/helper.dart';
+import 'package:first_project/homePage/homePage.dart';
 import 'package:first_project/howToPlay.dart';
 import 'package:first_project/internetConnectionDialog.dart';
+import 'package:first_project/mainpage_controller.dart';
 import 'package:first_project/my_flutter_app_icons.dart';
 import 'package:first_project/register.dart';
 import 'package:first_project/scorePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_project/training_mode/trainingHomePage.dart';
+import 'package:first_project/training_mode/training_controller.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:first_project/new_deneme.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
@@ -27,16 +34,17 @@ import 'package:confetti/confetti.dart';
 import 'dart:math' as math;
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'design.dart';
 import 'firebase_options.dart';
 import 'generalStatistic.dart';
+import 'package:get/get.dart';
 
-// TODO: Belirli sürüm atlını kullanan kullanıcıları güncellemeye yönlendir
+// TODO: oyun sonudna çarpıyı köşeye al
 // TODO: Paylaşı storede yayınlandıktan sonra düzenle
 // TODO: kÜFÜR FİLTRESİ
 // TODO: Kelime çıkma süresini netten çek
 // TODO: KullANNIcı kaydolurken aynı isim varsa çıkan dialogu sil
 
-Color squaresMainColor = Colors.white38;
 late SharedPreferences prefs;
 String? userName;
 String wordOfDay = "-----";
@@ -46,50 +54,39 @@ late double height;
 String title = 'Daily Word';
 bool isFirstBuild = true;
 bool isFirstBuildCompleted = false;
-bool isWordExist = false;
 bool? isGameEnd;
 late FirebaseDatabase database;
+bool isDbReady = false;
 String? lastWordInLocal;
 late int totalSeconds;
 late int userScore;
 late int whichWordUserFound;
+late var mainController;
+late var lastSquaresColors;
+bool isBack = false;
+
+/// Uygulama build edilirken hangi kutucuk satırında olduğunu tutuan değişken
+int squareRowCount = 0;
+
+/// Hangi kelimede olduğumuzu tutuyor
+int chosenWord = 0;
+
+/// Hangi kutucukta oldğumuzu tutuyor
+int chosenLetter = 0;
+List<String> userWords = [];
 
 /// Ana renkler
 
-List<dynamic> squaresColors = [
-  for (int i = 0; i < 6; i++) [for (int a = 0; a < 5; a++) squaresMainColor]
-];
-
-const colorBlack = Colors.black;
-const green = Color.fromRGBO(106, 170, 100, 1);
-const green3 = Color(0xff39FF14);
-const green2 = Color(0xff00ff00);
-const yellow = Color.fromRGBO(201, 180, 88, 0.8);
-const white = Color(0xffF5FFFA);
-const grey = Colors.grey;
-Map<int, Color> materialColor = {
-  50: const Color.fromRGBO(106, 170, 100, .1),
-  100: const Color.fromRGBO(106, 170, 100, .2),
-  200: const Color.fromRGBO(106, 170, 100, .3),
-  300: const Color.fromRGBO(106, 170, 100, .4),
-  400: const Color.fromRGBO(106, 170, 100, .5),
-  500: const Color.fromRGBO(106, 170, 100, .6),
-  600: const Color.fromRGBO(106, 170, 100, .7),
-  700: const Color.fromRGBO(106, 170, 100, .8),
-  800: const Color.fromRGBO(106, 170, 100, .9),
-  900: const Color.fromRGBO(106, 170, 100, 1),
-};
-
 Future<void> main() async {
-/*  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
+/*  // TODO:CRAHLİSİTCH AÇ
+  WidgetsFlutterBinding.ensureInitialized();
+  */ /* await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  );*/ /*
   prefs = await SharedPreferences.getInstance();
 
   /// Read word of day from firebase
-  DatabaseReference ref = FirebaseDatabase.instance.ref();
-  database = FirebaseDatabase.instance;
+  */ /*database = FirebaseDatabase.instance;*/ /*
   // var snapshot = await ref.child('word').get();
   wordOfDay = "burak";
 
@@ -102,12 +99,10 @@ Future<void> main() async {
     );
     prefs = await SharedPreferences.getInstance();
 
-    /// Read word of day from firebase
-    database = FirebaseDatabase.instance;
-
     // The following lines are the same as previously explained in "Handling uncaught errors"
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     await Future.delayed(Duration(seconds: 1), () {
       runApp(Phoenix(child: MyApp()));
     });
@@ -121,7 +116,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: MaterialColor(0xFF6aaa64, materialColor),
@@ -129,6 +124,12 @@ class MyApp extends StatelessWidget {
         title: title,
         home: Builder(
           builder: (BuildContext context) {
+            mainController = Get.put(MainController());
+            mainController.initAnimationController();
+
+            trainingController = Get.put(TrainingController());
+
+            trainingController.initAnimationController();
             width = MediaQuery.of(context).size.width / 100;
             double heightWithApp = MediaQuery.of(context).size.height -
                 MediaQuery.of(context).padding.top -
@@ -141,19 +142,13 @@ class MyApp extends StatelessWidget {
               width = width - width * 0.3;
             }
 
-            return MyHomePage(
-              title: title,
-            );
+            return HomePage();
           },
         ));
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -163,12 +158,26 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
-    winController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2),
-      animationBehavior: AnimationBehavior.preserve,
-    );
+
+    /// Read word of day from firebase
+    winController = mainController.winController;
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (isBack) {
+        List<String> userSavedWords = prefs.getStringList('userWords') ?? [];
+        for (int i = 0; i < userSavedWords.length; i++) {
+          for (int j = 0; j < 5; j++) {
+            flipKeys[i][j].value.currentState.toggleCard();
+          }
+        }
+
+        if (isGameEnd == true) {
+          await Future.delayed(Duration(milliseconds: 600));
+          _goEndPage();
+        }
+
+      }
+
       if (isFirstBuild) {
         _afterBuild();
       }
@@ -176,65 +185,21 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   /// Her bir kutucuğun stringini tanımlıyoruz
-  List<dynamic> textBoxes = [
-    for (int i = 0; i < 6; i++) [for (int a = 0; a < 5; a++) ""]
-  ];
-
-  /// Uygulama build edilirken hangi kutucuk satırında olduğunu tutuan değişken
-  int squareRowCount = 0;
-
-  /// Hangi kelimede olduğumuzu tutuyor
-  int chosenWord = 0;
-
-  /// Hangi kutucukta oldğumuzu tutuyor
-  int chosenLetter = 0;
+  List<List<RxString>> textBoxes = mainController.textBoxes;
 
   /// Kutucukların animasyonunu kontrol eden keylerin bulundugu liste
-  List flipKeys = [
-    for (int i = 0; i < 6; i++)
-      [for (int a = 0; a < 5; a++) GlobalKey<FlipCardState>()]
-  ];
+  List flipKeys = mainController.flipKeys;
 
   /// Klavye harflerini ve renklerini tutan map
-  Map<String, Color> rowLettersMap = {
-    "E": grey,
-    "R": grey,
-    "T": grey,
-    "Y": grey,
-    "U": grey,
-    "I": grey,
-    "O": grey,
-    "P": grey,
-    "Ğ": grey,
-    "Ü": grey,
-    "A": grey,
-    "S": grey,
-    "D": grey,
-    "F": grey,
-    "G": grey,
-    "H": grey,
-    "J": grey,
-    "K": grey,
-    "L": grey,
-    "Ş": grey,
-    "İ": grey,
-    "Z": grey,
-    "C": grey,
-    "V": grey,
-    "B": grey,
-    "N": grey,
-    "M": grey,
-    "Ö": grey,
-    "Ç": grey,
-  };
+  Map<String, dynamic> rowLettersMap = mainController.rowLettersMap;
+  List squaresColors = mainController.squaresColors;
 
-
+  RxBool isWordExist = mainController.isWordExist;
   bool isAnimationCompleted = true;
   Map<String, int>? newChosenWordColors;
   late Map<String, bool> mapOfSetUserWord;
   ConfettiController confettiController = ConfettiController();
-  List<String> userWords = [];
-  late AnimationController winController;
+  late var winController;
 
   @override
   Widget build(BuildContext context) {
@@ -260,46 +225,80 @@ class _MyHomePageState extends State<MyHomePage>
                 children: [
                   SizedBox(
                     width: width * 25,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                        onTap: () {
-                          if (isAnimationCompleted && isFirstBuildCompleted) {
-                            showDialog(
-                              barrierColor: Colors.black.withOpacity(0.5),
-                              context: context,
-                              builder: (context) => const HowToPlay(),
-                            );
-                          }
-                        },
-                        customBorder: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            height * 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () {
+                              if (isAnimationCompleted &&
+                                  isFirstBuildCompleted) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            customBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                height * 2,
+                              ),
+                            ),
+                            child: SizedBox(
+                              height: height * 5,
+                              width: height * 5,
+                              child: Icon(
+                                Icons.home_rounded,
+                                color: Colors.black45,
+                                size: height * 4,
+                              ),
+                            ),
                           ),
                         ),
-                        child: SizedBox(
-                          height: height * 5,
-                          width: height * 5,
-                          child: Icon(
-                            Icons.info_outline_rounded,
-                            color: Colors.black45,
-                            size: height * 4,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () {
+                              if (isAnimationCompleted &&
+                                  isFirstBuildCompleted) {
+                                showDialog(
+                                  barrierColor: Colors.black.withOpacity(0.5),
+                                  context: context,
+                                  builder: (context) => const HowToPlay(),
+                                );
+                              }
+                            },
+                            customBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                height * 2,
+                              ),
+                            ),
+                            child: SizedBox(
+                              height: height * 5,
+                              width: height * 5,
+                              child: Icon(
+                                Icons.info_outline_rounded,
+                                color: Colors.black45,
+                                size: height * 4,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                   SizedBox(
-                    height: height * 7,
+                    height: height * 6,
                     width: width * 44,
-                    child: AutoSizeText(
-                      title,
-                      style: TextStyle(
-                        fontSize: height * 6,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                    child: Align(
+                      child: AutoSizeText(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: height * 6,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        maxLines: 1,
                       ),
-                      maxLines: 1,
                     ),
                   ),
                   SizedBox(
@@ -370,45 +369,49 @@ class _MyHomePageState extends State<MyHomePage>
               child: Stack(children: [
                 createMainSquare(),
                 Align(
-                  child: AnimatedOpacity(
-                    // If the widget is visible, animate to 0.0 (invisible).
-                    // If the widget is hidden, animate to 1.0 (fully visible).
-                    opacity: isWordExist ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    // The green box must be a child of the AnimatedOpacity widget.
-                    child: Padding(
-                      padding: EdgeInsets.only(top: height * 25),
-                      child: Container(
-                        width: width * 60,
-                        height: height * 8,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: AutoSizeText(
-                          'Kelime listesinde yok.',
-                          maxLines: 1,
-                          style: TextStyle(
-                              fontSize: height * 3.64, color: Colors.white),
+                  child: Obx(
+                    () => AnimatedOpacity(
+                      // If the widget is visible, animate to 0.0 (invisible).
+                      // If the widget is hidden, animate to 1.0 (fully visible).
+                      opacity: isWordExist.value ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 500),
+                      // The green box must be a child of the AnimatedOpacity widget.
+                      child: Padding(
+                        padding: EdgeInsets.only(top: height * 25),
+                        child: Container(
+                          width: width * 60,
+                          height: height * 8,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: AutoSizeText(
+                            'Kelime listesinde yok.',
+                            maxLines: 1,
+                            style: TextStyle(
+                                fontSize: height * 3.64, color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
                 Align(
-                  child: Lottie.asset(
-                    'assets/win.json',
-                    height: height * 50,
-                    width: width * 75.67,
-                    controller: winController,
-                    repeat: false,
+                  child: Obx(
+                    () => Lottie.asset(
+                      'assets/win.json',
+                      height: height * 50,
+                      width: width * 75.67,
+                      controller: winController.value,
+                      repeat: false,
+                    ),
                   ),
                 ),
               ]),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: height * 1.2, top: height * 3.7),
+              padding: EdgeInsets.only(bottom: height * 1.2, top: height * 2.7),
               child: Column(
                 children: [
                   firstRow(),
@@ -423,80 +426,57 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  /// Ana büyük kutuyu oluşturuyor
-  Widget createMainSquare() {
-    return Column(
-      children: createRows(),
-    );
-  }
-
-  /// Ana kutunun içerisine 6 tane satır oluşturuyor
-  List<Widget> createRows() {
-    List<Widget> rows = [];
-
-    for (int i = 0; i < 6; i++) {
-      rows.add(Padding(
-        padding: EdgeInsets.only(bottom: i != 5 ? height * 0.9 : 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: createLittleSquares(),
-        ),
-      ));
-
-      squareRowCount += 1;
-      if (i == 5) {
-        squareRowCount = 0;
-      }
-    }
-
-    return rows;
-  }
-
   /// Harf girilen Kutucukları oluşturuyor
-  List<Widget> createLittleSquares() {
-    List<Widget> littleSquares = [];
-    choseSquaresColor();
-    for (int i = 0; i < 5; i++) {
-      var box = Padding(
-        padding: EdgeInsets.only(right: i != 20 ? width * 1.2 : 0),
-        child: SizedBox(
-          width: height * 9,
-          height: height * 9,
-          child: FlipCard(
+  Widget createMainSquare() {
+    Widget littleSquares = GridView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 5,
+          childAspectRatio: 1,
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 5,
+        ),
+        padding: EdgeInsets.only(left: height * 10, right: height * 10),
+        itemCount: 30,
+        itemBuilder: (BuildContext context, int index) {
+          return FlipCard(
             speed: 650,
-            key: flipKeys[squareRowCount][i],
+            key: flipKeys[index ~/ 5][index % 5].value,
             flipOnTouch: false,
             front: Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.white38,
-                border: Border.all(
-                  color: grey,
-                  width: 0.9,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.white38,
+                  border: Border.all(
+                    color: grey,
+                    width: 0.9,
+                  ),
+                ),
+                child: Obx(
+                  () => Text(
+                    textBoxes[index ~/ 5][index % 5].value,
+                    style: TextStyle(fontSize: height * 7, color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                )),
+            back: Obx(
+              () => Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: squaresColors[index ~/ 5][index % 5].value,
+                ),
+                child: Obx(
+                  () => Text(
+                    textBoxes[index ~/ 5][index % 5].value,
+                    style: TextStyle(fontSize: height * 7, color: Colors.white),
+                  ),
                 ),
               ),
-              child: Text(
-                textBoxes[squareRowCount][i],
-                style: TextStyle(fontSize: height * 7, color: Colors.black),
-                textAlign: TextAlign.center,
-              ),
             ),
-            back: Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: squaresColors[squareRowCount][i],
-              ),
-              child: Text(
-                textBoxes[squareRowCount][i],
-                style: TextStyle(fontSize: height * 7, color: Colors.white),
-              ),
-            ),
-          ),
-        ),
-      );
+          );
+        });
 
-      littleSquares.add(box);
-    }
     return littleSquares;
   }
 
@@ -553,28 +533,30 @@ class _MyHomePageState extends State<MyHomePage>
           child: SizedBox(
             height: height * 10,
             width: width * 8.9,
-            child: ElevatedButton(
-                style: ButtonStyle(
-                  enableFeedback: false,
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+            child: Obx(
+              () => ElevatedButton(
+                  style: ButtonStyle(
+                    enableFeedback: false,
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all(
+                        rowLettersMap[rowLettersMap.keys.toList()[i]]!.value),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                     ),
                   ),
-                  backgroundColor: MaterialStateProperty.all(
-                      rowLettersMap[rowLettersMap.keys.toList()[i]]),
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                  child: Text(
+                    rowLettersMap.keys.toList()[i],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: width * 3.9,
+                    ),
                   ),
-                ),
-                child: Text(
-                  rowLettersMap.keys.toList()[i],
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: width * 3.9,
-                  ),
-                ),
-                onPressed: () => letterButtonFunc(i, rowLettersMap)),
+                  onPressed: () => letterButtonFunc(i)),
+            ),
           ),
         ),
       ],
@@ -590,28 +572,30 @@ class _MyHomePageState extends State<MyHomePage>
           child: SizedBox(
             height: height * 10,
             width: width * 7.6,
-            child: ElevatedButton(
-                style: ButtonStyle(
-                  enableFeedback: false,
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+            child: Obx(
+              () => ElevatedButton(
+                  style: ButtonStyle(
+                    enableFeedback: false,
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all(
+                        rowLettersMap[rowLettersMap.keys.toList()[i]]!.value),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                     ),
                   ),
-                  backgroundColor: MaterialStateProperty.all(
-                      rowLettersMap[rowLettersMap.keys.toList()[i]]),
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                  child: Text(
+                    rowLettersMap.keys.toList()[i],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: width * 3.9,
+                    ),
                   ),
-                ),
-                child: Text(
-                  rowLettersMap.keys.toList()[i],
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: width * 3.9,
-                  ),
-                ),
-                onPressed: () => letterButtonFunc(i, rowLettersMap)),
+                  onPressed: () => letterButtonFunc(i)),
+            ),
           ),
         ),
       ],
@@ -627,28 +611,32 @@ class _MyHomePageState extends State<MyHomePage>
           child: SizedBox(
             height: height * 10,
             width: width * 7.785,
-            child: ElevatedButton(
-                style: ButtonStyle(
-                  enableFeedback: false,
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+            child: Obx(
+              () => ElevatedButton(
+                  style: ButtonStyle(
+                    enableFeedback: false,
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all(
+                        rowLettersMap[rowLettersMap.keys.toList()[i]]!.value),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                     ),
                   ),
-                  backgroundColor: MaterialStateProperty.all(
-                      rowLettersMap[rowLettersMap.keys.toList()[i]]),
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                  child: Text(
+                    rowLettersMap.keys.toList()[i],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: width * 3.9,
+                    ),
                   ),
-                ),
-                child: Text(
-                  rowLettersMap.keys.toList()[i],
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: width * 3.9,
-                  ),
-                ),
-                onPressed: () => letterButtonFunc(i, rowLettersMap)),
+                  onPressed: () => letterButtonFunc(
+                        i,
+                      )),
+            ),
           ),
         ),
       ],
@@ -719,10 +707,8 @@ class _MyHomePageState extends State<MyHomePage>
   /// Delete butonu için fonksiyon
   void deleteButtonFunc() {
     if (chosenLetter != 0 && isGameEnd == null && isAnimationCompleted) {
-      setState(() {
-        chosenLetter -= 1;
-        textBoxes[chosenWord][chosenLetter] = "";
-      });
+      chosenLetter -= 1;
+      mainController.setLetter(chosenWord, chosenLetter, "");
     }
   }
 
@@ -744,17 +730,14 @@ class _MyHomePageState extends State<MyHomePage>
 
       String wordOfUser = "";
       textBoxes[chosenWord].forEach((letter) {
-        wordOfUser += turkish.toLowerCase(letter);
+        wordOfUser += turkish.toLowerCase(letter.value);
       });
 
       if (!words.contains(wordOfUser)) {
-        setState(() {
-          isWordExist = true;
-        });
+        mainController.changeIsWordExist(true);
+
         Future.delayed(const Duration(seconds: 1)).then((_) {
-          setState(() {
-            isWordExist = false;
-          });
+          mainController.changeIsWordExist(false);
         });
 
         return false;
@@ -772,18 +755,14 @@ class _MyHomePageState extends State<MyHomePage>
 
         userWords.add(turkish.toUpperCase(wordOfUser));
         prefs.setStringList('userWords', userWords);
-
+        await choseSquaresColor();
         for (int i = 0; i < 5; i++) {
-          setState(() {
-            flipKeys[chosenWord][i].currentState.toggleCard();
-          });
+          mainController.flipCard(chosenWord, i);
           await Future.delayed(const Duration(milliseconds: 200));
         }
         await Future.delayed(const Duration(milliseconds: 300));
-        setState(() {
-          choseButtonsColor();
-        });
 
+        await choseButtonsColor();
         if (wordOfUser == wordOfDay) {
           _gameEnd(true);
         } else if ((wordOfUser != wordOfDay) && (chosenWord == 5)) {
@@ -791,6 +770,7 @@ class _MyHomePageState extends State<MyHomePage>
         } else {
           chosenLetter = 0;
           chosenWord += 1;
+          squareRowCount += 1;
         }
         isAnimationCompleted = true;
         return true;
@@ -801,72 +781,74 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   /// Harf butunlarına basınca gerçeklleşek işlemler
-  void letterButtonFunc(int i, Map<String, Color> rowLettersMap) {
+  void letterButtonFunc(int i) {
     if (chosenLetter < 5 &&
         isGameEnd == null &&
         isAnimationCompleted &&
         isFirstBuildCompleted) {
-      setState(() {
-        textBoxes[chosenWord][chosenLetter] = rowLettersMap.keys.toList()[i];
-        chosenLetter += 1;
-      });
+      mainController.setLetter(
+          chosenWord, chosenLetter, rowLettersMap.keys.toList()[i]);
+      chosenLetter += 1;
     }
   }
 
   /// Kutucukların rengini kontrol eden fonksiyon
-  void choseSquaresColor() {
+  Future<void> choseSquaresColor() async {
     for (int i = 0; i < 5; i++) {
       if (i == 0) {
         newChosenWordColors = {for (int i = 0; i < 5; i++) wordOfDay[i]: 0};
-        List<String> setUserWord =
-            {...textBoxes[squareRowCount] as List<String>}.toList();
+        List<RxString> setUserWord = {...textBoxes[squareRowCount]}.toList();
         mapOfSetUserWord = {
           for (int i = 0; i < setUserWord.length; i++)
-            turkish.toLowerCase(setUserWord[i]): false
+            turkish.toLowerCase(setUserWord[i].value): false
         };
       }
-      String chosenLetter = turkish.toLowerCase(textBoxes[squareRowCount][i]);
+      String chosenLetter =
+          turkish.toLowerCase(textBoxes[squareRowCount][i].value);
       String wordOfUser = turkish.toLowerCase(textBoxes[squareRowCount].join());
 
       if (chosenLetter == wordOfDay[i]) {
         newChosenWordColors![chosenLetter] =
             newChosenWordColors![chosenLetter]! + 1;
-        squaresColors[squareRowCount][i] = green;
+        mainController.setColorForSquare(squareRowCount, i, green);
       } else if (isYellow(wordOfUser, chosenLetter, i, true)) {
         newChosenWordColors![chosenLetter] =
             newChosenWordColors![chosenLetter]! + 1;
-        squaresColors[squareRowCount][i] = yellow;
+        mainController.setColorForSquare(squareRowCount, i, yellow);
       } else {
-        squaresColors[squareRowCount][i] = Colors.black54;
+        mainController.setColorForSquare(squareRowCount, i, Colors.black54);
       }
     }
   }
 
-  void choseButtonsColor() {
+  Future<void> choseButtonsColor() async {
     newChosenWordColors = {for (int i = 0; i < 5; i++) wordOfDay[i]: 0};
 
     String wordOfUser = turkish.toLowerCase(textBoxes[chosenWord].join());
 
     for (int i = 0; i < 5; i++) {
-      String chosenLetter = turkish.toLowerCase(textBoxes[chosenWord][i]);
+      String chosenLetter = turkish.toLowerCase(textBoxes[chosenWord][i].value);
+      String upperChosenLetter = turkish.toUpperCase(chosenLetter);
 
-      if (rowLettersMap[turkish.toUpperCase(chosenLetter)] != green) {
+      if (rowLettersMap[upperChosenLetter] != green) {
         if (chosenLetter == wordOfDay[i]) {
           newChosenWordColors![chosenLetter] =
               newChosenWordColors![chosenLetter]! + 1;
 
-          rowLettersMap[turkish.toUpperCase(chosenLetter)] = green;
+          mainController.setColor(upperChosenLetter, green);
         } else if (isYellow(wordOfUser, chosenLetter, 0, false)) {
           newChosenWordColors![chosenLetter] =
               newChosenWordColors![chosenLetter]! + 1;
-          rowLettersMap[turkish.toUpperCase(chosenLetter)] = yellow;
+          mainController.setColor(upperChosenLetter, yellow);
         } else {
-          if (rowLettersMap[turkish.toUpperCase(chosenLetter)] == grey) {
-            rowLettersMap[turkish.toUpperCase(chosenLetter)] = Colors.black45;
+          if (rowLettersMap[upperChosenLetter] == grey) {
+            mainController.setColor(upperChosenLetter, Colors.black45);
           }
         }
       }
     }
+
+    return;
   }
 
   /// Girilen harfin renginin sarı olup olmayacağını kontrol ediyor
@@ -1061,22 +1043,49 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Future<void> _afterBuild() async {
-/*    String u1 = "";
-    List? l = prefs.getStringList("userWords");
-    for (int i = 0; i < l!.length; i ++) {
-      u1 += "${l[i]},";
+/*    if (FirebaseAuth.instance.currentUser == null) {
+      await FirebaseAuth.instance.signInAnonymously();
+    }*/
+
+
+
+  /*  if (userName == null) {
+      await _registerScreen();
+    }*/
+    //userName = prefs.getString('userName');
+    userName = "sdfsdfs";
+    var jwt = JWT({
+      "userName": userName,
+    });
+    await dotenv.load(fileName: ".env");
+    var token = jwt.sign(SecretKey(dotenv.env['KEY']!));
+    FirebaseAuth.instance.signInWithCustomToken(token);
+/*    final storage = new FlutterSecureStorage();
+    await storage.write(key: 'jwt', value: token);*/
+
+
+    if (!isDbReady) {
+      database = FirebaseDatabase.instance;
     }
 
-    String?  lwic = prefs.getString("lastWordInLocal");
-    int? ii = prefs.getInt("whichWordUserFound");
-    throw (u1 + "\n" + lwic! + "\n" + ii.toString());*/
+   /* var snapshot = await database.ref('word/word').get();
+    wordOfDay = snapshot.value.toString();*/
+    wordOfDay = "burak";
+    String? lastWordInLocal = prefs.getString('lastWordInLocal');
+
+    if ((lastWordInLocal != wordOfDay) && !isBack) {
+      prefs.remove('isGameEnd');
+      prefs.remove('userWords');
+      prefs.remove('isWin');
+      prefs.setString('lastWordInLocal', wordOfDay);
+    }
+    List<String> userSavedWords = prefs.getStringList('userWords') ?? [];
+
+    if (userSavedWords.length == 0 && userName != null) {
+      isFirstBuildCompleted = true;
+    }
 
     /// checks internet connection
-    bool isConnected = await checkInternet();
-    if (!isConnected) {
-      _showInternetAlert();
-      return;
-    }
 
     try {
       AppUpdateInfo isThereUpdate = await InAppUpdate.checkForUpdate();
@@ -1086,58 +1095,42 @@ class _MyHomePageState extends State<MyHomePage>
       }
     } catch (e) {}
 
-    if (FirebaseAuth.instance.currentUser == null) {
-      await FirebaseAuth.instance.signInAnonymously();
-    }
-
-    var snapshot = await database.ref('word/word').get();
-    wordOfDay = snapshot.value.toString();
-    String? lastWordInLocal = prefs.getString('lastWordInLocal');
-    userName = prefs.getString('userName');
-    if (userName == null) {
-      _registerScreen();
-    }
-    if (lastWordInLocal != wordOfDay) {
+    database.ref('word').onChildChanged.listen((event) async {
       _startNewGame();
-      prefs.setString('lastWordInLocal', wordOfDay);
-    }
 
-    database.ref('word').onChildChanged.listen((event) {
-      isFirstBuild = true;
-      if (mounted) {
-        squaresColors = [
-          for (int i = 0; i < 6; i++)
-            [for (int a = 0; a < 5; a++) squaresMainColor]
-        ];
-        _showTimeIsUpAlert();
+      if ((mounted) &&
+          (ModalRoute.of(context)!.settings.name == "/MyHomePage")) {
+        await _showTimeIsUpAlert();
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => HomePage()),
+            (Route<dynamic> route) => false);
+        Get.to(() => MyHomePage());
       }
     });
 
-    List<String> userSavedWords = prefs.getStringList('userWords') ?? [];
-    isGameEnd = prefs.getBool('isGameEnd');
     if (userSavedWords.length != 0) {
       for (int i = 0; i < userSavedWords.length; i++) {
         userWords.add(userSavedWords[i]);
         for (int j = 0; j < 5; j++) {
-          textBoxes[i][j] = userSavedWords[i][j];
+          mainController.setLetter(i, j, userSavedWords[i][j]);
         }
       }
 
-      setState(() {
-        for (int a = 0; a < userSavedWords.length; a++) {
-          for (int i = 0; i < 5; i++) {
-            flipKeys[a][i].currentState.toggleCard();
-          }
+      for (int a = 0; a < userSavedWords.length; a++) {
+        for (int i = 0; i < 5; i++) {
+          mainController.flipCard(a, i);
         }
-      });
+      }
       await Future.delayed(const Duration(milliseconds: 400));
-      setState(() {
-        for (int a = 0; a < userSavedWords.length; a++) {
-          choseButtonsColor();
-          chosenWord += 1;
-        }
-      });
+      for (int a = 0; a < userSavedWords.length; a++) {
+        choseSquaresColor();
+        await choseButtonsColor();
+        chosenWord += 1;
+        squareRowCount += 1;
+      }
     }
+
+    isGameEnd = prefs.getBool('isGameEnd');
     await Future.delayed(const Duration(milliseconds: 400));
     if (isGameEnd != null) {
       totalSeconds = prefs.getInt('totalSeconds')!;
@@ -1157,6 +1150,7 @@ class _MyHomePageState extends State<MyHomePage>
 
     isFirstBuild = false;
     isFirstBuildCompleted = true;
+    isBack = true;
   }
 
   void _goEndPage() {
@@ -1168,6 +1162,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   Future<void> _gameEnd(bool isWon) async {
     isGameEnd = true;
+    lastSquaresColors = squaresColors;
     if (isWon) {
       await _updateDatabase(true);
       prefs.setBool('isGameEnd', true);
@@ -1187,18 +1182,134 @@ class _MyHomePageState extends State<MyHomePage>
     }
   }
 
-  _registerScreen() {
-    showDialog(
+  Future<void> _showTimeIsUpAlert() async {
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(width * 2))),
+            contentPadding: EdgeInsets.only(
+                top: height * 5,
+                bottom: height * 5,
+                left: width * 10,
+                right: width * 10),
+            insetPadding: EdgeInsets.all(0),
+            content: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: width * 100,
+                ),
+                Container(
+                  padding: EdgeInsets.all(0),
+                  height: height * 8,
+                  width: width * 70,
+                  decoration: BoxDecoration(
+                    color: green,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(width * 3),
+                      topRight: Radius.circular(width * 3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Süre Doldu!",
+                          style: TextStyle(
+                              fontSize: height * 3.5,
+                              color: colorBlack,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(height * 2),
+                  height: height * 21,
+                  width: width * 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(width * 3),
+                        bottomRight: Radius.circular(width * 3)),
+                    color: lightGreen,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text("Yeni kelimeyle oyuna devam edebilirsiniz.",
+                          style: TextStyle(
+                              fontSize: height * 3, color: colorBlack),
+                          textAlign: TextAlign.center),
+                      SizedBox(
+                        height: height * 6,
+                        width: width * 24,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ButtonStyle(
+                              overlayColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(width * 2),
+                                  ),
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.all(white),
+                              padding: MaterialStateProperty.all(
+                                EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 0),
+                              ),
+                            ),
+                            child: Text("Tamam",
+                                style: TextStyle(
+                                    fontSize: height * 3, color: green))),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    return;
+  }
+
+  Future<void> _registerScreen() async {
+    await showDialog(
         barrierColor: Colors.black.withOpacity(0.5),
         barrierDismissible: false,
         context: context,
         builder: (context) => AddPlayer());
+    return;
   }
 
-  void _startNewGame() {
+  void _startNewGame() async {
     prefs.remove('isGameEnd');
     prefs.remove('userWords');
     prefs.remove('isWin');
+    Get.delete<MainController>();
+    mainController = Get.put(MainController());
+    mainController.initAnimationController();
+    squareRowCount = 0;
+    chosenWord = 0;
+    chosenLetter = 0;
+    userWords = [];
+    isGameEnd = null;
+    isFirstBuild = true;
   }
 
   Future<void> _updateDatabase(bool isWon) async {
@@ -1367,121 +1478,9 @@ class _MyHomePageState extends State<MyHomePage>
     return;
   }
 
-  void _showTimeIsUpAlert() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: AlertDialog(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(width * 2))),
-            contentPadding: EdgeInsets.only(
-                top: height * 5,
-                bottom: height * 5,
-                left: width * 10,
-                right: width * 10),
-            insetPadding: EdgeInsets.all(0),
-            content: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: width * 100,
-                ),
-                Container(
-                  padding: EdgeInsets.all(0),
-                  height: height * 8,
-                  width: width * 70,
-                  decoration: BoxDecoration(
-                    color: green,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(width * 3),
-                      topRight: Radius.circular(width * 3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Süre Doldu!",
-                          style: TextStyle(
-                              fontSize: height * 3.5,
-                              color: colorBlack,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(height * 2),
-                  height: height * 21,
-                  width: width * 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(width * 3),
-                        bottomRight: Radius.circular(width * 3)),
-                    color: Color(0xffbbe7bb),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Yeni kelimeyle oyuna devam edebilirsiniz.",
-                          style: TextStyle(
-                              fontSize: height * 3, color: colorBlack),
-                          textAlign: TextAlign.center),
-                      SizedBox(
-                        height: height * 6,
-                        width: width * 24,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                Phoenix.rebirth(context);
-                              });
-                            },
-                            style: ButtonStyle(
-                              overlayColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(width * 2),
-                                  ),
-                                ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all(white),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 0),
-                              ),
-                            ),
-                            child: Text("Tamam",
-                                style: TextStyle(
-                                    fontSize: height * 3, color: green))),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> _controlWinAnimation() async {
     isAnimationCompleted = false;
-    winController.forward();
-    await Future.delayed(Duration(milliseconds: 1500), () {
-      winController.reverse();
-    });
-    await Future.delayed(Duration(milliseconds: 1500), () {
-      winController.dispose();
-    });
+    await mainController.controlWinAnimation();
     isAnimationCompleted = true;
   }
 

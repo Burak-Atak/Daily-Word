@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'design.dart';
 import 'main.dart';
 
 var style = TextStyle(color: colorBlack, fontSize: height * 3);
@@ -118,7 +119,7 @@ contentPadding: EdgeInsets.only(
                   width: width * 100,
                   height: height * 90,
                   decoration: BoxDecoration(
-                    color: Color(0xffbbe7bb),
+                    color: lightGreen,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.zero,
                       topRight: Radius.zero,
