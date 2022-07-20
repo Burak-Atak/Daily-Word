@@ -69,8 +69,8 @@ dev_dependencies:
 
 flutter_native_splash:
   color: "#ffffff"
-  image: assets/logoss3.png
-  image_dark: assets/logoss3.png
+  image: assets/images/newSplash.png
+  image_dark: assets/images/newSplash.png
 
 flutter_icons:
   android: "launcher_icon"
@@ -97,7 +97,7 @@ flutter:
 
   assets:
     - assets/win.json
-    - assets/images/homeBackGround.gif
+    - assets/images/bgForHomeScreen.png
     - .env
 
   # To add assets to your application, add an assets section, like this:

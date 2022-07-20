@@ -8,7 +8,6 @@ import 'package:first_project/training_mode/training_endgame.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:math';
 import 'package:turkish/turkish.dart';
@@ -17,11 +16,6 @@ import '../design.dart';
 import 'package:get/get.dart';
 import '../main.dart';
 
-// TODO: oyun sonudna çarpıyı köşeye al
-// TODO: Paylaşı storede yayınlandıktan sonra düzenle
-// TODO: kÜFÜR FİLTRESİ
-// TODO: Kelime çıkma süresini netten çek
-// TODO: KullANNIcı kaydolurken aynı isim varsa çıkan dialogu sil
 
 String wordOfDayTraining = "-----";
 bool trainingIsBack = false;
@@ -125,7 +119,7 @@ class _TrainingPageState extends State<TrainingPage>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: width * 25,
+                    width: width * 20,
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: InkWell(
@@ -152,14 +146,14 @@ class _TrainingPageState extends State<TrainingPage>
                     ),
                   ),
                   SizedBox(
-                    height: height * 5.5,
-                    width: width * 44,
+                    height: height * 9,
+                    width: width * 54,
                     child: Align(
                       child: AutoSizeText(
                         title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: height * 5.5,
+                          fontSize: height * 7,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -168,7 +162,7 @@ class _TrainingPageState extends State<TrainingPage>
                     ),
                   ),
                   SizedBox(
-                    width: width * 25,
+                    width: width * 20,
                   ),
                 ],
               ),
@@ -263,9 +257,9 @@ class _TrainingPageState extends State<TrainingPage>
                   ),
                 ),
                 child: Obx(
-                  () => Text(
+                  () => AutoSizeText(
                     textBoxes[index ~/ 5][index % 5].value,
-                    style: TextStyle(fontSize: height * 7, color: Colors.black),
+                    style: TextStyle(fontSize: height * 6, color: Colors.black),
                     textAlign: TextAlign.center,
                   ),
                 )),
@@ -276,9 +270,10 @@ class _TrainingPageState extends State<TrainingPage>
                   color: squaresColors[index ~/ 5][index % 5].value,
                 ),
                 child: Obx(
-                  () => Text(
+                  () => AutoSizeText(
                     textBoxes[index ~/ 5][index % 5].value,
-                    style: TextStyle(fontSize: height * 7, color: Colors.white),
+                    style: TextStyle(fontSize: height * 6, color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),

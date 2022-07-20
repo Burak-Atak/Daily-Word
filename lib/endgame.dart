@@ -857,8 +857,6 @@ class _EndGamePageState extends State<EndGame>
 
         if (zoneOffSet.inHours < 3) {
           zoneDiff = 3 - zoneOffSet.inHours;
-        } else if (zoneOffSet.inHours == 3) {
-          zoneDiff = 3;
         } else {
           zoneDiff = zoneOffSet.inHours - 3;
         }

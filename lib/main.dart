@@ -15,6 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/timeIsUpAlert.dart';
 import 'package:first_project/training_mode/trainingHomePage.dart';
 import 'package:first_project/training_mode/training_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:first_project/new_deneme.dart';
@@ -96,7 +97,9 @@ Future<void> main() async {
     prefs = await SharedPreferences.getInstance();
 
     // The following lines are the same as previously explained in "Handling uncaught errors"
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    var crashlytics = FirebaseCrashlytics.instance;
+    crashlytics.setCrashlyticsCollectionEnabled(!kDebugMode);
+    FlutterError.onError = crashlytics.recordFlutterFatalError;
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     await Future.delayed(Duration(seconds: 1), () {
@@ -114,6 +117,7 @@ Future<void> main() async {
     });
   },
       (error, stack) =>
+
           FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
 }
 
@@ -478,7 +482,7 @@ class _MyHomePageState extends State<MyHomePage>
                 child: Obx(
                   () => AutoSizeText(
                     textBoxes[index ~/ 5][index % 5].value,
-                    style: TextStyle(fontSize: height * 7, color: Colors.black),
+                    style: TextStyle(fontSize: height * 6, color: Colors.black),
                     textAlign: TextAlign.center,
                   ),
                 )),
@@ -491,7 +495,8 @@ class _MyHomePageState extends State<MyHomePage>
                 child: Obx(
                   () => AutoSizeText(
                     textBoxes[index ~/ 5][index % 5].value,
-                    style: TextStyle(fontSize: height * 7, color: Colors.white),
+                    style: TextStyle(fontSize: height * 6, color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -736,6 +741,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<bool> enterButtonFunc() async {
+    prefs.setString("userName", "WWWWWWWWWWWW");
 
     if (isGameEnd == null &&
         isAnimationCompleted &&
@@ -1006,6 +1012,7 @@ class _MyHomePageState extends State<MyHomePage>
     isGameEnd = prefs.getBool('isGameEnd');
     await Future.delayed(const Duration(milliseconds: 400));
     if (isGameEnd != null) {
+      lastSquaresColors = squaresColors;
       totalSeconds = prefs.getInt('totalSeconds')!;
       userScore = prefs.getInt('userScore')!;
       whichWordUserFound = prefs.getInt('whichWordUserFound')!;

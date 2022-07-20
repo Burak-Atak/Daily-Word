@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Image(
-              image: AssetImage('assets/images/homeBackGround.gif'),
+              image: AssetImage('assets/images/bgForHomeScreen.png'),
               alignment: Alignment.center,
               fit: BoxFit.fill,
             ),

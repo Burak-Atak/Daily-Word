@@ -367,7 +367,7 @@ class TrainingDictButton extends StatelessWidget {
         child: Icon(
           MyFlutterApp2.dictionary2,
           color: Colors.black,
-          size: height * 5,
+          size: height * 4.5,
         ),
       ),
     );

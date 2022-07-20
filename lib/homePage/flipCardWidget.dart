@@ -97,11 +97,11 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
               ..rotateY(pi * dragPositionX / 10)
               ..rotateX(pi * -dragPositionY / 10),
             child: Container(
-              padding: EdgeInsets.all(height * 4),
+              padding: EdgeInsets.only(bottom: height * 4, top: height*4, left: width*2, right: width*2),
               width: width * 70,
               height: height * 65,
               decoration: BoxDecoration(
-                color: Colors.transparent,
+                color: green,
                 borderRadius: BorderRadius.circular(width * 5),
               ),
               child: SizedBox(
@@ -121,6 +121,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                           fontWeight: FontWeight.bold,
                           color: white,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                     SizedBox(
