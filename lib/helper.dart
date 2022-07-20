@@ -1,14 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 
-void main() {
-
-}
-
-
-
-String timeFormat(int time) {
+String timeFormat(int time, {isEndTime = null}) {
   int? hour;
   int? min;
   int sec;
@@ -21,10 +14,12 @@ String timeFormat(int time) {
     time = time % 60;
   }
   sec = time;
-  if (hour != null) {
-    return "+${hour}s";
+
+  if (isEndTime != null) {
+    return "${min == null ? "00" : min.toString().length < 2 ? "0${min}" : min}:${sec.toString().length < 2 ? "0${sec}" : sec}";
   }
-  return "${min == null ? "00" : min.toString().length < 2 ? "0${min}" : min}:${sec.toString().length < 2 ? "0${sec}" : sec}";
+
+  return "${hour == null ? "00" :hour.toString().length < 2 ? "0${hour}" : hour}:${min == null ? "00" : min.toString().length < 2 ? "0${min}" : min}:${sec.toString().length < 2 ? "0${sec}" : sec}";
 }
 
 Future<bool> checkInternet() async {

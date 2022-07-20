@@ -10,9 +10,9 @@ import 'package:first_project/howToPlay.dart';
 import 'package:first_project/internetConnectionDialog.dart';
 import 'package:first_project/mainpage_controller.dart';
 import 'package:first_project/my_flutter_app_icons.dart';
-import 'package:first_project/register.dart';
 import 'package:first_project/scorePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_project/timeIsUpAlert.dart';
 import 'package:first_project/training_mode/trainingHomePage.dart';
 import 'package:first_project/training_mode/training_controller.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -21,18 +21,14 @@ import 'package:first_project/new_deneme.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
-import 'dart:math';
 import 'package:turkish/turkish.dart';
 import 'package:confetti/confetti.dart';
-import 'dart:math' as math;
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'design.dart';
 import 'firebase_options.dart';
@@ -56,7 +52,6 @@ bool isFirstBuild = true;
 bool isFirstBuildCompleted = false;
 bool? isGameEnd;
 late FirebaseDatabase database;
-bool isDbReady = false;
 String? lastWordInLocal;
 late int totalSeconds;
 late int userScore;
@@ -64,6 +59,7 @@ late int whichWordUserFound;
 late var mainController;
 late var lastSquaresColors;
 bool isBack = false;
+late EdgeInsetsGeometry paddingForSquare;
 
 /// Uygulama build edilirken hangi kutucuk satırında olduğunu tutuan değişken
 int squareRowCount = 0;
@@ -104,6 +100,16 @@ Future<void> main() async {
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     await Future.delayed(Duration(seconds: 1), () {
+/*      runApp(
+          DevicePreview(
+            builder: (context) => MyApp(),
+            enabled: true,
+            tools: [
+              ...DevicePreview.defaultTools,
+            ],
+          )
+      );*/
+
       runApp(Phoenix(child: MyApp()));
     });
   },
@@ -125,22 +131,38 @@ class MyApp extends StatelessWidget {
         home: Builder(
           builder: (BuildContext context) {
             mainController = Get.put(MainController());
-            mainController.initAnimationController();
 
             trainingController = Get.put(TrainingController());
 
-            trainingController.initAnimationController();
             width = MediaQuery.of(context).size.width / 100;
             double heightWithApp = MediaQuery.of(context).size.height -
                 MediaQuery.of(context).padding.top -
                 MediaQuery.of(context).padding.bottom;
             height = (heightWithApp - heightWithApp * 9.4 / 100) / 100;
-            if (height > 6.5) {
+            if (height > 12.5) {
+              height = height - height * 0.3;
+            } else if (height > 6.5) {
               height = height - height * 0.1;
             }
-            if (width > 4.5) {
-              width = width - width * 0.3;
+            if (width > 6) {
+              width = width - width * 0.1;
             }
+
+            (() {
+              if (height / width >= 1.8) {
+                paddingForSquare =
+                    EdgeInsets.only(left: width * 11, right: width * 11);
+              } else if (height / width >= 1.6) {
+                paddingForSquare =
+                    EdgeInsets.only(left: width * 13, right: width * 13);
+              } else if (height / width >= 1.4) {
+                paddingForSquare =
+                    EdgeInsets.only(left: width * 18, right: width * 18);
+              } else {
+                paddingForSquare =
+                    EdgeInsets.only(left: width * 30, right: width * 30);
+              }
+            })();
 
             return HomePage();
           },
@@ -159,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
 
-    /// Read word of day from firebase
+    mainController.initAnimationController();
     winController = mainController.winController;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -175,7 +197,6 @@ class _MyHomePageState extends State<MyHomePage>
           await Future.delayed(Duration(milliseconds: 600));
           _goEndPage();
         }
-
       }
 
       if (isFirstBuild) {
@@ -286,14 +307,14 @@ class _MyHomePageState extends State<MyHomePage>
                     ),
                   ),
                   SizedBox(
-                    height: height * 6,
+                    height: height * 5.5,
                     width: width * 44,
                     child: Align(
                       child: AutoSizeText(
                         title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: height * 6,
+                          fontSize: height * 5.5,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -364,54 +385,51 @@ class _MyHomePageState extends State<MyHomePage>
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: height * 5),
-              child: Stack(children: [
-                createMainSquare(),
-                Align(
-                  child: Obx(
-                    () => AnimatedOpacity(
-                      // If the widget is visible, animate to 0.0 (invisible).
-                      // If the widget is hidden, animate to 1.0 (fully visible).
-                      opacity: isWordExist.value ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 500),
-                      // The green box must be a child of the AnimatedOpacity widget.
-                      child: Padding(
-                        padding: EdgeInsets.only(top: height * 25),
-                        child: Container(
-                          width: width * 60,
-                          height: height * 8,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: AutoSizeText(
-                            'Kelime listesinde yok.',
-                            maxLines: 1,
-                            style: TextStyle(
-                                fontSize: height * 3.64, color: Colors.white),
-                          ),
+            Stack(children: [
+              createMainSquare(),
+              Align(
+                child: Obx(
+                  () => AnimatedOpacity(
+                    // If the widget is visible, animate to 0.0 (invisible).
+                    // If the widget is hidden, animate to 1.0 (fully visible).
+                    opacity: isWordExist.value ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 500),
+                    // The green box must be a child of the AnimatedOpacity widget.
+                    child: Padding(
+                      padding: EdgeInsets.only(top: height * 25),
+                      child: Container(
+                        width: width * 60,
+                        height: height * 8,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: AutoSizeText(
+                          'Kelime listesinde yok.',
+                          maxLines: 1,
+                          style: TextStyle(
+                              fontSize: height * 3.64, color: Colors.white),
                         ),
                       ),
                     ),
                   ),
                 ),
-                Align(
-                  child: Obx(
-                    () => Lottie.asset(
-                      'assets/win.json',
-                      height: height * 50,
-                      width: width * 75.67,
-                      controller: winController.value,
-                      repeat: false,
-                    ),
+              ),
+              Align(
+                child: Obx(
+                  () => Lottie.asset(
+                    'assets/win.json',
+                    height: height * 50,
+                    width: width * 75.67,
+                    controller: winController.value,
+                    repeat: false,
                   ),
                 ),
-              ]),
-            ),
+              ),
+            ]),
             Padding(
-              padding: EdgeInsets.only(bottom: height * 1.2, top: height * 2.7),
+              padding: EdgeInsets.only(bottom: height * 1.2),
               child: Column(
                 children: [
                   firstRow(),
@@ -428,6 +446,10 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Harf girilen Kutucukları oluşturuyor
   Widget createMainSquare() {
+    //1.5 kısa dar ekran
+    // 1.66 dar uzun 1.67 dar normal uzun
+    // 1.85dar uzun
+
     Widget littleSquares = GridView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
@@ -437,7 +459,7 @@ class _MyHomePageState extends State<MyHomePage>
           crossAxisSpacing: 5,
           mainAxisSpacing: 5,
         ),
-        padding: EdgeInsets.only(left: height * 10, right: height * 10),
+        padding: paddingForSquare,
         itemCount: 30,
         itemBuilder: (BuildContext context, int index) {
           return FlipCard(
@@ -454,7 +476,7 @@ class _MyHomePageState extends State<MyHomePage>
                   ),
                 ),
                 child: Obx(
-                  () => Text(
+                  () => AutoSizeText(
                     textBoxes[index ~/ 5][index % 5].value,
                     style: TextStyle(fontSize: height * 7, color: Colors.black),
                     textAlign: TextAlign.center,
@@ -467,7 +489,7 @@ class _MyHomePageState extends State<MyHomePage>
                   color: squaresColors[index ~/ 5][index % 5].value,
                 ),
                 child: Obx(
-                  () => Text(
+                  () => AutoSizeText(
                     textBoxes[index ~/ 5][index % 5].value,
                     style: TextStyle(fontSize: height * 7, color: Colors.white),
                   ),
@@ -714,6 +736,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<bool> enterButtonFunc() async {
+
     if (isGameEnd == null &&
         isAnimationCompleted &&
         chosenLetter % 5 == 0 &&
@@ -897,180 +920,33 @@ class _MyHomePageState extends State<MyHomePage>
     return false;
   }
 
-  /// Win ve Lose ekranının gösterilmesi
-  showDataAlert(bool isWon) {
-    Navigator.of(context).push(PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (BuildContext context, _, __) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: AlertDialog(
-                elevation: 0,
-                contentPadding: EdgeInsets.all(0),
-                insetPadding: EdgeInsets.zero,
-                backgroundColor: Colors.white.withOpacity(0.8),
-                content: finalColumn(isWon)),
-          );
-        }));
-  }
-
-  /// Win ve Lose ekranının içeriği
-  Widget finalColumn(bool isWon) {
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            !isWon
-                ? Colors.red.withOpacity(0.5)
-                : Colors.green.withOpacity(0.5),
-            Colors.white.withOpacity(0.1),
-          ],
-        ),
-      ),
-      width: width * 100,
-      height: height * 125,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          isWon
-              ? AnimatedTextKit(
-                  animatedTexts: [
-                    ScaleAnimatedText(
-                      'Tebrikler !',
-                      textStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: width * 16,
-                      ),
-                      duration: Duration(seconds: 4),
-                    ),
-                  ],
-                  totalRepeatCount: 1,
-                  onFinished: () {},
-                  isRepeatingAnimation: false,
-                  repeatForever: false,
-                )
-              : ShowUp(
-                  delay: 3,
-                  milliseconds: 1000,
-                  child: Container(
-                    width: width * 75.67,
-                    height: height * 10,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      turkish.toUpperCase(wordOfDay),
-                      style: TextStyle(
-                        fontSize: width * 16,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-          if (isWon)
-            ConfettiWidget(
-              confettiController: confettiController,
-              maximumSize: Size(height * 3, height * 3),
-              minimumSize: Size(height * 0.5, height * 0.5),
-              blastDirectionality: BlastDirectionality.explosive,
-              particleDrag: 0.04,
-              emissionFrequency: 0.6,
-              numberOfParticles: 2,
-              gravity: 0.08,
-              colors: const [
-                green3,
-                Colors.blue,
-                Colors.pink,
-                Colors.yellow,
-                Colors.purple,
-              ],
-            ),
-          Padding(
-            padding: EdgeInsets.only(top: height * 44, bottom: height * 6),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-                  },
-                  child: Transform.rotate(
-                      angle: 180 * pi / 180,
-                      child: Icon(
-                        Icons.exit_to_app_rounded,
-                        size: width * 10,
-                      )),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(green3),
-                    fixedSize: MaterialStateProperty.all(
-                      Size(width * 20, width * 15),
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    prefs.remove('isGameEnd');
-                    prefs.remove('userWords');
-                    prefs.remove('isWin');
-                    isFirstBuild = true;
-                    Phoenix.rebirth(context);
-                  },
-                  child: Icon(Icons.refresh, size: width * 10),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(green3),
-                    fixedSize: MaterialStateProperty.all(
-                      Size(width * 20, width * 15),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _afterBuild() async {
-/*    if (FirebaseAuth.instance.currentUser == null) {
-      await FirebaseAuth.instance.signInAnonymously();
-    }*/
 
 
-
-  /*  if (userName == null) {
-      await _registerScreen();
-    }*/
-    //userName = prefs.getString('userName');
-    userName = "sdfsdfs";
-    var jwt = JWT({
-      "userName": userName,
-    });
-    await dotenv.load(fileName: ".env");
-    var token = jwt.sign(SecretKey(dotenv.env['KEY']!));
-    FirebaseAuth.instance.signInWithCustomToken(token);
-/*    final storage = new FlutterSecureStorage();
-    await storage.write(key: 'jwt', value: token);*/
-
-
-    if (!isDbReady) {
-      database = FirebaseDatabase.instance;
+    if (FirebaseAuth.instance.currentUser == null) {
+      var jwt = JWT(
+        {
+          "iss": "firebase-adminsdk-yq4yd@wordle-5a28f.iam.gserviceaccount.com",
+          "sub": "firebase-adminsdk-yq4yd@wordle-5a28f.iam.gserviceaccount.com",
+          "aud":
+              "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit",
+          "iat": DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          "exp": DateTime.now()
+                  .add(Duration(seconds: 1800))
+                  .millisecondsSinceEpoch ~/
+              1000,
+          "uid": userName,
+        },
+      );
+      await dotenv.load(fileName: ".env");
+      var token = jwt.sign(RSAPrivateKey(dotenv.env["KEY"]!),
+          algorithm: JWTAlgorithm.RS256);
+      FirebaseAuth.instance.signInWithCustomToken(token);
     }
 
-   /* var snapshot = await database.ref('word/word').get();
-    wordOfDay = snapshot.value.toString();*/
-    wordOfDay = "burak";
+    var snapshot = await database.ref('word/word').get();
+    wordOfDay = snapshot.value.toString();
+
     String? lastWordInLocal = prefs.getString('lastWordInLocal');
 
     if ((lastWordInLocal != wordOfDay) && !isBack) {
@@ -1098,12 +974,9 @@ class _MyHomePageState extends State<MyHomePage>
     database.ref('word').onChildChanged.listen((event) async {
       _startNewGame();
 
-      if ((mounted) &&
-          (ModalRoute.of(context)!.settings.name == "/MyHomePage")) {
-        await _showTimeIsUpAlert();
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => HomePage()),
-            (Route<dynamic> route) => false);
+      if ((Get.currentRoute == "/MyHomePage")) {
+        await Get.dialog(TimeIsUpAlert());
+        Get.offAll(HomePage());
         Get.to(() => MyHomePage());
       }
     });
@@ -1182,120 +1055,8 @@ class _MyHomePageState extends State<MyHomePage>
     }
   }
 
-  Future<void> _showTimeIsUpAlert() async {
-    await showDialog(
-      barrierDismissible: false,
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: AlertDialog(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(width * 2))),
-            contentPadding: EdgeInsets.only(
-                top: height * 5,
-                bottom: height * 5,
-                left: width * 10,
-                right: width * 10),
-            insetPadding: EdgeInsets.all(0),
-            content: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: width * 100,
-                ),
-                Container(
-                  padding: EdgeInsets.all(0),
-                  height: height * 8,
-                  width: width * 70,
-                  decoration: BoxDecoration(
-                    color: green,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(width * 3),
-                      topRight: Radius.circular(width * 3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Süre Doldu!",
-                          style: TextStyle(
-                              fontSize: height * 3.5,
-                              color: colorBlack,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(height * 2),
-                  height: height * 21,
-                  width: width * 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(width * 3),
-                        bottomRight: Radius.circular(width * 3)),
-                    color: lightGreen,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Yeni kelimeyle oyuna devam edebilirsiniz.",
-                          style: TextStyle(
-                              fontSize: height * 3, color: colorBlack),
-                          textAlign: TextAlign.center),
-                      SizedBox(
-                        height: height * 6,
-                        width: width * 24,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: ButtonStyle(
-                              overlayColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(width * 2),
-                                  ),
-                                ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all(white),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 0),
-                              ),
-                            ),
-                            child: Text("Tamam",
-                                style: TextStyle(
-                                    fontSize: height * 3, color: green))),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
 
-    return;
-  }
 
-  Future<void> _registerScreen() async {
-    await showDialog(
-        barrierColor: Colors.black.withOpacity(0.5),
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => AddPlayer());
-    return;
-  }
 
   void _startNewGame() async {
     prefs.remove('isGameEnd');
@@ -1416,14 +1177,13 @@ class _MyHomePageState extends State<MyHomePage>
     database.ref('isSeries/$userName').set(true);
 
     /// Update dailyRank
-
     database.ref('dailyRank/$userName').set({
       'score': dayScore,
       'seconds': seconds,
     });
 
     /// Update user total win row
-
+//////////////////
     if (isWon) {
       database.ref('whichWord/$userName').once().then((event) {
         late String key;
@@ -1573,7 +1333,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 }
 
-const starPoints = 5;
+/*const starPoints = 5;
 
 class StarClipper extends CustomClipper<Path> {
   // use : StarClipper().getClip
@@ -1666,4 +1426,65 @@ class _ShowUpState extends State<ShowUp> with TickerProviderStateMixin {
       scale: _animController,
     );
   }
-}
+}*/
+
+/*
+       children: <Widget>[
+          isWon
+              ? AnimatedTextKit(
+                  animatedTexts: [
+                    ScaleAnimatedText(
+                      'Tebrikler !',
+                      textStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: width * 16,
+                      ),
+                      duration: Duration(seconds: 4),
+                    ),
+                  ],
+                  totalRepeatCount: 1,
+                  onFinished: () {},
+                  isRepeatingAnimation: false,
+                  repeatForever: false,
+                )
+              : ShowUp(
+                  delay: 3,
+                  milliseconds: 1000,
+                  child: Container(
+                    width: width * 75.67,
+                    height: height * 10,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      turkish.toUpperCase(wordOfDay),
+                      style: TextStyle(
+                        fontSize: width * 16,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+          if (isWon)
+            ConfettiWidget(
+              confettiController: confettiController,
+              maximumSize: Size(height * 3, height * 3),
+              minimumSize: Size(height * 0.5, height * 0.5),
+              blastDirectionality: BlastDirectionality.explosive,
+              particleDrag: 0.04,
+              emissionFrequency: 0.6,
+              numberOfParticles: 2,
+              gravity: 0.08,
+              colors: const [
+                green3,
+                Colors.blue,
+                Colors.pink,
+                Colors.yellow,
+                Colors.purple,
+              ],
+            ),
+        ],
+*/

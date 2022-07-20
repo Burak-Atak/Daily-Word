@@ -2,17 +2,13 @@ import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/dictAlertDialog.dart';
 import 'package:first_project/homePage/homePage.dart';
-import 'package:first_project/training_mode/training_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:turkish/turkish.dart';
 
 import '../design.dart';
 import '../main.dart';
 import '../my_flutter_app_icons.dart';
-import '../wordsMeanings.dart';
 import 'trainingHomePage.dart';
 
 bool startNewTrainingGame = false;

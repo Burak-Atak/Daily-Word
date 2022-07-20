@@ -3,6 +3,8 @@ import 'dart:collection';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'containerForBadConnection.dart';
 import 'design.dart';
 import 'main.dart';
 
@@ -11,12 +13,14 @@ Map? weeklyScoreTable;
 double playerHeight = height * 4;
 double playerWidth = width * 50;
 TextStyle scoreStyle = TextStyle(
-    color: colorBlack,
-    fontSize: height * 3,);
+  color: colorBlack,
+  fontSize: height * 3,
+);
 
 TextStyle scoreStyleMedals = TextStyle(
-    color: colorBlack,
-    fontSize: height * 3.5,);
+  color: colorBlack,
+  fontSize: height * 3.5,
+);
 
 const chosenColor = green;
 const playerColor = Color(0xff53d952);
@@ -37,57 +41,57 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
   @override
   Widget build(BuildContext context) {
     Future<Map?> getDailyScoreTable() async {
-      await database.ref('dailyRank').get().then((snapshot) {
+      await database.ref('dailyRank').get().timeout(Duration(seconds: 5),
+          onTimeout: (() {
+        throw Exception("dailyScoreTable is null");
+      })).then((snapshot) {
         if (snapshot.value == null) {
           scoreTable = null;
-          return;
+          return null;
         }
         Map<dynamic, dynamic> dailyDict = snapshot.value as Map;
 
-        try {
-          scoreTable = dailyDict.length > 1
-              ? SplayTreeMap.from(
-                  dailyDict,
-                  (a, b) => ((dailyDict[a]['score'] == dailyDict[b]['score']) &&
-                          (dailyDict[a]['seconds'] == dailyDict[b]['seconds']))
-                      ? 1
-                      : ((dailyDict[a]['score'] - dailyDict[b]['score']) != 0)
-                          ? dailyDict[b]['score']
-                              .compareTo(dailyDict[a]['score'])
-                          : dailyDict[a]['seconds']
-                              .compareTo(dailyDict[b]['seconds']))
-              : dailyDict;
-        } catch (e) {
-          throw ("dict : ${dailyDict} ${dailyDict.length} \n ${e}");
-        }
+        scoreTable = dailyDict.length > 1
+            ? SplayTreeMap.from(
+                dailyDict,
+                (a, b) => ((dailyDict[a]['score'] == dailyDict[b]['score']) &&
+                        (dailyDict[a]['seconds'] == dailyDict[b]['seconds']))
+                    ? 1
+                    : ((dailyDict[a]['score'] - dailyDict[b]['score']) != 0)
+                        ? dailyDict[b]['score'].compareTo(dailyDict[a]['score'])
+                        : dailyDict[a]['seconds']
+                            .compareTo(dailyDict[b]['seconds']))
+            : dailyDict;
       });
 
       return scoreTable;
     }
 
     Future<Map?> getWeeklyScoreTable() async {
-      await database.ref('weeklyRank').get().then((snapshot) {
+      await database.ref('weeklyRank').get().timeout(Duration(seconds: 5),
+          onTimeout: (() {
+        throw Exception("weeklyScoreTable is null");
+      })).then((snapshot) {
         if (snapshot.value == null) {
           weeklyScoreTable = null;
-          return;
+          return null;
         }
 
         Map<dynamic, dynamic> weeklyDict = snapshot.value as Map;
 
-             weeklyScoreTable = weeklyDict.length > 1
-              ? SplayTreeMap.from(
-              weeklyDict,
-                  (a, b) =>
-              ((weeklyDict[a]['score'] == weeklyDict[b]['score']) &&
-                  (weeklyDict[a]['totalSeconds'] ==
-                      weeklyDict[b]['totalSeconds']))
-                  ? 1
-                  : ((weeklyDict[a]['score'] - weeklyDict[b]['score']) != 0)
-                  ? weeklyDict[b]['score']
-                  .compareTo(weeklyDict[a]['score'])
-                  : weeklyDict[a]['totalSeconds']
-                  .compareTo(weeklyDict[b]['totalSeconds']))
-              : weeklyDict;
+        weeklyScoreTable = weeklyDict.length > 1
+            ? SplayTreeMap.from(
+                weeklyDict,
+                (a, b) => ((weeklyDict[a]['score'] == weeklyDict[b]['score']) &&
+                        (weeklyDict[a]['totalSeconds'] ==
+                            weeklyDict[b]['totalSeconds']))
+                    ? 1
+                    : ((weeklyDict[a]['score'] - weeklyDict[b]['score']) != 0)
+                        ? weeklyDict[b]['score']
+                            .compareTo(weeklyDict[a]['score'])
+                        : weeklyDict[a]['totalSeconds']
+                            .compareTo(weeklyDict[b]['totalSeconds']))
+            : weeklyDict;
       });
 
       return weeklyScoreTable;
@@ -103,15 +107,27 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
         ]),
         // a previously-obtained Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<List<Map?>> snapshot) {
-          late Widget child;
-          if (snapshot.hasData) {
-            child = mainScorePage();
-          } else {
-            child = Center(
-              child: CircularProgressIndicator(),
-            );
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return LoadingAnimationWidget.inkDrop(
+                color: green,
+                size: height * 5,
+              );
+            case ConnectionState.active:
+              return LoadingAnimationWidget.inkDrop(
+                color: green,
+                size: height * 5,
+              );
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return BadConnection();
+              } else {
+                return mainScorePage();
+              }
+            case ConnectionState.none:
+              // TODO: Handle this case.
+              return BadConnection();
           }
-          return child;
         },
       ),
     );
@@ -344,19 +360,24 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                   chosenScoreTable!.entries.length <= i
                                       ? ""
                                       : selectedDaily
-                                          ? timeFormat(chosenScoreTable!.entries
-                                                  .toList()[i]
-                                                  .value["seconds"])
+                                          ? timeFormat(
+                                                  chosenScoreTable!.entries
+                                                      .toList()[i]
+                                                      .value["seconds"],
+                                                  isEndTime: true)
                                               .toString()
-                                          : timeFormat((chosenScoreTable!
-                                                              .entries
-                                                              .toList()[i]
-                                                              .value[
-                                                          "totalSeconds"] /
-                                                      chosenScoreTable!.entries
-                                                          .toList()[i]
-                                                          .value["totalGame"])
-                                                  .round())
+                                          : timeFormat(
+                                                  (chosenScoreTable!.entries
+                                                                  .toList()[i]
+                                                                  .value[
+                                                              "totalSeconds"] /
+                                                          chosenScoreTable!
+                                                                  .entries
+                                                                  .toList()[i]
+                                                                  .value[
+                                                              "totalGame"])
+                                                      .round(),
+                                                  isEndTime: true)
                                               .toString(),
                                   textAlign: TextAlign.center,
                                   group: textSizeGroup,
@@ -426,7 +447,6 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                               child: Align(
                                 child: Text(
                                   "",
-                                  //timeFormat(userScores.value["seconds"]),
                                   textAlign: TextAlign.center,
                                   style: scoreStyle,
                                 ),
@@ -437,79 +457,78 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                       ),
                   if (chosenScoreTable != null)
                     if (chosenScoreTable!.keys.toList().contains(userName))
-                        if (chosenScoreTable!.keys.toList().indexOf(userName) > 9)
-                      Container(
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade800,
-                            /*             borderRadius: BorderRadius.only(
+                      if (chosenScoreTable!.keys.toList().indexOf(userName) > 9)
+                        Container(
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade800,
+                              /*             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(width * 5),
                               bottomRight: Radius.circular(width * 5),
                             ),*/
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                height: height * 7,
-                                width: width * 15,
-                                child: Align(
-                                  child: Text(
-                                    chosenScoreTable!.keys
-                                        .toList()
-                                        .indexOf(userName)
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: scoreStyle,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  height: height * 7,
+                                  width: width * 15,
+                                  child: Align(
+                                    child: Text(
+                                      chosenScoreTable!.keys
+                                          .toList()
+                                          .indexOf(userName)
+                                          .toString(),
+                                      textAlign: TextAlign.center,
+                                      style: scoreStyle,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: height * 7,
-                                width: width * 30,
-                                child: Align(
-                                  child: AutoSizeText(
-                                    userName!, //userScores.key,
-                                    textAlign: TextAlign.center,
-                                    group: textSizeGroup,
-                                    maxLines: 1,
-                                    style: scoreStyle,
+                                SizedBox(
+                                  height: height * 7,
+                                  width: width * 30,
+                                  child: Align(
+                                    child: AutoSizeText(
+                                      userName!, //userScores.key,
+                                      textAlign: TextAlign.center,
+                                      group: textSizeGroup,
+                                      maxLines: 1,
+                                      style: scoreStyle,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: height * 7,
-                                width: width * 15,
-                                child: Align(
-                                  child: AutoSizeText(
-                                    chosenScoreTable![userName]!["score"]
-                                        .toString(),
-                                    //userScores.value["score"].toString(),
-                                    textAlign: TextAlign.center,
-                                    group: textSizeGroup,
-                                    maxLines: 1,
-                                    style: scoreStyle,
+                                SizedBox(
+                                  height: height * 7,
+                                  width: width * 15,
+                                  child: Align(
+                                    child: AutoSizeText(
+                                      chosenScoreTable![userName]!["score"]
+                                          .toString(),
+                                      //userScores.value["score"].toString(),
+                                      textAlign: TextAlign.center,
+                                      group: textSizeGroup,
+                                      maxLines: 1,
+                                      style: scoreStyle,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: height * 7,
-                                width: width * 20,
-                                child: Align(
-                                  child: AutoSizeText(
-                                    chosenScoreTable![userName]![selectedDaily
-                                            ? "seconds"
-                                            : "totalSeconds"]
-                                        .toString(),
-                                    //timeFormat(userScores.value["seconds"]),
-                                    textAlign: TextAlign.center,
-                                    group: textSizeGroup,
-                                    maxLines: 1,
-                                    style: scoreStyle,
+                                SizedBox(
+                                  height: height * 7,
+                                  width: width * 20,
+                                  child: Align(
+                                    child: AutoSizeText(
+                                      chosenScoreTable![userName]![selectedDaily
+                                              ? "seconds"
+                                              : "totalSeconds"]
+                                          .toString(),
+                                      textAlign: TextAlign.center,
+                                      group: textSizeGroup,
+                                      maxLines: 1,
+                                      style: scoreStyle,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )),
+                              ],
+                            )),
                   Row(
                     children: [
                       SizedBox(
@@ -539,9 +558,8 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             'Günlük',
                             style: TextStyle(
                                 color: colorBlack,
-                                fontSize: selectedDaily
-                                    ? height * 3.64
-                                    : height * 3),
+                                fontSize:
+                                    selectedDaily ? height * 3.64 : height * 3),
                           ),
                         ),
                       ),
@@ -572,9 +590,8 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                             'Haftalık',
                             style: TextStyle(
                                 color: colorBlack,
-                                fontSize: selectedDaily
-                                    ? height * 3
-                                    : height * 3.64),
+                                fontSize:
+                                    selectedDaily ? height * 3 : height * 3.64),
                           ),
                         ),
                       ),

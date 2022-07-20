@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/homePage/homePage.dart';
 import 'package:first_project/new_deneme.dart';
+import 'package:first_project/training_mode/trainingWordsList.dart';
 import 'package:first_project/training_mode/training_controller.dart';
 import 'package:first_project/training_mode/training_endgame.dart';
 import 'package:flip_card/flip_card.dart';
@@ -57,6 +58,7 @@ class _TrainingPageState extends State<TrainingPage>
   @override
   void initState() {
     super.initState();
+    trainingController.initAnimationController();
     winController = trainingController.winController;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -150,14 +152,14 @@ class _TrainingPageState extends State<TrainingPage>
                     ),
                   ),
                   SizedBox(
-                    height: height * 6,
+                    height: height * 5.5,
                     width: width * 44,
                     child: Align(
                       child: AutoSizeText(
                         title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: height * 6,
+                          fontSize: height * 5.5,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -244,7 +246,7 @@ class _TrainingPageState extends State<TrainingPage>
           crossAxisSpacing: 5,
           mainAxisSpacing: 5,
         ),
-        padding: EdgeInsets.only(left: height * 10, right: height * 10),
+        padding: paddingForSquare,
         itemCount: 30,
         itemBuilder: (BuildContext context, int index) {
           return FlipCard(
@@ -697,11 +699,9 @@ class _TrainingPageState extends State<TrainingPage>
   Future<void> _afterBuild() async {
 
 
-    // Todo: yeni oyun için harfleri random ata yeni oyun veya devam et butonu
-
     String? lastWordInLocal = prefs.getString('trainingLastWordInLocal');
     if (startNewTrainingGame || lastWordInLocal == null) {
-      wordOfDayTraining = words[Random().nextInt(words.length)];
+      wordOfDayTraining = trainingWords[Random().nextInt(trainingWords.length)];
       prefs.setString('trainingLastWordInLocal', wordOfDayTraining);
     } else {
       wordOfDayTraining = lastWordInLocal;

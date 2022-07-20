@@ -1,7 +1,5 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:first_project/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +11,6 @@ import '../howToPlay.dart';
 import '../my_flutter_app_icons.dart';
 import '../scorePage.dart';
 import '../training_mode/trainingHomePage.dart';
-import '../training_mode/training_controller.dart';
 
 class FlipCardWidget extends StatefulWidget {
   @override
@@ -47,7 +44,6 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
           });
 
     _connectDbAndMakeAuth();
-
   }
 
   @override
@@ -66,7 +62,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     return GestureDetector(
       onPanUpdate: (details) {
         setState(() {
-          var newPositionX = dragPositionX - details.delta.dx / 200;
+          var newPositionX = dragPositionX - details.delta.dx / 150;
           if (newPositionX < -1) {
             dragPositionX = -1;
           } else if (newPositionX > 1) {
@@ -75,11 +71,11 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
             dragPositionX = newPositionX;
           }
 
-          var newPositionY = dragPositionY - details.delta.dy / 200;
-          if (newPositionY < -0.5) {
-            dragPositionY = -0.5;
-          } else if (newPositionY > 0.5) {
-            dragPositionY = 0.5;
+          var newPositionY = dragPositionY - details.delta.dy / 150;
+          if (newPositionY < -1) {
+            dragPositionY = -1;
+          } else if (newPositionY > 1) {
+            dragPositionY = 1;
           } else {
             dragPositionY = newPositionY;
           }
@@ -117,7 +113,9 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                     Padding(
                       padding: EdgeInsets.only(bottom: height * 3),
                       child: AutoSizeText(
-                        userName == null ? "Hoş geldin" : "Hoş geldin, $userName",
+                        userName == null
+                            ? "Hoş geldin"
+                            : "Hoş geldin, $userName",
                         style: TextStyle(
                           fontSize: height * 3.5,
                           fontWeight: FontWeight.bold,
@@ -126,7 +124,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       ),
                     ),
                     SizedBox(
-                      width: width * 44,
+                      width: width * 48,
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () async {
@@ -138,8 +136,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             }
                           },
                           style: ButtonStyle(
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.grey.withOpacity(0.2)),
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.grey.withOpacity(0.2)),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
@@ -149,15 +147,13 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             ),
                             backgroundColor: MaterialStateProperty.all(white),
                             padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(
-                                  horizontal: 1, vertical: 0),
+                              EdgeInsets.symmetric(horizontal: 1, vertical: 0),
                             ),
                           ),
                           child: Padding(
                             padding: EdgeInsets.only(left: width * 3),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Icon(
@@ -166,7 +162,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                                   size: width * 7,
                                 ),
                                 SizedBox(
-                                  width: width * 31.5,
+                                  width: width * 35.5,
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: AutoSizeText(
@@ -184,16 +180,15 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                           )),
                     ),
                     SizedBox(
-                      width: width * 44,
+                      width: width * 48,
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
-                            Get.to(() => TrainingPage(
-                            ));
+                            Get.to(() => TrainingPage());
                           },
                           style: ButtonStyle(
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.grey.withOpacity(0.2)),
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.grey.withOpacity(0.2)),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
@@ -218,7 +213,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                                   size: width * 5,
                                 ),
                                 SizedBox(
-                                  width: width * 30.5,
+                                  width: width * 34.5,
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: AutoSizeText(
@@ -236,7 +231,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                           )),
                     ),
                     SizedBox(
-                      width: width * 44,
+                      width: width * 48,
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
@@ -247,8 +242,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             );
                           },
                           style: ButtonStyle(
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.grey.withOpacity(0.2)),
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.grey.withOpacity(0.2)),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
@@ -273,7 +268,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                                   size: width * 4.5,
                                 ),
                                 SizedBox(
-                                  width: width * 30.5,
+                                  width: width * 34.5,
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: AutoSizeText(
@@ -291,7 +286,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                           )),
                     ),
                     SizedBox(
-                      width: width * 44,
+                      width: width * 48,
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
@@ -302,8 +297,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             );
                           },
                           style: ButtonStyle(
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.grey.withOpacity(0.2)),
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.grey.withOpacity(0.2)),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
@@ -328,7 +323,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                                   size: width * 7,
                                 ),
                                 SizedBox(
-                                  width: width * 30.5,
+                                  width: width * 34.5,
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: AutoSizeText(
@@ -346,7 +341,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                           )),
                     ),
                     SizedBox(
-                      width: width * 44,
+                      width: width * 48,
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
@@ -357,8 +352,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             );
                           },
                           style: ButtonStyle(
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.grey.withOpacity(0.2)),
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.grey.withOpacity(0.2)),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
@@ -383,7 +378,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                                   size: width * 5.5,
                                 ),
                                 SizedBox(
-                                  width: width * 30.5,
+                                  width: width * 34.5,
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: AutoSizeText(
@@ -401,16 +396,16 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                           )),
                     ),
                     SizedBox(
-                      width: width * 44,
+                      width: width * 48,
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
-                                SystemChannels.platform
+                            SystemChannels.platform
                                 .invokeMethod('SystemNavigator.pop');
                           },
                           style: ButtonStyle(
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.grey.withOpacity(0.2)),
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.grey.withOpacity(0.2)),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
@@ -437,7 +432,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                                       color: green,
                                     )),
                                 SizedBox(
-                                  width: width * 30.5,
+                                  width: width * 34.5,
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: AutoSizeText(
@@ -478,8 +473,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
             contentPadding: EdgeInsets.only(
                 top: height * 5,
                 bottom: height * 5,
-                left: width * 10,
-                right: width * 10),
+                left: width * 15,
+                right: width * 15),
             insetPadding: EdgeInsets.all(0),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -508,7 +503,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                         width: width * 10,
                       ),
                       SizedBox(
-                        width: width * 60,
+                        width: width * 50,
                         child: AutoSizeText("İnternet Yok",
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -532,9 +527,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             size: height * 5,
                           ),
                           onPressed: () {
-                            setState(() {
                               Navigator.pop(context);
-                            });
                           },
                           padding: EdgeInsets.all(0),
                         ),
@@ -542,76 +535,82 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                     ],
                   ),
                 ),
-
                 Container(
-                  padding:
-                  EdgeInsets.only(bottom: height * 4, top: height * 4),
+                  padding: EdgeInsets.only(bottom: height, top: height, left: width * 2, right: width * 2),
                   height: height * 35,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(width * 3), bottomRight: Radius.circular(width * 3)),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(width * 3),
+                        bottomRight: Radius.circular(width * 3)),
                     color: lightGreen,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-
-                      Text(
-                          "İnternete bağlı değilsiniz. Antrenman modunu çevrimdışı oynayabilirsiniz.",
-                          style: TextStyle(
-                              fontSize: height * 3.64, color: Colors.black),
-                          textAlign: TextAlign.center),
-                  SizedBox(
-                            width: width * 44,
-                            height: height * 7,
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  Get.to(() => TrainingPage(
-                                  ));
-                                },
-                                style: ButtonStyle(
-                                  overlayColor:
-                                  MaterialStateProperty.all(Colors.grey.withOpacity(0.2)),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(width * 5),
+                      SizedBox(
+                        height: height * 6,
+                      ),
+                      SizedBox(
+                        height: height * 21,
+                        child: Text(
+                            "İnternete bağlı değilsiniz. Antrenman modunu çevrimdışı oynayabilirsiniz.",
+                            style: TextStyle(
+                                fontSize: height * 3, color: Colors.black),
+                            textAlign: TextAlign.center),
+                      ),
+                      SizedBox(
+                        width: width * 44,
+                        height: height * 6,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Get.to(() => TrainingPage());
+                            },
+                            style: ButtonStyle(
+                              overlayColor: MaterialStateProperty.all(
+                                  Colors.grey.withOpacity(0.2)),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(width * 5),
+                                  ),
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.all(white),
+                              padding: MaterialStateProperty.all(
+                                EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 0),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(left: width * 3),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Icon(
+                                    Icons.directions_run_rounded,
+                                    color: green,
+                                    size: width * 5,
+                                  ),
+                                  SizedBox(
+                                    width: width * 30.5,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: AutoSizeText(
+                                        "Antrenman Modu",
+                                        style: TextStyle(
+                                            fontSize: height * 3.64,
+                                            color: green),
+                                        maxLines: 1,
+                                        group: textSizeGroup,
                                       ),
                                     ),
                                   ),
-                                  backgroundColor: MaterialStateProperty.all(white),
-                                  padding: MaterialStateProperty.all(
-                                    EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: width * 3),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Icon(
-                                        Icons.directions_run_rounded,
-                                        color: green,
-                                        size: width * 5,
-                                      ),
-                                      SizedBox(
-                                        width: width * 30.5,
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: AutoSizeText(
-                                            "Antrenman Modu",
-                                            style: TextStyle(
-                                                fontSize: height * 3.64,
-                                                color: green),
-                                            maxLines: 1,
-                                            group: textSizeGroup,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                          ),
+                                ],
+                              ),
+                            )),
+                      ),
                     ],
                   ),
                 ),
@@ -628,8 +627,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     if (!isConnected) {
       return;
     } else {
-
-   /*   if (FirebaseAuth.instance.currentUser == null) {
+      /*   if (FirebaseAuth.instance.currentUser == null) {
         await FirebaseAuth.instance.signInAnonymously();
       }
       database = FirebaseDatabase.instance;
@@ -637,6 +635,4 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     }
     return;
   }
-
-
 }

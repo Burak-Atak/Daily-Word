@@ -1,10 +1,8 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:first_project/homePage/shadow.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:first_project/main.dart';
 import 'package:flutter/material.dart';
+import '../register.dart';
 import 'flipCardWidget.dart';
-import 'dart:math' as math;
-
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,7 +11,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-
+  @override
+  void initState() {
+    super.initState();
+    database = FirebaseDatabase.instance;
+    userName = prefs.getString("userName");
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (userName == null) {
+        await _registerScreen();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,22 +32,31 @@ class _HomePageState extends State<HomePage> {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Image(
-              image: AssetImage('assets/images/ezgif-3-c189523e62.gif'),
+              image: AssetImage('assets/images/homeBackGround.gif'),
               alignment: Alignment.center,
               fit: BoxFit.fill,
             ),
           ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-
-                FlipCardWidget(),
-              ],
+          if (userName != null)
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  FlipCardWidget(),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
+  }
+
+  Future<void> _registerScreen() async {
+    await showDialog(
+        barrierColor: Colors.transparent,
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => AddPlayer());
+    return;
   }
 }

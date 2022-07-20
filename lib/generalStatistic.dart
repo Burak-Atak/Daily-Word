@@ -1,8 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'containerForBadConnection.dart';
 import 'design.dart';
 import 'main.dart';
 
@@ -36,9 +38,12 @@ class _GeneralStatisticState extends State<GeneralStatistic>
   @override
   Widget build(BuildContext context) {
     Future<Map?> getSeries() async {
-      await database.ref('series/${userName}').get().then((snapshot) {
+      await database.ref('series/${userName}').get().timeout(Duration(seconds: 5),
+          onTimeout: (() {
+            throw Exception("series is null");
+          })).then((snapshot) {
         if (snapshot.value == null) {
-          return;
+          return null;
         }
         series = snapshot.value as Map;
         return;
@@ -47,9 +52,12 @@ class _GeneralStatisticState extends State<GeneralStatistic>
     }
 
     Future<Map?> getGeneralStatistic() async {
-      await database.ref('users/${userName}').get().then((snapshot) {
+      await database.ref('users/${userName}').get().timeout(Duration(seconds: 5),
+          onTimeout: (() {
+            throw Exception("generalStatistic is null");
+          })).then((snapshot) {
         if (snapshot.value == null) {
-          return;
+          return null;
         }
 
         generalStatistic = snapshot.value as Map;
@@ -60,9 +68,12 @@ class _GeneralStatisticState extends State<GeneralStatistic>
     }
 
     Future<Map?> getWhichWord() async {
-      await database.ref('whichWord/${userName}').get().then((snapshot) {
+      await database.ref('whichWord/${userName}').get().timeout(Duration(seconds: 5),
+          onTimeout: (() {
+            throw Exception("whichWord is null");
+          })).then((snapshot) {
         if (snapshot.value == null) {
-          return;
+          return null;
         }
 
         whichWord = snapshot.value as Map;
@@ -81,15 +92,27 @@ class _GeneralStatisticState extends State<GeneralStatistic>
           getWhichWord(),
         ]),
         builder: (BuildContext context, AsyncSnapshot<List<Map?>> snapshot) {
-          late Widget child;
-          if (snapshot.hasData) {
-            child = mainStatisticPage();
-          } else {
-            child = Center(
-              child: CircularProgressIndicator(),
-            );
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return LoadingAnimationWidget.inkDrop(
+                color: green,
+                size: height * 5,
+              );
+            case ConnectionState.active:
+
+              return LoadingAnimationWidget.inkDrop(
+                color: green,
+                size: height * 5,
+              );
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return BadConnection();
+              } else {
+                return mainStatisticPage();
+              }
+            case ConnectionState.none:
+            return BadConnection();
           }
-          return child;
         },
       ),
     );
