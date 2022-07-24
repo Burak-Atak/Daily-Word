@@ -48,218 +48,224 @@ class _HowToPlayState extends State<HowToPlay>
                 borderRadius: BorderRadius.all(Radius.circular(0))),
             backgroundColor: Colors.transparent,
             insetPadding: EdgeInsets.all(0),
-contentPadding: EdgeInsets.only(
+            contentPadding: EdgeInsets.only(
                 top: height * 5,
                 bottom: height * 5,
                 left: width * 10,
                 right: width * 10),
-            content: Column(mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.max , children: [
-              SizedBox(
-                height: height * 2,
-              ),
-              Container(
-                height: height * 8,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: white.withOpacity(0.3),
-                      blurRadius: 25,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                  color: green,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(width * 3),
-                    topRight: Radius.circular(width * 3),
+            content: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(
+                    height: height * 2,
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: width * 10,
-                    ),
-                    SizedBox(
-                      width: width * 60,
-                      child: AutoSizeText("Nasıl Oynanır?",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: colorBlack,
-                              fontSize: height * 4,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                    SizedBox(
-                      width: width * 10,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.cancel_rounded,
-                          shadows: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              blurRadius: 25,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                          color: white,
-                          size: height * 5,
+                  Container(
+                    height: height * 8,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: white.withOpacity(0.3),
+                          blurRadius: 25,
+                          spreadRadius: 1,
                         ),
-                        onPressed: () {
-                          setState(() {
-                            Navigator.pop(context);
-                          });
-                        },
-                        padding: EdgeInsets.all(0),
+                      ],
+                      color: green,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(width * 3),
+                        topRight: Radius.circular(width * 3),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                  padding: EdgeInsets.all(width * 3),
-                  width: width * 100,
-                  height: height * 90,
-                  decoration: BoxDecoration(
-                    color: lightGreen,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.zero,
-                      topRight: Radius.zero,
-                      bottomLeft: Radius.circular(width * 3),
-                      bottomRight: Radius.circular(width * 3),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: white.withOpacity(0.3),
-                        blurRadius: 25,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      AutoSizeText(
-                        "24 saatte bir yenilenen günün kelimesini 6 denemede bul.\n",
-                        style: style,
-                      ),
-                      AutoSizeText(
-                        "Kutucukların renkleri, günün kelimesini bulman için ipucu verir.",
-                        style: style,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: width * 3, top: width * 3),
-                        child: Divider(
-                          color: Color(0xff21821e),
-                          thickness: 0.5,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: width * 10,
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: AutoSizeText(
-                          "Örnekler\n",
-                          style: TextStyle(
-                              color: colorBlack,
-                              fontSize: height * 3,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: width * 3,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ...createLittleSquares(0, 0),
-                          ],
-                        ),
-                      ),
-                      AutoSizeText.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "A",
+                        SizedBox(
+                          width: width * 60,
+                          child: AutoSizeText("Nasıl Oynanır?",
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: colorBlack,
-                                  fontSize: height * 3,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: " harfi günün kelimesinde var ve doğru yerde.\n",
-                              style: TextStyle(
-                                color: colorBlack,
-                                fontSize: height * 3,
-                              ),
-                            ),
-                          ],
+                                  fontSize: height * 4,
+                                  fontWeight: FontWeight.bold)),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: width * 3,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ...createLittleSquares(1, 2),
-                          ],
-                        ),
-                      ),
-                      AutoSizeText.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "L",
-                              style: TextStyle(
-                                  color: colorBlack,
-                                  fontSize: height * 3,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: " harfi günün kelimesinde var fakat yanlış yerde.\n",
-                              style: TextStyle(
-                                color: colorBlack,
-                                fontSize: height * 3,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: width * 3,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ...createLittleSquares(2, 4),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: AutoSizeText.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "Ş",
-                                style: TextStyle(
-                                    color: colorBlack,
-                                    fontSize: height * 3,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(
-                                text: " harfi günün kelimesinde yok.",
-                                style: TextStyle(
-                                  color: colorBlack,
-                                  fontSize: height * 3,
+                        SizedBox(
+                          width: width * 10,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.cancel_rounded,
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  blurRadius: 25,
+                                  spreadRadius: 1,
                                 ),
-                              ),
-                            ],
+                              ],
+                              color: white,
+                              size: height * 5,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                Navigator.pop(context);
+                              });
+                            },
+                            padding: EdgeInsets.all(0),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                      padding: EdgeInsets.all(width * 3),
+                      width: width * 100,
+                      height: height * 90,
+                      decoration: BoxDecoration(
+                        color: lightGreen,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.zero,
+                          topRight: Radius.zero,
+                          bottomLeft: Radius.circular(width * 3),
+                          bottomRight: Radius.circular(width * 3),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: white.withOpacity(0.3),
+                            blurRadius: 25,
+                            spreadRadius: 1,
+                          ),
+                        ],
                       ),
-                    ],
-                  ))
-            ])),
+                      child: Column(
+                        children: [
+                          AutoSizeText(
+                            "24 saatte bir yenilenen günün kelimesini 6 denemede bul.\n",
+                            style: style,
+                          ),
+                          AutoSizeText(
+                            "Kutucukların renkleri, günün kelimesini bulman için ipucu verir.",
+                            style: style,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                bottom: width * 3, top: width * 3),
+                            child: Divider(
+                              color: Color(0xff21821e),
+                              thickness: 0.5,
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: AutoSizeText(
+                              "Örnekler\n",
+                              style: TextStyle(
+                                  color: colorBlack,
+                                  fontSize: height * 3,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              bottom: width * 3,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ...createLittleSquares(0, 0),
+                              ],
+                            ),
+                          ),
+                          AutoSizeText.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "A",
+                                  style: TextStyle(
+                                      color: colorBlack,
+                                      fontSize: height * 3,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                  text:
+                                      " harfi günün kelimesinde var ve doğru yerde.\n",
+                                  style: TextStyle(
+                                    color: colorBlack,
+                                    fontSize: height * 3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              bottom: width * 3,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ...createLittleSquares(1, 2),
+                              ],
+                            ),
+                          ),
+                          AutoSizeText.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "L",
+                                  style: TextStyle(
+                                      color: colorBlack,
+                                      fontSize: height * 3,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                  text:
+                                      " harfi günün kelimesinde var fakat yanlış yerde.\n",
+                                  style: TextStyle(
+                                    color: colorBlack,
+                                    fontSize: height * 3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              bottom: width * 3,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ...createLittleSquares(2, 4),
+                              ],
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: AutoSizeText.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Ş",
+                                    style: TextStyle(
+                                        color: colorBlack,
+                                        fontSize: height * 3,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(
+                                    text: " harfi günün kelimesinde yok.",
+                                    style: TextStyle(
+                                      color: colorBlack,
+                                      fontSize: height * 3,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ))
+                ])),
       ),
     );
   }

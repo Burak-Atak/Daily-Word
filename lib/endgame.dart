@@ -440,13 +440,18 @@ class _EndGamePageState extends State<EndGame>
                     ),
                   ),
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Sonraki kelimeye kalan süre\n",
-                        style: TextStyle(
-                            color: colorBlack,
-                            fontSize: height * 2.5,
-                            fontWeight: FontWeight.bold),
+                      SizedBox(
+                        height: height * 4,
+                        child: AutoSizeText(
+                          "Sonraki kelimeye kalan süre\n",
+                          style: TextStyle(
+                              color: colorBlack,
+                              fontSize: height * 2.5,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.end,
+                        ),
                       ),
                       CountdownTimerDemo(
                         remainingTime: remainingTime,

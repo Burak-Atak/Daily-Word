@@ -114,8 +114,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       padding: EdgeInsets.only(bottom: height * 3),
                       child: AutoSizeText(
                         userName == null
-                            ? "Hoş geldin"
-                            : "Hoş geldin, $userName",
+                            ? "Merhaba"
+                            : "Merhaba, $userName",
                         style: TextStyle(
                           fontSize: height * 3.5,
                           fontWeight: FontWeight.bold,

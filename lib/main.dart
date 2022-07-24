@@ -15,7 +15,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/timeIsUpAlert.dart';
 import 'package:first_project/training_mode/trainingHomePage.dart';
 import 'package:first_project/training_mode/training_controller.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:first_project/new_deneme.dart';
@@ -97,9 +96,8 @@ Future<void> main() async {
     prefs = await SharedPreferences.getInstance();
 
     // The following lines are the same as previously explained in "Handling uncaught errors"
-    var crashlytics = FirebaseCrashlytics.instance;
-    crashlytics.setCrashlyticsCollectionEnabled(!kDebugMode);
-    FlutterError.onError = crashlytics.recordFlutterFatalError;
+
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     await Future.delayed(Duration(seconds: 1), () {
@@ -132,7 +130,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: MaterialColor(0xFF6aaa64, materialColor),
         ),
         title: title,
-        home: Builder(
+        home:  Builder(
           builder: (BuildContext context) {
             mainController = Get.put(MainController());
 
@@ -741,7 +739,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<bool> enterButtonFunc() async {
-    prefs.setString("userName", "WWWWWWWWWWWW");
 
     if (isGameEnd == null &&
         isAnimationCompleted &&
