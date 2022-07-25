@@ -36,6 +36,7 @@
 # Web related
 lib/generated_plugin_registrant.dart
 lib/firebase_options.dart
+lib/ad_helper.dart
 
 # Symbolication related
 app.*.symbols
@@ -48,6 +49,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/src/main/AndroidManifest.xml
 
 # Created by https://www.toptal.com/developers/gitignore/api/flutter
 # Edit at https://www.toptal.com/developers/gitignore?templates=flutter

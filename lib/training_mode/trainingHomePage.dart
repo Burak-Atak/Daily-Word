@@ -7,15 +7,16 @@ import 'package:first_project/training_mode/training_controller.dart';
 import 'package:first_project/training_mode/training_endgame.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:math';
 import 'package:turkish/turkish.dart';
 import 'package:confetti/confetti.dart';
+import '../ad_helper.dart';
 import '../design.dart';
 import 'package:get/get.dart';
 import '../main.dart';
-
 
 String wordOfDayTraining = "-----";
 bool trainingIsBack = false;
@@ -42,7 +43,6 @@ int trainingChosenLetter = 0;
 List<String> trainingUserWords = [];
 
 class TrainingPage extends StatefulWidget {
-
   @override
   State<TrainingPage> createState() => _TrainingPageState();
 }
@@ -75,11 +75,29 @@ class _TrainingPageState extends State<TrainingPage>
         _afterBuild();
       }
     });
+
+    _initGoogleMobileAds();
+
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize(width: (width * 100).round(), height: (height * 9).round()),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
   }
 
   /// Her bir kutucuğun stringini tanımlıyoruz
   List<List<RxString>> textBoxes = trainingController.textBoxes;
-
 
   /// Kutucukların animasyonunu kontrol eden keylerin bulundugu liste
   List flipKeys = trainingController.flipKeys;
@@ -95,6 +113,19 @@ class _TrainingPageState extends State<TrainingPage>
   ConfettiController trainingConfettiController = ConfettiController();
 
   late var winController;
+
+  BannerAd? _bannerAd;
+
+  Future<InitializationStatus> _initGoogleMobileAds() {
+    return MobileAds.instance.initialize();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,59 +198,76 @@ class _TrainingPageState extends State<TrainingPage>
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: height * 5),
-              child: Stack(children: [
-                createMainSquare(),
-                Align(
-                  child: Obx(
-                    () => AnimatedOpacity(
-                      // If the widget is visible, animate to 0.0 (invisible).
-                      // If the widget is hidden, animate to 1.0 (fully visible).
-                      opacity: isWordExist.value ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 500),
-                      // The green box must be a child of the AnimatedOpacity widget.
-                      child: Padding(
-                        padding: EdgeInsets.only(top: height * 25),
-                        child: Container(
-                          width: width * 60,
-                          height: height * 8,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: AutoSizeText(
-                            'Kelime listesinde yok.',
-                            maxLines: 1,
-                            style: TextStyle(
-                                fontSize: height * 3.64, color: Colors.white),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (_bannerAd != null)
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        width: _bannerAd!.size.width.toDouble(),
+                        height: _bannerAd!.size.height.toDouble(),
+                        child: AdWidget(ad: _bannerAd!),
+                      ),
+                    )
+                  else
+                    SizedBox(
+                      height: (height * 9).roundToDouble(),
+                    ),
+                  Stack(children: [
+                    createMainSquare(),
+                    Align(
+                      child: Obx(
+                        () => AnimatedOpacity(
+                          // If the widget is visible, animate to 0.0 (invisible).
+                          // If the widget is hidden, animate to 1.0 (fully visible).
+                          opacity: isWordExist.value ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 500),
+                          // The green box must be a child of the AnimatedOpacity widget.
+                          child: Padding(
+                            padding: EdgeInsets.only(top: height * 25),
+                            child: Container(
+                              width: width * 60,
+                              height: height * 8,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: AutoSizeText(
+                                'Kelime listesinde yok.',
+                                maxLines: 1,
+                                style: TextStyle(
+                                    fontSize: height * 3.64, color: Colors.white),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Align(
-                  child: Obx(
-                    () => Lottie.asset(
-                      'assets/win.json',
-                      height: height * 50,
-                      width: width * 75.67,
-                      controller: winController.value,
-                      repeat: false,
+                    Align(
+                      child: Obx(
+                        () => Lottie.asset(
+                          'assets/win.json',
+                          height: height * 50,
+                          width: width * 75.67,
+                          controller: winController.value,
+                          repeat: false,
+                        ),
+                      ),
+                    ),
+                  ]),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: height * 1.2),
+                    child: Column(
+                      children: [
+                        firstRow(),
+                        secondRow(),
+                        thirdRow(),
+                      ],
                     ),
                   ),
-                ),
-              ]),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: height * 1.2, top: height * 2.7),
-              child: Column(
-                children: [
-                  firstRow(),
-                  secondRow(),
-                  thirdRow(),
                 ],
               ),
             ),
@@ -510,9 +558,12 @@ class _TrainingPageState extends State<TrainingPage>
 
   /// Delete butonu için fonksiyon
   void deleteButtonFunc() {
-    if (trainingChosenLetter != 0 && trainingIsGameEnd == null && isAnimationCompleted) {
+    if (trainingChosenLetter != 0 &&
+        trainingIsGameEnd == null &&
+        isAnimationCompleted) {
       trainingChosenLetter -= 1;
-      trainingController.setLetter(trainingChosenWord, trainingChosenLetter, "");
+      trainingController.setLetter(
+          trainingChosenWord, trainingChosenLetter, "");
     }
   }
 
@@ -559,7 +610,8 @@ class _TrainingPageState extends State<TrainingPage>
         await choseButtonsColor();
         if (wordOfUser == wordOfDayTraining) {
           _gameEnd(true);
-        } else if ((wordOfUser != wordOfDayTraining) && (trainingChosenWord == 5)) {
+        } else if ((wordOfUser != wordOfDayTraining) &&
+            (trainingChosenWord == 5)) {
           _gameEnd(false);
         } else {
           trainingChosenLetter = 0;
@@ -580,8 +632,8 @@ class _TrainingPageState extends State<TrainingPage>
         trainingIsGameEnd == null &&
         isAnimationCompleted &&
         isFirstBuildCompleted) {
-      trainingController.setLetter(
-          trainingChosenWord, trainingChosenLetter, rowLettersMap.keys.toList()[i]);
+      trainingController.setLetter(trainingChosenWord, trainingChosenLetter,
+          rowLettersMap.keys.toList()[i]);
       trainingChosenLetter += 1;
     }
   }
@@ -590,8 +642,11 @@ class _TrainingPageState extends State<TrainingPage>
   Future<void> choseSquaresColor() async {
     for (int i = 0; i < 5; i++) {
       if (i == 0) {
-        trainingNewChosenWordColors = {for (int i = 0; i < 5; i++) wordOfDayTraining[i]: 0};
-        List<RxString> setUserWord = {...textBoxes[trainingSquareRowCount]}.toList();
+        trainingNewChosenWordColors = {
+          for (int i = 0; i < 5; i++) wordOfDayTraining[i]: 0
+        };
+        List<RxString> setUserWord =
+            {...textBoxes[trainingSquareRowCount]}.toList();
         trainingMapOfSetUserWord = {
           for (int i = 0; i < setUserWord.length; i++)
             turkish.toLowerCase(setUserWord[i].value): false
@@ -599,7 +654,8 @@ class _TrainingPageState extends State<TrainingPage>
       }
       String chosenLetter =
           turkish.toLowerCase(textBoxes[trainingSquareRowCount][i].value);
-      String wordOfUser = turkish.toLowerCase(textBoxes[trainingSquareRowCount].join());
+      String wordOfUser =
+          turkish.toLowerCase(textBoxes[trainingSquareRowCount].join());
 
       if (chosenLetter == wordOfDayTraining[i]) {
         trainingNewChosenWordColors![chosenLetter] =
@@ -610,18 +666,23 @@ class _TrainingPageState extends State<TrainingPage>
             trainingNewChosenWordColors![chosenLetter]! + 1;
         trainingController.setColorForSquare(trainingSquareRowCount, i, yellow);
       } else {
-        trainingController.setColorForSquare(trainingSquareRowCount, i, Colors.black54);
+        trainingController.setColorForSquare(
+            trainingSquareRowCount, i, Colors.black54);
       }
     }
   }
 
   Future<void> choseButtonsColor() async {
-    trainingNewChosenWordColors = {for (int i = 0; i < 5; i++) wordOfDayTraining[i]: 0};
+    trainingNewChosenWordColors = {
+      for (int i = 0; i < 5; i++) wordOfDayTraining[i]: 0
+    };
 
-    String wordOfUser = turkish.toLowerCase(textBoxes[trainingChosenWord].join());
+    String wordOfUser =
+        turkish.toLowerCase(textBoxes[trainingChosenWord].join());
 
     for (int i = 0; i < 5; i++) {
-      String chosenLetter = turkish.toLowerCase(textBoxes[trainingChosenWord][i].value);
+      String chosenLetter =
+          turkish.toLowerCase(textBoxes[trainingChosenWord][i].value);
       String upperChosenLetter = turkish.toUpperCase(chosenLetter);
 
       if (rowLettersMap[upperChosenLetter] != green) {
@@ -692,8 +753,6 @@ class _TrainingPageState extends State<TrainingPage>
   }
 
   Future<void> _afterBuild() async {
-
-
     String? lastWordInLocal = prefs.getString('trainingLastWordInLocal');
     if (startNewTrainingGame || lastWordInLocal == null) {
       wordOfDayTraining = trainingWords[Random().nextInt(trainingWords.length)];
@@ -756,10 +815,12 @@ class _TrainingPageState extends State<TrainingPage>
   // TODO: DEĞİŞTİR
   void _goEndPage() async {
     await showDialog(
-            barrierColor: Colors.black.withOpacity(0.5), context: context, builder: (context) => EndGame());
+        barrierColor: Colors.black.withOpacity(0.5),
+        context: context,
+        builder: (context) => EndGame());
 
     if (startNewTrainingGame) {
-    _startNewGame();
+      _startNewGame();
     }
   }
 
@@ -780,8 +841,6 @@ class _TrainingPageState extends State<TrainingPage>
     }
   }
 
-
-
   Future<void> _controlWinAnimation() async {
     isAnimationCompleted = false;
     await trainingController.controlWinAnimation();
@@ -801,8 +860,9 @@ class _TrainingPageState extends State<TrainingPage>
     trainingUserWords = [];
     trainingIsGameEnd = null;
     trainingIsFirstBuild = true;
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-        HomePage()), (Route<dynamic> route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => HomePage()),
+        (Route<dynamic> route) => false);
     Get.to(() => TrainingPage());
   }
 }

@@ -21,6 +21,7 @@ import 'package:first_project/new_deneme.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
@@ -30,6 +31,7 @@ import 'package:tap_debouncer/tap_debouncer.dart';
 import 'package:turkish/turkish.dart';
 import 'package:confetti/confetti.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'ad_helper.dart';
 import 'design.dart';
 import 'firebase_options.dart';
 import 'generalStatistic.dart';
@@ -182,6 +184,8 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
+    _initGoogleMobileAds();
+    _loadInterstitialAd();
 
     mainController.initAnimationController();
     winController = mainController.winController;
@@ -205,6 +209,47 @@ class _MyHomePageState extends State<MyHomePage>
         _afterBuild();
       }
     });
+
+
+
+   BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize(width: (width * 100).round(), height:( height * 9).round()),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+
+  InterstitialAd? _interstitialAd;
+
+  Future<void> _loadInterstitialAd() async {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) async {
+            },
+          );
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (err) {
+        },
+      ),
+    );
+
+    return;
   }
 
   /// Her bir kutucuğun stringini tanımlıyoruz
@@ -223,6 +268,21 @@ class _MyHomePageState extends State<MyHomePage>
   late Map<String, bool> mapOfSetUserWord;
   ConfettiController confettiController = ConfettiController();
   late var winController;
+
+  BannerAd? _bannerAd;
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
+
+    super.dispose();
+  }
+
+  Future<InitializationStatus> _initGoogleMobileAds() {
+    return MobileAds.instance.initialize();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -331,16 +391,20 @@ class _MyHomePageState extends State<MyHomePage>
                       children: [
                         Padding(
                           padding:
-                              EdgeInsets.only(left: width * 2, right: width),
+                          EdgeInsets.only(left: width * 2, right: width),
                           child: InkWell(
                             onTap: () {
                               if (isAnimationCompleted &&
                                   isFirstBuildCompleted) {
+                                try {
+                                  _interstitialAd?.show();
+                                } catch (e) {
+                                }
                                 showDialog(
                                   barrierColor: Colors.black.withOpacity(0.5),
                                   context: context,
                                   builder: (context) =>
-                                      const GeneralStatistic(),
+                                  const GeneralStatistic(),
                                 );
                               }
                             },
@@ -359,6 +423,10 @@ class _MyHomePageState extends State<MyHomePage>
                         InkWell(
                           onTap: () {
                             if (isAnimationCompleted && isFirstBuildCompleted) {
+                              try {
+                                _interstitialAd?.show();
+                              } catch (e) {
+                              }
                               showDialog(
                                 barrierColor: Colors.black.withOpacity(0.5),
                                 context: context,
@@ -387,56 +455,79 @@ class _MyHomePageState extends State<MyHomePage>
                 ],
               ),
             ),
-            Stack(children: [
-              createMainSquare(),
-              Align(
-                child: Obx(
-                  () => AnimatedOpacity(
-                    // If the widget is visible, animate to 0.0 (invisible).
-                    // If the widget is hidden, animate to 1.0 (fully visible).
-                    opacity: isWordExist.value ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    // The green box must be a child of the AnimatedOpacity widget.
-                    child: Padding(
-                      padding: EdgeInsets.only(top: height * 25),
+
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (_bannerAd != null)
+                    Align(
+                      alignment: Alignment.topCenter,
                       child: Container(
-                        width: width * 60,
-                        height: height * 8,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: AutoSizeText(
-                          'Kelime listesinde yok.',
-                          maxLines: 1,
-                          style: TextStyle(
-                              fontSize: height * 3.64, color: Colors.white),
+                        width: _bannerAd!.size.width.toDouble(),
+                        height: _bannerAd!.size.height.toDouble(),
+                        child: AdWidget(ad: _bannerAd!),
+                      ),
+                    )
+                else
+                    SizedBox(
+                      height: (height * 9).round().toDouble(),
+                    ),
+                  Stack(children: [
+
+
+                    createMainSquare(),
+                    Align(
+                      child: Obx(
+                        () => AnimatedOpacity(
+                          // If the widget is visible, animate to 0.0 (invisible).
+                          // If the widget is hidden, animate to 1.0 (fully visible).
+                          opacity: isWordExist.value ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 500),
+                          // The green box must be a child of the AnimatedOpacity widget.
+                          child: Padding(
+                            padding: EdgeInsets.only(top: height * 25),
+                            child: Container(
+                              width: width * 60,
+                              height: height * 8,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: AutoSizeText(
+                                'Kelime listesinde yok.',
+                                maxLines: 1,
+                                style: TextStyle(
+                                    fontSize: height * 3.64, color: Colors.white),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
+                    Align(
+                      child: Obx(
+                        () => Lottie.asset(
+                          'assets/win.json',
+                          height: height * 50,
+                          width: width * 75.67,
+                          controller: winController.value,
+                          repeat: false,
+                        ),
+                      ),
+                    ),
+                  ]),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: height * 1.2),
+                    child: Column(
+                      children: [
+                        firstRow(),
+                        secondRow(),
+                        thirdRow(),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              Align(
-                child: Obx(
-                  () => Lottie.asset(
-                    'assets/win.json',
-                    height: height * 50,
-                    width: width * 75.67,
-                    controller: winController.value,
-                    repeat: false,
-                  ),
-                ),
-              ),
-            ]),
-            Padding(
-              padding: EdgeInsets.only(bottom: height * 1.2),
-              child: Column(
-                children: [
-                  firstRow(),
-                  secondRow(),
-                  thirdRow(),
                 ],
               ),
             ),

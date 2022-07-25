@@ -4,8 +4,10 @@ import 'package:first_project/dictAlertDialog.dart';
 import 'package:first_project/homePage/homePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:turkish/turkish.dart';
 
+import '../ad_helper.dart';
 import '../design.dart';
 import '../main.dart';
 import '../my_flutter_app_icons.dart';
@@ -30,6 +32,7 @@ class _EndGamePageState extends State<EndGame>
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     final quick = const Duration(milliseconds: 200);
     final scaleTween = Tween(begin: 1.0, end: 0.8);
     controller = AnimationController(duration: quick, vsync: this);
@@ -50,8 +53,31 @@ class _EndGamePageState extends State<EndGame>
     });
   }
 
+  InterstitialAd? _interstitialAd;
+
+  Future<void> _loadInterstitialAd() async {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) async {
+            },
+          );
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (err) {
+        },
+      ),
+    );
+
+    return;
+  }
+
   @override
   void dispose() {
+    _interstitialAd?.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -221,6 +247,10 @@ class _EndGamePageState extends State<EndGame>
                           child: ElevatedButton(
                               onPressed: () {
                                 startNewTrainingGame = true;
+                                try {
+                                  _interstitialAd?.show();
+                                } catch (e) {
+                                }
                                 Navigator.pop(context);
                               },
                               style: ButtonStyle(

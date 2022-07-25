@@ -60,6 +60,7 @@ class _DictAlertDialogState extends State<DictAlertDialog> {
                     style: TextStyle(
                         color: white,
                         fontFamily: "DMSans",
+                        fontSize: height * 2.5,
                         fontStyle: FontStyle.italic),
 
                   ),

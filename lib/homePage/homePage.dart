@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:first_project/main.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../ad_helper.dart';
 import '../register.dart';
 import 'flipCardWidget.dart';
 
@@ -10,7 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
@@ -21,34 +22,80 @@ class _HomePageState extends State<HomePage> {
         await _registerScreen();
       }
     });
+
+    _initGoogleMobileAds();
+
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize(width: (width * 100).round(), height:( height * 9).round()),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
   }
+
+  BannerAd? _bannerAd;
+
+
+  Future<InitializationStatus> _initGoogleMobileAds() {
+    return MobileAds.instance.initialize();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Image(
-              image: AssetImage('assets/images/bgForHomeScreen.png'),
-              alignment: Alignment.center,
-              fit: BoxFit.fill,
-            ),
-          ),
-          if (userName != null)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  FlipCardWidget(),
-                ],
+        body: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Image(
+                image: AssetImage('assets/images/bgForHomeScreen.png'),
+                alignment: Alignment.center,
+                fit: BoxFit.fill,
               ),
             ),
-        ],
-      ),
-    );
+            if (userName != null)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FlipCardWidget(),
+                  ],
+                ),
+              ),
+            if (_bannerAd != null)
+              Padding(
+                padding:     EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: _bannerAd!.size.width.toDouble(),
+                    height: _bannerAd!.size.height.toDouble(),
+                    child: AdWidget(ad: _bannerAd!),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
   }
 
   Future<void> _registerScreen() async {

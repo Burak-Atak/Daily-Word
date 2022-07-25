@@ -4,9 +4,11 @@ import 'package:first_project/my_flutter_app_icons.dart';
 import 'package:first_project/scorePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ntp/ntp.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:turkish/turkish.dart';
+import 'ad_helper.dart';
 import 'countDowner.dart';
 import 'design.dart';
 import 'dictAlertDialog.dart';
@@ -32,6 +34,7 @@ class _EndGamePageState extends State<EndGame>
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
 
     final quick = const Duration(milliseconds: 200);
     final scaleTween = Tween(begin: 1.0, end: 0.8);
@@ -53,13 +56,38 @@ class _EndGamePageState extends State<EndGame>
     });
 
     remainingTimeFuture = _checkTime();
+
+  }
+
+  InterstitialAd? _interstitialAd;
+
+  Future<void> _loadInterstitialAd() async {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) async {
+            },
+          );
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (err) {
+        },
+      ),
+    );
+
+    return;
   }
 
   String myTime = timeFormat(totalSeconds, isEndTime: true);
   var textSizeGroup = AutoSizeGroup();
 
+
   @override
   void dispose() {
+    _interstitialAd?.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -229,6 +257,12 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
+
+                                try {
+                                  _interstitialAd?.show();
+                                } catch (e) {
+                                }
+
                                 _goScorePage();
                               },
                               style: ButtonStyle(
@@ -279,7 +313,11 @@ class _EndGamePageState extends State<EndGame>
                           width: width * 44,
                           height: height * 7,
                           child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                try {
+                                  _interstitialAd?.show();
+                                } catch (e) {
+                                }
                                 showDialog(
                                   barrierColor: Colors.black.withOpacity(0.5),
                                   context: context,
@@ -336,6 +374,10 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () async {
+                                try {
+                                  _interstitialAd?.show();
+                                } catch (e) {
+                                }
                                 Share.share(_prepareShareText());
                               },
                               style: ButtonStyle(
@@ -616,6 +658,10 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
+                                try {
+                                  _interstitialAd?.show();
+                                } catch (e) {
+                                }
                                 _goScorePage();
                               },
                               style: ButtonStyle(
@@ -667,6 +713,10 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
+                                try {
+                                  _interstitialAd?.show();
+                                } catch (e) {
+                                }
                                 showDialog(
                                   barrierColor: Colors.black.withOpacity(0.5),
                                   context: context,
@@ -723,6 +773,10 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () async {
+                                try {
+                                  _interstitialAd?.show();
+                                } catch (e) {
+                                }
                                 Share.share(_prepareShareText());
                               },
                               style: ButtonStyle(

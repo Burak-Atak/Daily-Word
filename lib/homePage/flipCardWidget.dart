@@ -4,6 +4,8 @@ import 'package:first_project/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../ad_helper.dart';
 import '../design.dart';
 import '../generalStatistic.dart';
 import '../helper.dart';
@@ -29,6 +31,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     _controllerX =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
           ..addListener(() {
@@ -46,12 +49,36 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     _connectDbAndMakeAuth();
   }
 
+  InterstitialAd? _interstitialAd;
+
+  Future<void> _loadInterstitialAd() async {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) async {
+            },
+          );
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (err) {
+        },
+      ),
+    );
+
+    return;
+  }
+
   @override
   void dispose() {
     _controllerX.dispose();
     _controllerY.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
+
 
   double dragPositionX = 0;
   double dragPositionY = 0;
@@ -236,6 +263,10 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
+                            try {
+                              _interstitialAd?.show();
+                            } catch (e) {
+                            }
                             showDialog(
                               barrierColor: Colors.black.withOpacity(0.5),
                               context: context,
@@ -291,6 +322,10 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
+                            try {
+                              _interstitialAd?.show();
+                            } catch (e) {
+                            }
                             showDialog(
                               barrierColor: Colors.black.withOpacity(0.5),
                               context: context,

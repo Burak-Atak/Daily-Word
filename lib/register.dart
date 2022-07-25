@@ -10,7 +10,6 @@ import 'design.dart';
 import 'helper.dart';
 import 'homePage/homePage.dart';
 import 'howToPlay.dart';
-import 'internetConnectionDialog.dart';
 import 'main.dart';
 
 /// This page used to create new players
@@ -32,26 +31,6 @@ class _AddPlayerPageState extends State<AddPlayer>
   bool _isButtonChildChanged = false;
   bool _isServerError = false;
   bool _showWarningForValidation = false;
-
-/*
-  late final AnimationController _controllerAnimation = AnimationController(
-    duration: const Duration(milliseconds: 500),
-    vsync: this,
-  );
-  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-    begin: Offset.zero,
-    end: const Offset(1.5, 0.0),
-  ).animate(CurvedAnimation(
-    parent: _controllerAnimation,
-    curve: Curves.easeInOut,
-  ));
-
-  @override
-  void dispose() {
-    _controllerAnimation.dispose();
-    super.dispose();
-  }
-*/
 
   @override
   Widget build(BuildContext context) {
