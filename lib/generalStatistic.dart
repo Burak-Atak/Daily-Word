@@ -120,24 +120,87 @@ class _GeneralStatisticState extends State<GeneralStatistic>
 
   Widget mainStatisticPage() {
     var longestBar = whichWord!.values.reduce((value, element) => value > element ? value : element);
-    return SingleChildScrollView(
-      physics: NeverScrollableScrollPhysics(),
-      child: AlertDialog(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(0))),
-          backgroundColor: Colors.transparent,
-          contentPadding: EdgeInsets.only(
-              top: height * 5,
-              bottom: height * 5,
-              left: width * 8,
-              right: width * 8),
-          insetPadding: EdgeInsets.all(0),
-          content: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(
-              height: height * 8,
+    return AlertDialog(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(0))),
+        backgroundColor: Colors.transparent,
+        contentPadding: EdgeInsets.only(
+            top: height * 5,
+            bottom: height * 5,
+            left: width * 8,
+            right: width * 8),
+        insetPadding: EdgeInsets.all(0),
+        content: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(
+            height: height * 8,
+            decoration: BoxDecoration(
+              color: green,
+              boxShadow: [
+                BoxShadow(
+                  color: white.withOpacity(0.3),
+                  blurRadius: 25,
+                  spreadRadius: 1,
+                ),
+              ],
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(width * 3),
+                topRight: Radius.circular(width *3),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: width * 10,
+                ),
+                SizedBox(
+                  width: width * 60,
+                  child: AutoSizeText("İstatistik",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: colorBlack,
+                          fontSize: height * 4,
+                          fontWeight: FontWeight.bold)),
+                ),
+                SizedBox(
+                  width: width * 10,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.cancel_rounded,
+                      shadows: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          blurRadius: 25,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                      color: white,
+                      size: height * 5,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        Navigator.pop(context);
+                      });
+                    },
+                    padding: EdgeInsets.all(0),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+              padding: EdgeInsets.only(top: height, bottom: height, left: width * 2, right: width * 2),
+              width: width * 100,
+              height: height * 90,
               decoration: BoxDecoration(
-                color: green,
+                color: lightGreen,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.zero,
+                  topRight: Radius.zero,
+                  bottomLeft: Radius.circular(width * 3),
+                  bottomRight: Radius.circular(width * 3),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: white.withOpacity(0.3),
@@ -145,326 +208,260 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                     spreadRadius: 1,
                   ),
                 ],
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(width * 3),
-                  topRight: Radius.circular(width *3),
-                ),
               ),
-              child: Row(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    width: width * 10,
-                  ),
-                  SizedBox(
-                    width: width * 60,
-                    child: AutoSizeText("İstatistik",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: colorBlack,
-                            fontSize: height * 4,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                  SizedBox(
-                    width: width * 10,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.cancel_rounded,
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            blurRadius: 25,
-                            spreadRadius: 1,
-                          ),
-                        ],
-                        color: white,
-                        size: height * 5,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          Navigator.pop(context);
-                        });
-                      },
-                      padding: EdgeInsets.all(0),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-                padding: EdgeInsets.only(top: height, bottom: height, left: width * 2, right: width * 2),
-                width: width * 100,
-                height: height * 90,
-                decoration: BoxDecoration(
-                  color: lightGreen,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.zero,
-                    topRight: Radius.zero,
-                    bottomLeft: Radius.circular(width * 3),
-                    bottomRight: Radius.circular(width * 3),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: white.withOpacity(0.3),
-                      blurRadius: 25,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
 
-                    SizedBox(
-                      height: height * 30,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Tahmin Dağılımı",
-                            style:
-                                TextStyle(color: colorBlack, fontSize: height * 3.2),
-                          ),
-                          for (int i = 0; i < 6; i++)
-                            LinearPercentIndicator(
-                              width: whichWord![keys[i]] / (longestBar == 0 ? 1 : longestBar)  *
-                                  width *
-                                  60 +
-                                  width * 10,
-                              animation: true,
-                              animationDuration: 1000,
-                              lineHeight: height * 3.5,
-                              leading: Text(
-                                (i + 1).toString(),
-                                style: TextStyle(
-                                    color: colorBlack, fontSize: height * 3),
-                              ),
-                              percent: 1,
-                              center: Text(
-                                whichWord![keys[i]].toString(),
-                                style: TextStyle(color: white, fontSize: height * 3),
-                                textAlign: TextAlign.center,
-                              ),
-                              progressColor: green,
-                              backgroundColor: Colors.transparent,
-                            ),
-                        ],
-                      ),
-                    ),
-
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  SizedBox(
+                    height: height * 30,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Ortalama Süre",
-                          style: TextStyle(color: colorBlack, fontSize: height * 3),
+                          "Tahmin Dağılımı",
+                          style:
+                              TextStyle(color: colorBlack, fontSize: height * 3.2),
                         ),
-
-                        generalStatistic!["totalGame"] != 0 ?
-                        Text(timeFormat((generalStatistic!["totalSeconds"] /
-                            generalStatistic!["totalGame"])
-                            .round())) : Text(timeFormat(0)),
+                        for (int i = 0; i < 6; i++)
+                          LinearPercentIndicator(
+                            width: whichWord![keys[i]] / (longestBar == 0 ? 1 : longestBar)  *
+                                width *
+                                60 +
+                                width * 10,
+                            animation: true,
+                            animationDuration: 1000,
+                            lineHeight: height * 3.5,
+                            leading: Text(
+                              (i + 1).toString(),
+                              style: TextStyle(
+                                  color: colorBlack, fontSize: height * 3),
+                            ),
+                            percent: 1,
+                            center: Text(
+                              whichWord![keys[i]].toString(),
+                              style: TextStyle(color: white, fontSize: height * 3),
+                              textAlign: TextAlign.center,
+                            ),
+                            progressColor: green,
+                            backgroundColor: Colors.transparent,
+                          ),
                       ],
                     ),
-                    SizedBox(
-                      height: height * 40,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                width: width * 38,
-                                child: CircularPercentIndicator(
-                                  animation: true,
-                                  animationDuration: 1000,
-                                  radius: 25.0,
-                                  lineWidth: 5.0,
-                                  percent: 1,
-                                  header: Padding(
-                                    padding: EdgeInsets.only(bottom: height * 0.5),
-                                    child: AutoSizeText(
-                                      "Oynanan",
-                                      maxLines: 1,
-                                      group: textGroup,
-                                      style: TextStyle(
-                                          color: colorBlack, fontSize: height * 3),
-                                    ),
-                                  ),
-                                  center: new Text(
-                                    generalStatistic!["totalGame"].toString(),
-                                    style: TextStyle(
-                                        color: colorBlack, fontSize: height * 3),
-                                  ),
-                                  backgroundColor: Colors.white.withOpacity(0.9),
-                                  progressColor: green,
-                                  circularStrokeCap: CircularStrokeCap.butt,
-                                ),
-                              ),
-                              SizedBox(
-                                width: width * 38,
-                                child: CircularPercentIndicator(
-                                  animation: true,
-                                  animationDuration: 1000,
-                                  radius: 25.0,
-                                  lineWidth: 5.0,
-                                  percent: generalStatistic!["totalGame"] != 0 ? (generalStatistic!["totalWin"] / generalStatistic!["totalGame"]) : 0
-                                  ,
-                                  header: Padding(
-                                    padding: EdgeInsets.only(bottom: height * 0.5),
-                                    child: AutoSizeText(
-                                      "Kazanılan",
-                                      maxLines: 1,
-                                      group: textGroup,
-                                      style: TextStyle(
-                                          color: colorBlack, fontSize: height * 3),
-                                    ),
-                                  ),
-                                  center: new Text(
-                                    generalStatistic!["totalWin"].toString(),
-                                    style: TextStyle(
-                                        color: colorBlack, fontSize: height * 3),
-                                  ),
-                                  backgroundColor: Colors.white.withOpacity(0.9),
-                                  progressColor: green,
-                                  circularStrokeCap: CircularStrokeCap.butt,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                width: width * 38,
-                                child: CircularPercentIndicator(
-                                  animation: true,
-                                  animationDuration: 1000,
-                                  radius: 25.0,
-                                  lineWidth: 5.0,
-                                  percent: 1,
-                                  header: Padding(
-                                    padding: EdgeInsets.only(bottom: height * 0.5),
-                                    child: AutoSizeText(
-                                      "Seri Rekoru",
-                                      maxLines: 1,
-                                      group: textGroup,
-                                      style: TextStyle(
-                                          color: colorBlack, fontSize: height * 3),
-                                    ),
-                                  ),
-                                  center: new Text(
-                                    series!["seriesRecord"].toString(),
-                                    style: TextStyle(
-                                        color: colorBlack, fontSize: height * 3),
-                                  ),
-                                  backgroundColor: Colors.white.withOpacity(0.9),
-                                  progressColor: green,
-                                  circularStrokeCap: CircularStrokeCap.butt,
-                                ),
-                              ),
+                  ),
 
-                              SizedBox(
-                                width: width * 38,
-                                child: CircularPercentIndicator(
-                                  animation: true,
-                                  animationDuration: 1000,
-                                  radius: 25.0,
-                                  lineWidth: 5.0,
-                                  percent: series!["seriesRecord"] != 0 ? (series!["gameSeries"] /series!["seriesRecord"]) : 0,
-                                  header: Padding(
-                                    padding: EdgeInsets.only(bottom: height * 0.5),
-                                    child: AutoSizeText(
-                                      "Seri",
-                                      maxLines: 1,
-                                      group: textGroup,
-                                      style: TextStyle(
-                                          color: colorBlack, fontSize: height * 3),
-                                    ),
-                                  ),
-                                  center: new Text(
-                                    series!["gameSeries"].toString(),
-                                    style: TextStyle(
-                                        color: colorBlack, fontSize: height * 3),
-                                  ),
-                                  backgroundColor: Colors.white.withOpacity(0.9),
-                                  progressColor: green,
-                                  circularStrokeCap: CircularStrokeCap.butt,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                width: width * 38,
-                                child: CircularPercentIndicator(
-                                  animation: true,
-                                  animationDuration: 1000,
-                                  radius: 25.0,
-                                  lineWidth: 5.0,
-                                  percent: 1,
-                                  header: Padding(
-                                    padding: EdgeInsets.only(bottom: height * 0.5),
-                                    child: AutoSizeText(
-                                      "Galibiyet S. Rekoru",
-                                      maxLines: 1,
-                                      group: textGroup,
-                                      style: TextStyle(
-                                          color: colorBlack, fontSize: height * 3),
-                                    ),
-                                  ),
-                                  center: new Text(
-                                    series!["winSeriesRecord"].toString(),
-                                    style: TextStyle(
-                                        color: colorBlack, fontSize: height * 3),
-                                  ),
-                                  backgroundColor: Colors.white.withOpacity(0.9),
-                                  progressColor: green,
-                                  circularStrokeCap: CircularStrokeCap.butt,
-                                ),
-                              ),
-                              SizedBox(
-                                width: width * 38,
-                                child: CircularPercentIndicator(
-                                  animation: true,
-                                  animationDuration: 1000,
-                                  radius: 25.0,
-                                  lineWidth: 5.0,
-                                  percent: series!["winSeriesRecord"] != 0 ? series!["winSeries"] / series!["winSeriesRecord"] : 0,
-                                  header: Padding(
-                                    padding: EdgeInsets.only(bottom: height * 0.5),
-                                    child: AutoSizeText(
-
-                                      "Galibiyet Serisi",
-                                      maxLines: 1,
-                                      group: textGroup,
-                                      style: TextStyle(
-                                          color: colorBlack, fontSize: height * 3),
-                                    ),
-                                  ),
-                                  center: new Text(
-                                    series!["winSeries"].toString(),
-                                    style: TextStyle(
-                                        color: colorBlack, fontSize: height * 3),
-                                  ),
-                                  backgroundColor: Colors.white.withOpacity(0.9),
-                                  progressColor: green,
-                                  circularStrokeCap: CircularStrokeCap.butt,
-                                ),
-                              ),
-
-                            ],
-                          ),
-                        ],
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Ortalama Süre",
+                        style: TextStyle(color: colorBlack, fontSize: height * 3),
                       ),
-                    ),
 
-                  ],
-                ))
-          ])),
-    );
+                      generalStatistic!["totalGame"] != 0 ?
+                      Text(timeFormat((generalStatistic!["totalSeconds"] /
+                          generalStatistic!["totalGame"])
+                          .round())) : Text(timeFormat(0)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: height * 40,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: width * 38,
+                              child: CircularPercentIndicator(
+                                animation: true,
+                                animationDuration: 1000,
+                                radius: 25.0,
+                                lineWidth: 5.0,
+                                percent: 1,
+                                header: Padding(
+                                  padding: EdgeInsets.only(bottom: height * 0.5),
+                                  child: AutoSizeText(
+                                    "Oynanan",
+                                    maxLines: 1,
+                                    group: textGroup,
+                                    style: TextStyle(
+                                        color: colorBlack, fontSize: height * 3),
+                                  ),
+                                ),
+                                center: new Text(
+                                  generalStatistic!["totalGame"].toString(),
+                                  style: TextStyle(
+                                      color: colorBlack, fontSize: height * 3),
+                                ),
+                                backgroundColor: Colors.white.withOpacity(0.9),
+                                progressColor: green,
+                                circularStrokeCap: CircularStrokeCap.butt,
+                              ),
+                            ),
+                            SizedBox(
+                              width: width * 38,
+                              child: CircularPercentIndicator(
+                                animation: true,
+                                animationDuration: 1000,
+                                radius: 25.0,
+                                lineWidth: 5.0,
+                                percent: generalStatistic!["totalGame"] != 0 ? (generalStatistic!["totalWin"] / generalStatistic!["totalGame"]) : 0
+                                ,
+                                header: Padding(
+                                  padding: EdgeInsets.only(bottom: height * 0.5),
+                                  child: AutoSizeText(
+                                    "Kazanılan",
+                                    maxLines: 1,
+                                    group: textGroup,
+                                    style: TextStyle(
+                                        color: colorBlack, fontSize: height * 3),
+                                  ),
+                                ),
+                                center: new Text(
+                                  generalStatistic!["totalWin"].toString(),
+                                  style: TextStyle(
+                                      color: colorBlack, fontSize: height * 3),
+                                ),
+                                backgroundColor: Colors.white.withOpacity(0.9),
+                                progressColor: green,
+                                circularStrokeCap: CircularStrokeCap.butt,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: width * 38,
+                              child: CircularPercentIndicator(
+                                animation: true,
+                                animationDuration: 1000,
+                                radius: 25.0,
+                                lineWidth: 5.0,
+                                percent: 1,
+                                header: Padding(
+                                  padding: EdgeInsets.only(bottom: height * 0.5),
+                                  child: AutoSizeText(
+                                    "Seri Rekoru",
+                                    maxLines: 1,
+                                    group: textGroup,
+                                    style: TextStyle(
+                                        color: colorBlack, fontSize: height * 3),
+                                  ),
+                                ),
+                                center: new Text(
+                                  series!["seriesRecord"].toString(),
+                                  style: TextStyle(
+                                      color: colorBlack, fontSize: height * 3),
+                                ),
+                                backgroundColor: Colors.white.withOpacity(0.9),
+                                progressColor: green,
+                                circularStrokeCap: CircularStrokeCap.butt,
+                              ),
+                            ),
+
+                            SizedBox(
+                              width: width * 38,
+                              child: CircularPercentIndicator(
+                                animation: true,
+                                animationDuration: 1000,
+                                radius: 25.0,
+                                lineWidth: 5.0,
+                                percent: series!["seriesRecord"] != 0 ? (series!["gameSeries"] /series!["seriesRecord"]) : 0,
+                                header: Padding(
+                                  padding: EdgeInsets.only(bottom: height * 0.5),
+                                  child: AutoSizeText(
+                                    "Seri",
+                                    maxLines: 1,
+                                    group: textGroup,
+                                    style: TextStyle(
+                                        color: colorBlack, fontSize: height * 3),
+                                  ),
+                                ),
+                                center: new Text(
+                                  series!["gameSeries"].toString(),
+                                  style: TextStyle(
+                                      color: colorBlack, fontSize: height * 3),
+                                ),
+                                backgroundColor: Colors.white.withOpacity(0.9),
+                                progressColor: green,
+                                circularStrokeCap: CircularStrokeCap.butt,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: width * 38,
+                              child: CircularPercentIndicator(
+                                animation: true,
+                                animationDuration: 1000,
+                                radius: 25.0,
+                                lineWidth: 5.0,
+                                percent: 1,
+                                header: Padding(
+                                  padding: EdgeInsets.only(bottom: height * 0.5),
+                                  child: AutoSizeText(
+                                    "Galibiyet S. Rekoru",
+                                    maxLines: 1,
+                                    group: textGroup,
+                                    style: TextStyle(
+                                        color: colorBlack, fontSize: height * 3),
+                                  ),
+                                ),
+                                center: new Text(
+                                  series!["winSeriesRecord"].toString(),
+                                  style: TextStyle(
+                                      color: colorBlack, fontSize: height * 3),
+                                ),
+                                backgroundColor: Colors.white.withOpacity(0.9),
+                                progressColor: green,
+                                circularStrokeCap: CircularStrokeCap.butt,
+                              ),
+                            ),
+                            SizedBox(
+                              width: width * 38,
+                              child: CircularPercentIndicator(
+                                animation: true,
+                                animationDuration: 1000,
+                                radius: 25.0,
+                                lineWidth: 5.0,
+                                percent: series!["winSeriesRecord"] != 0 ? series!["winSeries"] / series!["winSeriesRecord"] : 0,
+                                header: Padding(
+                                  padding: EdgeInsets.only(bottom: height * 0.5),
+                                  child: AutoSizeText(
+
+                                    "Galibiyet Serisi",
+                                    maxLines: 1,
+                                    group: textGroup,
+                                    style: TextStyle(
+                                        color: colorBlack, fontSize: height * 3),
+                                  ),
+                                ),
+                                center: new Text(
+                                  series!["winSeries"].toString(),
+                                  style: TextStyle(
+                                      color: colorBlack, fontSize: height * 3),
+                                ),
+                                backgroundColor: Colors.white.withOpacity(0.9),
+                                progressColor: green,
+                                circularStrokeCap: CircularStrokeCap.butt,
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                ],
+              ))
+        ]));
   }
 }

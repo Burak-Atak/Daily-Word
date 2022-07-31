@@ -1356,7 +1356,6 @@ List<String> trainingWords = [
   'iznik',
   'izole',
   'izzet',
-  'iğdır',
   'ılgım',
   'ılıca',
   'ılıma',

@@ -34,7 +34,10 @@ class _EndGamePageState extends State<EndGame>
   @override
   void initState() {
     super.initState();
-    _loadInterstitialAd();
+
+
+      AdHelper().loadInterstitialAd();
+
 
     final quick = const Duration(milliseconds: 200);
     final scaleTween = Tween(begin: 1.0, end: 0.8);
@@ -59,27 +62,7 @@ class _EndGamePageState extends State<EndGame>
 
   }
 
-  InterstitialAd? _interstitialAd;
 
-  Future<void> _loadInterstitialAd() async {
-    InterstitialAd.load(
-      adUnitId: AdHelper.interstitialAdUnitId,
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) async {
-            },
-          );
-          _interstitialAd = ad;
-        },
-        onAdFailedToLoad: (err) {
-        },
-      ),
-    );
-
-    return;
-  }
 
   String myTime = timeFormat(totalSeconds, isEndTime: true);
   var textSizeGroup = AutoSizeGroup();
@@ -87,7 +70,7 @@ class _EndGamePageState extends State<EndGame>
 
   @override
   void dispose() {
-    _interstitialAd?.dispose();
+    interstitialAd?.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -259,7 +242,7 @@ class _EndGamePageState extends State<EndGame>
                               onPressed: () {
 
                                 try {
-                                  _interstitialAd?.show();
+                                  interstitialAd?.show();
                                 } catch (e) {
                                 }
 
@@ -314,10 +297,6 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () async {
-                                try {
-                                  _interstitialAd?.show();
-                                } catch (e) {
-                                }
                                 showDialog(
                                   barrierColor: Colors.black.withOpacity(0.5),
                                   context: context,
@@ -374,10 +353,6 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () async {
-                                try {
-                                  _interstitialAd?.show();
-                                } catch (e) {
-                                }
                                 Share.share(_prepareShareText());
                               },
                               style: ButtonStyle(
@@ -659,7 +634,7 @@ class _EndGamePageState extends State<EndGame>
                           child: ElevatedButton(
                               onPressed: () {
                                 try {
-                                  _interstitialAd?.show();
+                                  interstitialAd?.show();
                                 } catch (e) {
                                 }
                                 _goScorePage();
@@ -714,7 +689,7 @@ class _EndGamePageState extends State<EndGame>
                           child: ElevatedButton(
                               onPressed: () {
                                 try {
-                                  _interstitialAd?.show();
+                                  interstitialAd?.show();
                                 } catch (e) {
                                 }
                                 showDialog(
@@ -774,7 +749,7 @@ class _EndGamePageState extends State<EndGame>
                           child: ElevatedButton(
                               onPressed: () async {
                                 try {
-                                  _interstitialAd?.show();
+                                  interstitialAd?.show();
                                 } catch (e) {
                                 }
                                 Share.share(_prepareShareText());

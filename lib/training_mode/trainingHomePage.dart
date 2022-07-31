@@ -52,6 +52,10 @@ class _TrainingPageState extends State<TrainingPage>
   @override
   void initState() {
     super.initState();
+
+
+      AdHelper().loadInterstitialAd();
+
     trainingController.initAnimationController();
     winController = trainingController.winController;
 
@@ -78,22 +82,25 @@ class _TrainingPageState extends State<TrainingPage>
 
     _initGoogleMobileAds();
 
-    BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      request: AdRequest(),
-      size: AdSize(width: (width * 100).round(), height: (height * 9).round()),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _bannerAd = ad as BannerAd;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
-          ad.dispose();
-        },
-      ),
-    ).load();
+    if (_bannerAd == null) {
+      BannerAd(
+        adUnitId: AdHelper.bannerAdUnitId,
+        request: AdRequest(),
+        size:
+            AdSize(width: (width * 100).round(), height: (height * 9).round()),
+        listener: BannerAdListener(
+          onAdLoaded: (ad) {
+            setState(() {
+              _bannerAd = ad as BannerAd;
+            });
+          },
+          onAdFailedToLoad: (ad, err) {
+            print('Failed to load a banner ad: ${err.message}');
+            ad.dispose();
+          },
+        ),
+      ).load();
+    }
   }
 
   /// Her bir kutucuğun stringini tanımlıyoruz
@@ -239,7 +246,8 @@ class _TrainingPageState extends State<TrainingPage>
                                 'Kelime listesinde yok.',
                                 maxLines: 1,
                                 style: TextStyle(
-                                    fontSize: height * 3.64, color: Colors.white),
+                                    fontSize: height * 3.64,
+                                    color: Colors.white),
                               ),
                             ),
                           ),

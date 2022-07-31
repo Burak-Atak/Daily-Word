@@ -168,6 +168,14 @@ class MyApp extends StatelessWidget {
               }
             })();
 
+            Future<InitializationStatus> _initGoogleMobileAds() {
+              return MobileAds.instance.initialize();
+            }
+
+            _initGoogleMobileAds();
+
+            AdHelper().loadInterstitialAd();
+
             return HomePage();
           },
         ));
@@ -184,8 +192,10 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
-    _initGoogleMobileAds();
-    _loadInterstitialAd();
+
+
+      AdHelper().loadInterstitialAd();
+
 
     mainController.initAnimationController();
     winController = mainController.winController;
@@ -211,46 +221,27 @@ class _MyHomePageState extends State<MyHomePage>
     });
 
 
-
-   BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      request: AdRequest(),
-      size: AdSize(width: (width * 100).round(), height:( height * 9).round()),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _bannerAd = ad as BannerAd;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
-          ad.dispose();
-        },
-      ),
-    ).load();
+    if (_bannerAd == null) {
+      BannerAd(
+        adUnitId: AdHelper.bannerAdUnitId,
+        request: AdRequest(),
+        size:
+            AdSize(width: (width * 100).round(), height: (height * 9).round()),
+        listener: BannerAdListener(
+          onAdLoaded: (ad) {
+            setState(() {
+              _bannerAd = ad as BannerAd;
+            });
+          },
+          onAdFailedToLoad: (ad, err) {
+            print('Failed to load a banner ad: ${err.message}');
+            ad.dispose();
+          },
+        ),
+      ).load();
+    }
   }
 
-  InterstitialAd? _interstitialAd;
-
-  Future<void> _loadInterstitialAd() async {
-    InterstitialAd.load(
-      adUnitId: AdHelper.interstitialAdUnitId,
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) async {
-            },
-          );
-          _interstitialAd = ad;
-        },
-        onAdFailedToLoad: (err) {
-        },
-      ),
-    );
-
-    return;
-  }
 
   /// Her bir kutucuğun stringini tanımlıyoruz
   List<List<RxString>> textBoxes = mainController.textBoxes;
@@ -274,13 +265,9 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void dispose() {
     _bannerAd?.dispose();
-    _interstitialAd?.dispose();
+    interstitialAd?.dispose();
 
     super.dispose();
-  }
-
-  Future<InitializationStatus> _initGoogleMobileAds() {
-    return MobileAds.instance.initialize();
   }
 
 
@@ -396,10 +383,6 @@ class _MyHomePageState extends State<MyHomePage>
                             onTap: () {
                               if (isAnimationCompleted &&
                                   isFirstBuildCompleted) {
-                                try {
-                                  _interstitialAd?.show();
-                                } catch (e) {
-                                }
                                 showDialog(
                                   barrierColor: Colors.black.withOpacity(0.5),
                                   context: context,
@@ -424,7 +407,7 @@ class _MyHomePageState extends State<MyHomePage>
                           onTap: () {
                             if (isAnimationCompleted && isFirstBuildCompleted) {
                               try {
-                                _interstitialAd?.show();
+                                interstitialAd?.show();
                               } catch (e) {
                               }
                               showDialog(

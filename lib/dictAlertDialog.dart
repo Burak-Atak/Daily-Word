@@ -41,7 +41,7 @@ class _DictAlertDialogState extends State<DictAlertDialog> {
         ),
         insetPadding: EdgeInsets.all(0),
         content: Container(
-          width: width * 100,
+          width: MediaQuery.of(context).size.width,
           height: count > 300 ? height * 33 : count > 250 ? height * 30: count > 200 ? height * 25: height * 20,
           alignment: Alignment.center,
           decoration: BoxDecoration(
