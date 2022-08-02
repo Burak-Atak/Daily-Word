@@ -163,7 +163,8 @@ class _TrainingPageState extends State<TrainingPage>
                       child: InkWell(
                         onTap: () {
                           if (isAnimationCompleted && isFirstBuildCompleted) {
-                            Navigator.pop(context);
+                            Get.offAll(HomePage());
+
                           }
                         },
                         customBorder: RoundedRectangleBorder(

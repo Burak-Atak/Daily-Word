@@ -60,9 +60,6 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        ndk {
-            debugSymbolLevel 'SYMBOL_TABLE'
-        }
         multiDexEnabled true
     }
 

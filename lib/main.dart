@@ -99,7 +99,7 @@ Future<void> main() async {
 
     // The following lines are the same as previously explained in "Handling uncaught errors"
 
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    //FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     await Future.delayed(Duration(seconds: 1), () {
@@ -117,7 +117,6 @@ Future<void> main() async {
     });
   },
       (error, stack) =>
-
           FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
 }
 
@@ -132,7 +131,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: MaterialColor(0xFF6aaa64, materialColor),
         ),
         title: title,
-        home:  Builder(
+        home: Builder(
           builder: (BuildContext context) {
             mainController = Get.put(MainController());
 
@@ -155,7 +154,7 @@ class MyApp extends StatelessWidget {
             (() {
               if (height / width >= 1.8) {
                 paddingForSquare =
-                    EdgeInsets.only(left: width * 11, right: width * 11);
+              EdgeInsets.only(left: width * 11, right: width * 11);
               } else if (height / width >= 1.6) {
                 paddingForSquare =
                     EdgeInsets.only(left: width * 13, right: width * 13);
@@ -193,9 +192,7 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
 
-
-      AdHelper().loadInterstitialAd();
-
+    AdHelper().loadInterstitialAd();
 
     mainController.initAnimationController();
     winController = mainController.winController;
@@ -220,7 +217,6 @@ class _MyHomePageState extends State<MyHomePage>
       }
     });
 
-
     if (_bannerAd == null) {
       BannerAd(
         adUnitId: AdHelper.bannerAdUnitId,
@@ -241,7 +237,6 @@ class _MyHomePageState extends State<MyHomePage>
       ).load();
     }
   }
-
 
   /// Her bir kutucuğun stringini tanımlıyoruz
   List<List<RxString>> textBoxes = mainController.textBoxes;
@@ -269,7 +264,6 @@ class _MyHomePageState extends State<MyHomePage>
 
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -304,7 +298,8 @@ class _MyHomePageState extends State<MyHomePage>
                             onTap: () {
                               if (isAnimationCompleted &&
                                   isFirstBuildCompleted) {
-                                Navigator.pop(context);
+                                Get.offAll(HomePage());
+
                               }
                             },
                             customBorder: RoundedRectangleBorder(
@@ -378,7 +373,7 @@ class _MyHomePageState extends State<MyHomePage>
                       children: [
                         Padding(
                           padding:
-                          EdgeInsets.only(left: width * 2, right: width),
+                              EdgeInsets.only(left: width * 2, right: width),
                           child: InkWell(
                             onTap: () {
                               if (isAnimationCompleted &&
@@ -387,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage>
                                   barrierColor: Colors.black.withOpacity(0.5),
                                   context: context,
                                   builder: (context) =>
-                                  const GeneralStatistic(),
+                                      const GeneralStatistic(),
                                 );
                               }
                             },
@@ -408,8 +403,7 @@ class _MyHomePageState extends State<MyHomePage>
                             if (isAnimationCompleted && isFirstBuildCompleted) {
                               try {
                                 interstitialAd?.show();
-                              } catch (e) {
-                              }
+                              } catch (e) {}
                               showDialog(
                                 barrierColor: Colors.black.withOpacity(0.5),
                                 context: context,
@@ -438,7 +432,6 @@ class _MyHomePageState extends State<MyHomePage>
                 ],
               ),
             ),
-
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -452,14 +445,12 @@ class _MyHomePageState extends State<MyHomePage>
                         child: AdWidget(ad: _bannerAd!),
                       ),
                     )
-                else
+                  else
                     SizedBox(
                       height: (height * 9).round().toDouble(),
                     ),
                   Stack(children: [
-
-
-                    createMainSquare(),
+                   createMainSquare(),
                     Align(
                       child: Obx(
                         () => AnimatedOpacity(
@@ -482,7 +473,8 @@ class _MyHomePageState extends State<MyHomePage>
                                 'Kelime listesinde yok.',
                                 maxLines: 1,
                                 style: TextStyle(
-                                    fontSize: height * 3.64, color: Colors.white),
+                                    fontSize: height * 3.64,
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -813,7 +805,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<bool> enterButtonFunc() async {
-
     if (isGameEnd == null &&
         isAnimationCompleted &&
         chosenLetter % 5 == 0 &&
@@ -998,8 +989,6 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Future<void> _afterBuild() async {
-
-
     if (FirebaseAuth.instance.currentUser == null) {
       var jwt = JWT(
         {
@@ -1132,9 +1121,6 @@ class _MyHomePageState extends State<MyHomePage>
       _goEndPage();
     }
   }
-
-
-
 
   void _startNewGame() async {
     prefs.remove('isGameEnd');

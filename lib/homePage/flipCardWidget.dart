@@ -142,7 +142,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             if (!isConnected) {
                               _goTrainingPage();
                             } else {
-                              Get.to(() => MyHomePage());
+                              Get.offAll(MyHomePage());
                             }
                           },
                           style: ButtonStyle(
@@ -194,7 +194,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
-                            Get.to(() => TrainingPage());
+                            Get.offAll(TrainingPage());
                           },
                           style: ButtonStyle(
                             overlayColor: MaterialStateProperty.all(
