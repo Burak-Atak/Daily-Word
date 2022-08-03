@@ -4,7 +4,6 @@ import 'package:first_project/my_flutter_app_icons.dart';
 import 'package:first_project/scorePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ntp/ntp.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:turkish/turkish.dart';
@@ -171,7 +170,7 @@ class _EndGamePageState extends State<EndGame>
                         width: width * 10,
                       ),
                       Text(
-                        '${turkish.toUpperCase(wordOfDay)}',
+                        turkish.toUpperCase(wordOfDay),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Color(0xff2bb429),
@@ -207,7 +206,7 @@ class _EndGamePageState extends State<EndGame>
                                   Icon(Icons.watch_later_outlined,
                                       color: colorBlack, size: height * 3.5),
                                   Text(
-                                    " " + myTime,
+                                    " $myTime",
                                     style: TextStyle(
                                         color: colorBlack,
                                         fontSize: height * 3.5,
@@ -224,7 +223,7 @@ class _EndGamePageState extends State<EndGame>
                                     size: height * 2.8,
                                   ),
                                   Text(
-                                    " " + userScore.toString(),
+                                    " $userScore",
                                     style: TextStyle(
                                         color: colorBlack,
                                         fontSize: height * 3.5,
@@ -564,7 +563,7 @@ class _EndGamePageState extends State<EndGame>
                         width: width * 10,
                       ),
                       Text(
-                        '${turkish.toUpperCase(wordOfDay)}',
+                        turkish.toUpperCase(wordOfDay),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Color(0xff2bb429),
@@ -600,7 +599,7 @@ class _EndGamePageState extends State<EndGame>
                                   Icon(Icons.watch_later_outlined,
                                       color: colorBlack, size: height * 3.5),
                                   Text(
-                                    " " + myTime,
+                                    " $myTime",
                                     style: TextStyle(
                                         color: colorBlack,
                                         fontSize: height * 3.5,
@@ -617,7 +616,7 @@ class _EndGamePageState extends State<EndGame>
                                     size: height * 2.8,
                                   ),
                                   Text(
-                                    " " + userScore.toString(),
+                                    " $userScore",
                                     style: TextStyle(
                                         color: colorBlack,
                                         fontSize: height * 3.5,
@@ -882,7 +881,7 @@ class _EndGamePageState extends State<EndGame>
   Future<Duration?> _checkTime() async {
     await (() async {
       try {
-        var globalTime;
+        DateTime globalTime;
 
         var now = await NTP.now();
         Duration zoneOffSet = now.timeZoneOffset;
@@ -907,13 +906,14 @@ class _EndGamePageState extends State<EndGame>
         /*    String hour = (now.hour + 1).toString().length == 1
           ? "0${now.hour + 1}"
           : (now.hour + 1).toString();*/
+        //TODO: HATA VERDİREREK NE OLACAGINA BAK
 
         var after =
-            DateTime.parse("${globalTime.year}-${month}-${day} 00:00:00");
+            DateTime.parse("${globalTime.year}-$month-$day 00:00:00");
         remainingTime = after.difference(globalTime);
         return remainingTime;
       } catch (e) {
-        throw e;
+
       }
     })();
 

@@ -6,7 +6,7 @@ import 'main.dart';
 
 class BadConnection extends StatefulWidget {
   @override
-  _BadConnectionState createState() => _BadConnectionState();
+  State<BadConnection> createState() => _BadConnectionState();
 }
 
 

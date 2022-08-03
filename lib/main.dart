@@ -8,6 +8,7 @@ import 'package:first_project/helper.dart';
 import 'package:first_project/homePage/homePage.dart';
 import 'package:first_project/howToPlay.dart';
 import 'package:first_project/internetConnectionDialog.dart';
+import 'package:first_project/mainGame/mainSquare.dart';
 import 'package:first_project/mainpage_controller.dart';
 import 'package:first_project/my_flutter_app_icons.dart';
 import 'package:first_project/scorePage.dart';
@@ -23,8 +24,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_update/in_app_update.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:lottie/lottie.dart';
 import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
@@ -36,6 +35,8 @@ import 'design.dart';
 import 'firebase_options.dart';
 import 'generalStatistic.dart';
 import 'package:get/get.dart';
+import 'mainGame/keyboard.dart';
+import 'mainGame/winAnimationWidget.dart';
 
 // TODO: oyun sonudna çarpıyı köşeye al
 // TODO: Paylaşı storede yayınlandıktan sonra düzenle
@@ -154,7 +155,7 @@ class MyApp extends StatelessWidget {
             (() {
               if (height / width >= 1.8) {
                 paddingForSquare =
-              EdgeInsets.only(left: width * 11, right: width * 11);
+                    EdgeInsets.only(left: width * 11, right: width * 11);
               } else if (height / width >= 1.6) {
                 paddingForSquare =
                     EdgeInsets.only(left: width * 13, right: width * 13);
@@ -181,21 +182,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
-  @override
+class MyHomePage extends StatelessWidget {
+/*  @override
   void initState() {
     super.initState();
 
+
     AdHelper().loadInterstitialAd();
 
-    mainController.initAnimationController();
-    winController = mainController.winController;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isBack) {
@@ -217,26 +211,7 @@ class _MyHomePageState extends State<MyHomePage>
       }
     });
 
-    if (_bannerAd == null) {
-      BannerAd(
-        adUnitId: AdHelper.bannerAdUnitId,
-        request: AdRequest(),
-        size:
-            AdSize(width: (width * 100).round(), height: (height * 9).round()),
-        listener: BannerAdListener(
-          onAdLoaded: (ad) {
-            setState(() {
-              _bannerAd = ad as BannerAd;
-            });
-          },
-          onAdFailedToLoad: (ad, err) {
-            print('Failed to load a banner ad: ${err.message}');
-            ad.dispose();
-          },
-        ),
-      ).load();
-    }
-  }
+  }*/
 
   /// Her bir kutucuğun stringini tanımlıyoruz
   List<List<RxString>> textBoxes = mainController.textBoxes;
@@ -253,20 +228,35 @@ class _MyHomePageState extends State<MyHomePage>
   Map<String, int>? newChosenWordColors;
   late Map<String, bool> mapOfSetUserWord;
   ConfettiController confettiController = ConfettiController();
-  late var winController;
 
-  BannerAd? _bannerAd;
-
-  @override
+/*  @override
   void dispose() {
-    _bannerAd?.dispose();
     interstitialAd?.dispose();
 
     super.dispose();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (isBack) {
+        List<String> userSavedWords = prefs.getStringList('userWords') ?? [];
+        for (int i = 0; i < userSavedWords.length; i++) {
+          for (int j = 0; j < 5; j++) {
+            flipKeys[i][j].value.currentState.toggleCard();
+          }
+        }
+
+        if (isGameEnd == true) {
+          await Future.delayed(Duration(milliseconds: 600));
+          _goEndPage();
+        }
+      }
+
+      if (isFirstBuild) {
+        _afterBuild();
+      }
+    });
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -299,7 +289,6 @@ class _MyHomePageState extends State<MyHomePage>
                               if (isAnimationCompleted &&
                                   isFirstBuildCompleted) {
                                 Get.offAll(HomePage());
-
                               }
                             },
                             customBorder: RoundedRectangleBorder(
@@ -436,21 +425,10 @@ class _MyHomePageState extends State<MyHomePage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (_bannerAd != null)
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Container(
-                        width: _bannerAd!.size.width.toDouble(),
-                        height: _bannerAd!.size.height.toDouble(),
-                        child: AdWidget(ad: _bannerAd!),
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: (height * 9).round().toDouble(),
-                    ),
+                  // todo : active banner ad
+                  //BannerAdWidget(),
                   Stack(children: [
-                   createMainSquare(),
+                    mainSquare(),
                     Align(
                       child: Obx(
                         () => AnimatedOpacity(
@@ -481,19 +459,13 @@ class _MyHomePageState extends State<MyHomePage>
                         ),
                       ),
                     ),
-                    Align(
-                      child: Obx(
-                        () => Lottie.asset(
-                          'assets/win.json',
-                          height: height * 50,
-                          width: width * 75.67,
-                          controller: winController.value,
-                          repeat: false,
-                        ),
-                      ),
-                    ),
+                    winAnimationWidget(),
                   ]),
-                  Padding(
+                  Keyboard(
+                      letterButtonFunc: letterButtonFunc,
+                      deleteButtonFunc: deleteButtonFunc,
+                      enterButtonFunc: enterButtonFunc),
+                  /*       Padding(
                     padding: EdgeInsets.only(bottom: height * 1.2),
                     child: Column(
                       children: [
@@ -502,7 +474,7 @@ class _MyHomePageState extends State<MyHomePage>
                         thirdRow(),
                       ],
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -514,10 +486,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   /// Harf girilen Kutucukları oluşturuyor
   Widget createMainSquare() {
-    //1.5 kısa dar ekran
-    // 1.66 dar uzun 1.67 dar normal uzun
-    // 1.85dar uzun
-
     Widget littleSquares = GridView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
@@ -811,18 +779,21 @@ class _MyHomePageState extends State<MyHomePage>
         chosenLetter != 0) {
       bool isConnected = await checkInternet();
       if (!isConnected) {
-        showDialog(
+/*        showDialog(
             barrierColor: Colors.black.withOpacity(0.5),
             barrierDismissible: false,
             context: context,
-            builder: (context) => ConnectionDialog());
+            builder: (context) => ConnectionDialog());*/
+        Get.dialog(ConnectionDialog(),
+            barrierColor: Colors.black.withOpacity(0.5),
+            barrierDismissible: false);
         return false;
       }
 
       String wordOfUser = "";
-      textBoxes[chosenWord].forEach((letter) {
+      for (var letter in textBoxes[chosenWord]) {
         wordOfUser += turkish.toLowerCase(letter.value);
-      });
+      }
 
       if (!words.contains(wordOfUser)) {
         mainController.changeIsWordExist(true);
@@ -1047,7 +1018,7 @@ class _MyHomePageState extends State<MyHomePage>
       }
     });
 
-    if (userSavedWords.length != 0) {
+    if (userSavedWords.isNotEmpty) {
       for (int i = 0; i < userSavedWords.length; i++) {
         userWords.add(userSavedWords[i]);
         for (int j = 0; j < 5; j++) {
@@ -1094,10 +1065,14 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _goEndPage() {
-    showDialog(
+/*    showDialog(
         barrierColor: Colors.black.withOpacity(0.5),
         context: context,
-        builder: (context) => EndGame());
+        builder: (context) => EndGame());*/
+    Get.dialog(
+      EndGame(),
+      barrierColor: Colors.black.withOpacity(0.5),
+    );
   }
 
   Future<void> _gameEnd(bool isWon) async {
@@ -1146,12 +1121,16 @@ class _MyHomePageState extends State<MyHomePage>
     /// Calculate finish time
     try {
       DateTime now = await NTP.now();
-      String? startTime = await prefs.getString('startTime');
-      seconds = await now.difference(DateTime.parse(startTime!)).inSeconds;
+      String? startTime = prefs.getString('startTime');
+      seconds = now.difference(DateTime.parse(startTime!)).inSeconds;
       totalSeconds = seconds;
       await prefs.setInt("totalSeconds", seconds);
     } catch (e) {
-      throw e;
+      DateTime now = DateTime.now();
+      String? startTime = prefs.getString('startTime');
+      seconds = now.difference(DateTime.parse(startTime!)).inSeconds;
+      totalSeconds = seconds;
+      await prefs.setInt("totalSeconds", seconds);
     }
 
     /// Choose the day score
@@ -1308,7 +1287,7 @@ class _MyHomePageState extends State<MyHomePage>
     isAnimationCompleted = true;
   }
 
-  void _showInternetAlert() {
+/*void _showInternetAlert() {
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.5),
@@ -1394,7 +1373,7 @@ class _MyHomePageState extends State<MyHomePage>
         );
       },
     );
-  }
+  }*/
 }
 
 /*const starPoints = 5;
