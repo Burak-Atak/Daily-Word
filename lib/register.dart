@@ -3,8 +3,6 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'design.dart';
 import 'helper.dart';
@@ -34,13 +32,13 @@ class _AddPlayerPageState extends State<AddPlayer>
 
   @override
   Widget build(BuildContext context) {
-    double _height = MediaQuery.of(context).size.height / 100;
+    double height = MediaQuery.of(context).size.height / 100;
     double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final bool isKeyboardOpen = keyboardHeight != 0;
 
-    double _size = (isKeyboardOpen || _controller.text.length != 0)
-        ? _height * 1.5
-        : _height * 2.5;
+    double size = (isKeyboardOpen || _controller.text.isNotEmpty)
+        ? height * 1.5
+        : height * 2.5;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -57,15 +55,15 @@ class _AddPlayerPageState extends State<AddPlayer>
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   )
                 : EdgeInsets.only(
-                    bottom: _height * 35,
+                    bottom: height * 35,
                   ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: EdgeInsets.all(_height * 1.8),
+                  padding: EdgeInsets.all(height * 1.8),
                   width: width * 70,
-                  height: _height * 30,
+                  height: height * 30,
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: green,
@@ -84,15 +82,15 @@ class _AddPlayerPageState extends State<AddPlayer>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: _height * 8,
+                            height: height * 8,
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
                                 AnimatedPositioned(
                                   top: (isKeyboardOpen ||
-                                          _controller.text.length != 0)
+                                          _controller.text.isNotEmpty)
                                       ? 0
-                                      : _height * 2.6,
+                                      : height * 2.6,
                                   left: 0,
                                   duration: Duration(milliseconds: 200),
                                   child: Align(
@@ -100,7 +98,7 @@ class _AddPlayerPageState extends State<AddPlayer>
                                     child: AnimatedDefaultTextStyle(
                                       duration: Duration(milliseconds: 200),
                                       style: TextStyle(
-                                          fontSize: _size, color: white),
+                                          fontSize: size, color: white),
                                       child: AutoSizeText(
                                         "Kullanıcı Adı",
                                       ),
@@ -117,7 +115,7 @@ class _AddPlayerPageState extends State<AddPlayer>
                                   maxLines: 1,
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
-                                      fontSize: _height * 3, color: white),
+                                      fontSize: height * 3, color: white),
                                   controller: _controller,
                                   decoration: InputDecoration(
                                     isDense: true,
@@ -134,7 +132,7 @@ class _AddPlayerPageState extends State<AddPlayer>
                             ),
                           ),
                           SizedBox(
-                            height: _height * 4,
+                            height: height * 4,
                             width: width * 60,
                             child: Stack(
                               children: [
@@ -144,7 +142,7 @@ class _AddPlayerPageState extends State<AddPlayer>
                                   child: Text(
                                       "Kullanıcı adı daha önceden alınmış.",
                                       style: TextStyle(
-                                          fontSize: _height * 1.5,
+                                          fontSize: height * 1.5,
                                           color: white)),
                                 ),
                                 AnimatedOpacity(
@@ -153,7 +151,7 @@ class _AddPlayerPageState extends State<AddPlayer>
                                   child: Text(
                                     "Kullanıcı adı 1-12 karakter uzunluğunda olmalıdır.",
                                     style: TextStyle(
-                                        fontSize: _height * 1.5,
+                                        fontSize: height * 1.5,
                                         color: white),
                                     maxLines: 2,
                                   ),
@@ -164,7 +162,7 @@ class _AddPlayerPageState extends State<AddPlayer>
                                   child: Text(
                                     "Opps! Bir hata oluştu.",
                                     style: TextStyle(
-                                        fontSize: _height * 1.5,
+                                        fontSize: height * 1.5,
                                         color: white),
                                     maxLines: 2,
                                   ),
@@ -175,7 +173,7 @@ class _AddPlayerPageState extends State<AddPlayer>
                                   child: Text(
                                     "Boşluk kullanmayınız.",
                                     style: TextStyle(
-                                        fontSize: _height * 1.5,
+                                        fontSize: height * 1.5,
                                         color:white),
                                     maxLines: 2,
                                   ),
@@ -187,7 +185,7 @@ class _AddPlayerPageState extends State<AddPlayer>
                       ),
                       SizedBox(
                         width: width * 25,
-                        height: _height * 5,
+                        height: height * 5,
                         child: ElevatedButton(
                           style: ButtonStyle(
                             overlayColor:
@@ -213,10 +211,10 @@ class _AddPlayerPageState extends State<AddPlayer>
                               : null,
                           child: _isButtonChildChanged ?       LoadingAnimationWidget.inkDrop(
                             color: green,
-                            size: _height * 3,
+                            size: height * 3,
                           ) : AutoSizeText("Kaydet",
                               style: TextStyle(
-                                  fontSize: _height * 3, color: green)),
+                                  fontSize: height * 3, color: green)),
                         ),
                       ),
                     ],
@@ -270,6 +268,9 @@ class _AddPlayerPageState extends State<AddPlayer>
     FocusManager.instance.primaryFocus?.unfocus();
 
 
+    Widget howToPlay = await buildPageAsync(HowToPlay());
+
+
     await showGeneralDialog(
         context: context,
         pageBuilder: (ctx, a1, a2) {
@@ -279,15 +280,18 @@ class _AddPlayerPageState extends State<AddPlayer>
           var curve = Curves.easeInOut.transform(a1.value);
           return Transform.scale(
             scale: curve,
-            child: HowToPlay(),
+            child: howToPlay,
           );
         },
         transitionDuration: const Duration(milliseconds: 500),
       );
 
     userName = chosenName;
+    print(123);
 
-    Get.offAll(() => HomePage());
+    PushPage().pushPage(HomePage());
+    print(123567);
+
 
   }
 
@@ -306,8 +310,8 @@ class _AddPlayerPageState extends State<AddPlayer>
       return false;
     }
 
-    bool _isTrue = false;
-    if (_controller.text.length < 1 || _controller.text.length > 12) {
+    bool isTrue = false;
+    if (_controller.text.isEmpty || _controller.text.length > 12) {
       _showWarningForLength = true;
       _isButtonEnabled = false;
       return false;
@@ -318,7 +322,7 @@ class _AddPlayerPageState extends State<AddPlayer>
 
     await database.ref('userNames').get().then((value) async {
       if (value.value == null) {
-        _isTrue = true;
+        isTrue = true;
         return;
       }
       Map userName = value.value as Map;
@@ -327,12 +331,12 @@ class _AddPlayerPageState extends State<AddPlayer>
         _showWarningForUsername = true;
         return;
       } else {
-        _isTrue = true;
+        isTrue = true;
       }
     });
 
 
-    return _isTrue;
+    return isTrue;
   }
 
   Future<void> authAndRegisterDb(String chosenName) async {

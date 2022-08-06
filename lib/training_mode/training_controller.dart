@@ -49,6 +49,11 @@ class TrainingController extends GetxController
       [for (int a = 0; a < 5; a++) GlobalKey<FlipCardState>().obs]
   ];
 
+  List<dynamic> isFlipped = [
+    for (int i = 0; i < 6; i++)
+      [for (int a = 0; a < 5; a++) false.obs]
+  ];
+
   List<dynamic> squaresColors = [
     for (int i = 0; i < 6; i++)
       [for (int a = 0; a < 5; a++) squaresMainColor.obs]
@@ -95,8 +100,12 @@ class TrainingController extends GetxController
     squaresColors[row][column].value = color;
   }
 
-  void flipCard(int row, int col) {
+  void flipCard(int row, int col) async {
     flipKeys[row][col].value.currentState.toggleCard();
+  }
+
+  void changeIsFlipped(int row, int col) {
+    isFlipped[row][col].value = true;
   }
 
   void setLetter(int row, int col, String letter) {

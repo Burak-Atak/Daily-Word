@@ -3,7 +3,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import '../ad_helper.dart';
 import '../design.dart';
 import '../generalStatistic.dart';
@@ -142,7 +141,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             if (!isConnected) {
                               _goTrainingPage();
                             } else {
-                              Get.offAll(MyHomePage());
+                              PushPage().pushPage(MyHomePage());
+
                             }
                           },
                           style: ButtonStyle(
@@ -194,7 +194,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
-                            Get.offAll(TrainingPage());
+                            PushPage().pushPage(TrainingPage());
                           },
                           style: ButtonStyle(
                             overlayColor: MaterialStateProperty.all(
@@ -244,16 +244,14 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       width: width * 48,
                       height: height * 7,
                       child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             try {
                               interstitialAd?.show();
                             } catch (e) {
                             }
-                            showDialog(
-                              barrierColor: Colors.black.withOpacity(0.5),
-                              context: context,
-                              builder: (context) => const MyAlertDialog(),
-                            );
+
+                            PushPage().pushDialog(ScorePage());
+
                           },
                           style: ButtonStyle(
                             overlayColor: MaterialStateProperty.all(
@@ -304,11 +302,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
-                            showDialog(
-                              barrierColor: Colors.black.withOpacity(0.5),
-                              context: context,
-                              builder: (context) => const GeneralStatistic(),
-                            );
+                            PushPage().pushDialog(GeneralStatistic());
+
                           },
                           style: ButtonStyle(
                             overlayColor: MaterialStateProperty.all(
@@ -359,11 +354,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                       height: height * 7,
                       child: ElevatedButton(
                           onPressed: () {
-                            showDialog(
-                              barrierColor: Colors.black.withOpacity(0.5),
-                              context: context,
-                              builder: (context) => const HowToPlay(),
-                            );
+                            PushPage().pushDialog(HowToPlay());
                           },
                           style: ButtonStyle(
                             overlayColor: MaterialStateProperty.all(
@@ -577,7 +568,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                         height: height * 6,
                         child: ElevatedButton(
                             onPressed: () {
-                              Get.to(() => TrainingPage());
+                              PushPage().pushPage(TrainingPage());
                             },
                             style: ButtonStyle(
                               overlayColor: MaterialStateProperty.all(

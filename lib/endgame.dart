@@ -245,7 +245,8 @@ class _EndGamePageState extends State<EndGame>
                                 } catch (e) {
                                 }
 
-                                _goScorePage();
+                                PushPage().pushDialog(ScorePage());
+
                               },
                               style: ButtonStyle(
                                 overlayColor: MaterialStateProperty.all(
@@ -296,12 +297,8 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () async {
-                                showDialog(
-                                  barrierColor: Colors.black.withOpacity(0.5),
-                                  context: context,
-                                  builder: (context) =>
-                                      const GeneralStatistic(),
-                                );
+                                PushPage().pushDialog(GeneralStatistic());
+
                               },
                               style: ButtonStyle(
                                 overlayColor: MaterialStateProperty.all(
@@ -636,7 +633,8 @@ class _EndGamePageState extends State<EndGame>
                                   interstitialAd?.show();
                                 } catch (e) {
                                 }
-                                _goScorePage();
+                                PushPage().pushDialog(ScorePage());
+
                               },
                               style: ButtonStyle(
                                 overlayColor: MaterialStateProperty.all(
@@ -920,13 +918,6 @@ class _EndGamePageState extends State<EndGame>
     return remainingTime;
   }
 
-  void _goScorePage() async {
-    showDialog(
-      barrierColor: Colors.black.withOpacity(0.5),
-      context: context,
-      builder: (context) => const MyAlertDialog(),
-    );
-  }
 
   String _prepareShareText() {
     String shareText = " T O K A T L A N D I N\n\n";

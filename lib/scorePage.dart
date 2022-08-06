@@ -30,14 +30,14 @@ const notChosen = Color(0xff5e5e5e);
 const userColorOne = Color(0xffa1cba1);
 const userColorTwo = lightGreen;
 
-class MyAlertDialog extends StatefulWidget {
-  const MyAlertDialog({Key? key}) : super(key: key);
+class ScorePage extends StatefulWidget {
+  const ScorePage({Key? key}) : super(key: key);
 
   @override
-  State<MyAlertDialog> createState() => _MyAlertDialogState();
+  State<ScorePage> createState() => _ScorePageState();
 }
 
-class _MyAlertDialogState extends State<MyAlertDialog> {
+class _ScorePageState extends State<ScorePage> {
   bool selectedDaily = true;
 
   @override
@@ -218,9 +218,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                     size: height * 5,
                                   ),
                                   onPressed: () {
-                                    setState(() {
                                       Navigator.pop(context);
-                                    });
                                   },
                                   padding: EdgeInsets.all(0),
                                 ),
@@ -283,9 +281,76 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                           ],
                         ),
                       ),
-                      for (var i = 0; i < 10; i++)
-                        if (chosenScoreTable != null)
+                      if (chosenScoreTable == null)
+                        for (var i = 0; i < 10; i++)
                           Container(
+                            decoration: BoxDecoration(
+                              color: i % 2 == 0 ? userColorOne : userColorTwo,
+                              /*             borderRadius: chosenScoreTable!.length < 10 &&
+                                      i == chosenScoreTable!.length - 1
+                                  ? BorderRadius.only(
+                                      bottomLeft: Radius.circular(width * 5),
+                                      bottomRight: Radius.circular(width * 5),
+                                    )
+                                  : BorderRadius.zero,*/
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  height: height * 7,
+                                  width: width * 15,
+                                  child: Align(
+                                    child: Text(
+                                      "",
+                                      //userScores.key,
+                                      textAlign: TextAlign.center,
+                                      style:
+                                      i < 3 ? scoreStyleMedals : scoreStyle,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: height * 7,
+                                  width: width * 30,
+                                  child: Align(
+                                    child: Text(
+                                      "",
+                                      //userScores.key,
+                                      textAlign: TextAlign.center,
+                                      style: scoreStyle,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: height * 7,
+                                  width: width * 15,
+                                  child: Align(
+                                    child: Text(
+                                      "",
+                                      //userScores.value["score"].toString(),
+                                      textAlign: TextAlign.center,
+                                      style: scoreStyle,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: height * 7,
+                                  width: width * 20,
+                                  child: Align(
+                                    child: Text(
+                                      "",
+                                      textAlign: TextAlign.center,
+                                      style: scoreStyle,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (chosenScoreTable != null)
+                          for (var i = 0; i < 10; i++)
+                            Container(
                             decoration: BoxDecoration(
                               color: _checkUserInScoreTable(
                                       i, chosenScoreTable!.length)
@@ -401,82 +466,15 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                               ],
                             ),
                           ),
-                      if (chosenScoreTable == null)
-                        for (var i = 0; i < 10; i++)
-                          Container(
-                            decoration: BoxDecoration(
-                              color: i % 2 == 0 ? userColorOne : userColorTwo,
-                              /*             borderRadius: chosenScoreTable!.length < 10 &&
-                                      i == chosenScoreTable!.length - 1
-                                  ? BorderRadius.only(
-                                      bottomLeft: Radius.circular(width * 5),
-                                      bottomRight: Radius.circular(width * 5),
-                                    )
-                                  : BorderRadius.zero,*/
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  height: height * 7,
-                                  width: width * 15,
-                                  child: Align(
-                                    child: Text(
-                                      "",
-                                      //userScores.key,
-                                      textAlign: TextAlign.center,
-                                      style:
-                                          i < 3 ? scoreStyleMedals : scoreStyle,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: height * 7,
-                                  width: width * 30,
-                                  child: Align(
-                                    child: Text(
-                                      "",
-                                      //userScores.key,
-                                      textAlign: TextAlign.center,
-                                      style: scoreStyle,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: height * 7,
-                                  width: width * 15,
-                                  child: Align(
-                                    child: Text(
-                                      "",
-                                      //userScores.value["score"].toString(),
-                                      textAlign: TextAlign.center,
-                                      style: scoreStyle,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: height * 7,
-                                  width: width * 20,
-                                  child: Align(
-                                    child: Text(
-                                      "",
-                                      textAlign: TextAlign.center,
-                                      style: scoreStyle,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      if (chosenScoreTable != null)
-                        if (chosenScoreTable!.keys.toList().contains(userName))
-                          if (chosenScoreTable!.keys
-                                  .toList()
-                                  .indexOf(userName) >
-                              9)
+
+                        if (chosenScoreTable!.keys.toList().contains(userName)
+                            && (chosenScoreTable!.keys
+                            .toList()
+                            .indexOf(userName) >
+                            9))
                             Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.green.shade800,
+                                  color: playerColor,
                                   /*             borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(width * 5),
                                   bottomRight: Radius.circular(width * 5),
@@ -491,9 +489,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                       width: width * 15,
                                       child: Align(
                                         child: Text(
-                                          chosenScoreTable!.keys
-                                              .toList()
-                                              .indexOf(userName)
+                                          (chosenScoreTable!.keys.toList().indexOf(userName) + 1)
                                               .toString(),
                                           textAlign: TextAlign.center,
                                           style: scoreStyle,
@@ -518,8 +514,8 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                       width: width * 15,
                                       child: Align(
                                         child: AutoSizeText(
-                                          chosenScoreTable![userName]!["score"]
-                                              .toString(),
+                                          chosenScoreTable!.entries.toList()[chosenScoreTable!.keys.toList().indexOf(userName)].value['score'].toString()
+                                          ,
                                           //userScores.value["score"].toString(),
                                           textAlign: TextAlign.center,
                                           group: textSizeGroup,
@@ -533,11 +529,10 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                                       width: width * 20,
                                       child: Align(
                                         child: AutoSizeText(
-                                          chosenScoreTable![userName]![
-                                                  selectedDaily
-                                                      ? "seconds"
-                                                      : "totalSeconds"]
-                                              .toString(),
+                                          timeFormat(chosenScoreTable!.entries.toList()[chosenScoreTable!.keys.toList().indexOf(userName)].value[
+                                          selectedDaily
+                                              ? "seconds"
+                                              : "totalSeconds"], isEndTime: true),
                                           textAlign: TextAlign.center,
                                           group: textSizeGroup,
                                           maxLines: 1,

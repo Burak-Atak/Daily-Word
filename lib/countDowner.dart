@@ -3,7 +3,7 @@ import 'package:first_project/helper.dart';
 import 'package:flutter/material.dart';
 
 class CountdownTimerDemo extends StatefulWidget {
-  late final Duration remainingTime;
+  late Duration remainingTime;
   final TextStyle textStyle;
 
   CountdownTimerDemo({Key? key, required this.remainingTime, required this.textStyle}) : super(key: key);

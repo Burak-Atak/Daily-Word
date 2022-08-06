@@ -36,7 +36,6 @@ class _HomePageState extends State<HomePage> {
           });
         },
         onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
           ad.dispose();
         },
       ),

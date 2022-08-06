@@ -179,9 +179,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                       size: height * 5,
                     ),
                     onPressed: () {
-                      setState(() {
                         Navigator.pop(context);
-                      });
                     },
                     padding: EdgeInsets.all(0),
                   ),

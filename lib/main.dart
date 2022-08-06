@@ -35,6 +35,7 @@ import 'design.dart';
 import 'firebase_options.dart';
 import 'generalStatistic.dart';
 import 'package:get/get.dart';
+import 'mainGame/bannerAdWidget.dart';
 import 'mainGame/keyboard.dart';
 import 'mainGame/winAnimationWidget.dart';
 
@@ -240,12 +241,6 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isBack) {
-        List<String> userSavedWords = prefs.getStringList('userWords') ?? [];
-        for (int i = 0; i < userSavedWords.length; i++) {
-          for (int j = 0; j < 5; j++) {
-            flipKeys[i][j].value.currentState.toggleCard();
-          }
-        }
 
         if (isGameEnd == true) {
           await Future.delayed(Duration(milliseconds: 600));
@@ -288,7 +283,8 @@ class MyHomePage extends StatelessWidget {
                             onTap: () {
                               if (isAnimationCompleted &&
                                   isFirstBuildCompleted) {
-                                Get.offAll(HomePage());
+                                PushPage().pushPage(HomePage());
+
                               }
                             },
                             customBorder: RoundedRectangleBorder(
@@ -313,11 +309,7 @@ class MyHomePage extends StatelessWidget {
                             onTap: () {
                               if (isAnimationCompleted &&
                                   isFirstBuildCompleted) {
-                                showDialog(
-                                  barrierColor: Colors.black.withOpacity(0.5),
-                                  context: context,
-                                  builder: (context) => const HowToPlay(),
-                                );
+                                PushPage().pushDialog(HowToPlay());
                               }
                             },
                             customBorder: RoundedRectangleBorder(
@@ -367,12 +359,8 @@ class MyHomePage extends StatelessWidget {
                             onTap: () {
                               if (isAnimationCompleted &&
                                   isFirstBuildCompleted) {
-                                showDialog(
-                                  barrierColor: Colors.black.withOpacity(0.5),
-                                  context: context,
-                                  builder: (context) =>
-                                      const GeneralStatistic(),
-                                );
+                                PushPage().pushDialog(GeneralStatistic());
+
                               }
                             },
                             customBorder: RoundedRectangleBorder(
@@ -393,11 +381,8 @@ class MyHomePage extends StatelessWidget {
                               try {
                                 interstitialAd?.show();
                               } catch (e) {}
-                              showDialog(
-                                barrierColor: Colors.black.withOpacity(0.5),
-                                context: context,
-                                builder: (context) => const MyAlertDialog(),
-                              );
+                              PushPage().pushDialog(ScorePage());
+
                             }
                           },
                           customBorder: RoundedRectangleBorder(
@@ -425,8 +410,8 @@ class MyHomePage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // todo : active banner ad
-                  //BannerAdWidget(),
+
+                  BannerAdWidget(),
                   Stack(children: [
                     mainSquare(),
                     Align(
@@ -818,6 +803,7 @@ class MyHomePage extends StatelessWidget {
         userWords.add(turkish.toUpperCase(wordOfUser));
         prefs.setStringList('userWords', userWords);
         await choseSquaresColor();
+
         for (int i = 0; i < 5; i++) {
           mainController.flipCard(chosenWord, i);
           await Future.delayed(const Duration(milliseconds: 200));
@@ -825,6 +811,11 @@ class MyHomePage extends StatelessWidget {
         await Future.delayed(const Duration(milliseconds: 300));
 
         await choseButtonsColor();
+
+        for (int i = 0; i < 5; i++) {
+          mainController.changeIsFlipped(chosenWord, i);
+        }
+
         if (wordOfUser == wordOfDay) {
           _gameEnd(true);
         } else if ((wordOfUser != wordOfDay) && (chosenWord == 5)) {
@@ -994,7 +985,7 @@ class MyHomePage extends StatelessWidget {
     }
     List<String> userSavedWords = prefs.getStringList('userWords') ?? [];
 
-    if (userSavedWords.length == 0 && userName != null) {
+    if (userSavedWords.isEmpty && userName != null) {
       isFirstBuildCompleted = true;
     }
 
@@ -1031,12 +1022,22 @@ class MyHomePage extends StatelessWidget {
           mainController.flipCard(a, i);
         }
       }
+
       await Future.delayed(const Duration(milliseconds: 400));
       for (int a = 0; a < userSavedWords.length; a++) {
         choseSquaresColor();
         await choseButtonsColor();
         chosenWord += 1;
         squareRowCount += 1;
+      }
+
+      await Future.delayed(const Duration(milliseconds: 400));
+
+      for (int a = 0; a < userSavedWords.length; a++) {
+        for (int i = 0; i < 5; i++) {
+          mainController.changeIsFlipped(a, i);
+
+        }
       }
     }
 

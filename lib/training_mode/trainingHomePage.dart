@@ -16,6 +16,7 @@ import 'package:confetti/confetti.dart';
 import '../ad_helper.dart';
 import '../design.dart';
 import 'package:get/get.dart';
+import '../helper.dart';
 import '../main.dart';
 
 String wordOfDayTraining = "-----";
@@ -61,13 +62,6 @@ class _TrainingPageState extends State<TrainingPage>
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (trainingIsBack) {
-        List<String> userSavedWords =
-            prefs.getStringList('trainingUserWords') ?? [];
-        for (int i = 0; i < userSavedWords.length; i++) {
-          for (int j = 0; j < 5; j++) {
-            flipKeys[i][j].value.currentState.toggleCard();
-          }
-        }
 
         if (trainingIsGameEnd == true) {
           await Future.delayed(Duration(milliseconds: 600));
@@ -108,6 +102,9 @@ class _TrainingPageState extends State<TrainingPage>
 
   /// Kutucukların animasyonunu kontrol eden keylerin bulundugu liste
   List flipKeys = trainingController.flipKeys;
+
+  List isFlipped = trainingController.isFlipped;
+
 
   /// Klavye harflerini ve renklerini tutan map
   Map<String, dynamic> rowLettersMap = trainingController.rowLettersMap;
@@ -163,8 +160,7 @@ class _TrainingPageState extends State<TrainingPage>
                       child: InkWell(
                         onTap: () {
                           if (isAnimationCompleted && isFirstBuildCompleted) {
-                            Get.offAll(HomePage());
-
+                            PushPage().pushPage(HomePage());
                           }
                         },
                         customBorder: RoundedRectangleBorder(
@@ -300,45 +296,51 @@ class _TrainingPageState extends State<TrainingPage>
         padding: paddingForSquare,
         itemCount: 30,
         itemBuilder: (BuildContext context, int index) {
-          return FlipCard(
-            speed: 650,
-            key: flipKeys[index ~/ 5][index % 5].value,
-            flipOnTouch: false,
-            front: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.white38,
-                  border: Border.all(
-                    color: grey,
-                    width: 0.9,
-                  ),
-                ),
-                child: Obx(
-                  () => AutoSizeText(
-                    textBoxes[index ~/ 5][index % 5].value,
-                    style: TextStyle(fontSize: height * 6, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                )),
-            back: Obx(
-              () => Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: squaresColors[index ~/ 5][index % 5].value,
-                ),
-                child: Obx(
-                  () => AutoSizeText(
-                    textBoxes[index ~/ 5][index % 5].value,
-                    style: TextStyle(fontSize: height * 6, color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
-          );
+          return _flipCard(index);
         });
 
     return littleSquares;
+  }
+
+  Widget _flipCard(int index) {
+    int row = index ~/ 5;
+    int column = index % 5;
+    Widget front = Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Colors.white38,
+        border: Border.all(
+          color: grey,
+          width: 0.9,
+        ),
+      ),
+      child: Obx(
+            () => AutoSizeText(
+          textBoxes[row][column].value,
+          style: TextStyle(fontSize: height * 6, color: Colors.black),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+    Widget back = Obx(
+          () => Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: squaresColors[row][column].value,
+          ),
+          child: AutoSizeText(
+            textBoxes[row][column].value,
+            style: TextStyle(fontSize: height * 6, color: Colors.white),
+            textAlign: TextAlign.center,
+          )),
+    );
+    return Obx(() => (isFlipped[row][column].value) ? back : FlipCard(
+      speed: 650,
+      key: flipKeys[index ~/ 5][index % 5].value,
+      flipOnTouch: false,
+      front:front,
+      back: back,
+    ));
   }
 
   /// Klavyenin ilk satırını oluşturuyor
@@ -583,9 +585,9 @@ class _TrainingPageState extends State<TrainingPage>
         trainingChosenLetter % 5 == 0 &&
         trainingChosenLetter != 0) {
       String wordOfUser = "";
-      textBoxes[trainingChosenWord].forEach((letter) {
+      for (var letter in textBoxes[trainingChosenWord]) {
         wordOfUser += turkish.toLowerCase(letter.value);
-      });
+      }
 
       if (!words.contains(wordOfUser)) {
         trainingController.changeIsWordExist(true);
@@ -610,6 +612,7 @@ class _TrainingPageState extends State<TrainingPage>
         trainingUserWords.add(turkish.toUpperCase(wordOfUser));
         prefs.setStringList('trainingUserWords', trainingUserWords);
         await choseSquaresColor();
+
         for (int i = 0; i < 5; i++) {
           trainingController.flipCard(trainingChosenWord, i);
           await Future.delayed(const Duration(milliseconds: 200));
@@ -617,6 +620,11 @@ class _TrainingPageState extends State<TrainingPage>
         await Future.delayed(const Duration(milliseconds: 300));
 
         await choseButtonsColor();
+
+        for (int i = 0; i < 5; i++) {
+          trainingController.changeIsFlipped(trainingChosenWord, i);
+        }
+
         if (wordOfUser == wordOfDayTraining) {
           _gameEnd(true);
         } else if ((wordOfUser != wordOfDayTraining) &&
@@ -773,11 +781,11 @@ class _TrainingPageState extends State<TrainingPage>
     List<String> userSavedWords =
         prefs.getStringList('trainingUserWords') ?? [];
 
-    if (userSavedWords.length == 0) {
+    if (userSavedWords.isEmpty) {
       isFirstBuildCompleted = true;
     }
 
-    if (userSavedWords.length != 0) {
+    if (userSavedWords.isNotEmpty) {
       for (int i = 0; i < userSavedWords.length; i++) {
         trainingUserWords.add(userSavedWords[i]);
         for (int j = 0; j < 5; j++) {
@@ -796,6 +804,15 @@ class _TrainingPageState extends State<TrainingPage>
         await choseButtonsColor();
         trainingChosenWord += 1;
         trainingSquareRowCount += 1;
+      }
+    }
+
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    for (int a = 0; a < userSavedWords.length; a++) {
+      for (int i = 0; i < 5; i++) {
+        trainingController.changeIsFlipped(a, i);
+
       }
     }
 

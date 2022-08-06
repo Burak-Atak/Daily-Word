@@ -18,6 +18,8 @@ class mainSquare extends StatelessWidget {
   Map<String, dynamic> rowLettersMap = mainController.rowLettersMap;
   List squaresColors = mainController.squaresColors;
 
+  List isFlipped = mainController.isFlipped;
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -32,44 +34,47 @@ class mainSquare extends StatelessWidget {
         padding: paddingForSquare,
         itemCount: 30,
         itemBuilder: (BuildContext context, int index) {
-          return FlipCard(
-            speed: 650,
-            key: flipKeys[index ~/ 5][index % 5].value,
-            flipOnTouch: false,
-            front: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.white38,
-                  border: Border.all(
-                    color: grey,
-                    width: 0.9,
-                  ),
-                ),
-
-              child: Obx(
-                  () => AutoSizeText(
-                    textBoxes[index ~/ 5][index % 5].value,
-                    style: TextStyle(fontSize: height * 6, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-
-            ),
-            back: Obx(
-              () => Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: squaresColors[index ~/ 5][index % 5].value,
-                ),
-                child:    AutoSizeText(
-                    textBoxes[index ~/ 5][index % 5].value,
-                    style: TextStyle(fontSize: height * 6, color: Colors.white),
-                    textAlign: TextAlign.center,
-                  )
-
+          int row = index ~/ 5;
+          int column = index % 5;
+          Widget front = Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white38,
+              border: Border.all(
+                color: grey,
+                width: 0.9,
               ),
-            )
+            ),
+            child: Obx(
+              () => AutoSizeText(
+                textBoxes[row][column].value,
+                style: TextStyle(fontSize: height * 6, color: Colors.black),
+                textAlign: TextAlign.center,
+              ),
+            ),
           );
+          Widget back = Obx(
+            () => Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: squaresColors[row][column].value,
+                ),
+                child: AutoSizeText(
+                  textBoxes[row][column].value,
+                  style: TextStyle(fontSize: height * 6, color: Colors.white),
+                  textAlign: TextAlign.center,
+                )),
+          );
+
+          return Obx(() => (isFlipped[row][column].value)
+              ? back
+              : FlipCard(
+                  speed: 650,
+                  key: flipKeys[row][column].value,
+                  flipOnTouch: false,
+                  front: front,
+                  back: back,
+                ));
         });
   }
 }

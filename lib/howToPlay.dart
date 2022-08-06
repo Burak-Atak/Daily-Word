@@ -107,9 +107,7 @@ class _HowToPlayState extends State<HowToPlay>
                               size: height * 5,
                             ),
                             onPressed: () {
-                              setState(() {
                                 Navigator.pop(context);
-                              });
                             },
                             padding: EdgeInsets.all(0),
                           ),

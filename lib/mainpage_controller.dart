@@ -55,6 +55,11 @@ class MainController extends GetxController
       [for (int a = 0; a < 5; a++) squaresMainColor.obs]
   ];
 
+  List<dynamic> isFlipped = [
+    for (int i = 0; i < 6; i++)
+      [for (int a = 0; a < 5; a++) false.obs]
+  ];
+
   RxBool isWordExist = false.obs;
   var isFirstBuildCompleted = false.obs;
 
@@ -98,6 +103,10 @@ class MainController extends GetxController
 
   void flipCard(int row, int col) {
     flipKeys[row][col].value.currentState?.toggleCard();
+  }
+
+  void changeIsFlipped(int row, int col) {
+    isFlipped[row][col].value = true;
   }
 
   void setLetter(int row, int col, String letter) {
