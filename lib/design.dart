@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'main.dart';
+
 const colorBlack = Colors.black;
 Color squaresMainColor = Colors.white38;
 const green = Color.fromRGBO(106, 170, 100, 1);
@@ -21,3 +23,19 @@ Map<int, Color> materialColor = {
   800: const Color.fromRGBO(106, 170, 100, .9),
   900: const Color.fromRGBO(106, 170, 100, 1),
 };
+
+ButtonStyle roundedButtonStyle = ButtonStyle(
+  overlayColor: MaterialStateProperty.all(
+      Colors.grey.withOpacity(0.2)),
+  shape: MaterialStateProperty.all(
+    RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(width * 5),
+      ),
+    ),
+  ),
+  backgroundColor: MaterialStateProperty.all(white),
+  padding: MaterialStateProperty.all(
+    EdgeInsets.symmetric(horizontal: 1, vertical: 0),
+  ),
+);

@@ -4,7 +4,6 @@ import 'package:first_project/dictAlertDialog.dart';
 import 'package:first_project/homePage/homePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:turkish/turkish.dart';
 
 import '../ad_helper.dart';
@@ -32,7 +31,8 @@ class _EndGamePageState extends State<EndGame>
   @override
   void initState() {
     super.initState();
-    _loadInterstitialAd();
+    AdHelper().loadInterstitialAd();
+
     final quick = const Duration(milliseconds: 200);
     final scaleTween = Tween(begin: 1.0, end: 0.8);
     controller = AnimationController(duration: quick, vsync: this);
@@ -53,31 +53,9 @@ class _EndGamePageState extends State<EndGame>
     });
   }
 
-  InterstitialAd? _interstitialAd;
-
-  Future<void> _loadInterstitialAd() async {
-    InterstitialAd.load(
-      adUnitId: AdHelper.interstitialAdUnitId,
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) async {
-            },
-          );
-          _interstitialAd = ad;
-        },
-        onAdFailedToLoad: (err) {
-        },
-      ),
-    );
-
-    return;
-  }
-
   @override
   void dispose() {
-    _interstitialAd?.dispose();
+    interstitialAd?.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -103,12 +81,12 @@ class _EndGamePageState extends State<EndGame>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: width * 80,
+              width: width * 70,
               height: height * 55,
               decoration: BoxDecoration(
                 color: Color(0xffbbe7bb),
                 borderRadius: BorderRadius.all(
-                  Radius.circular(width * 3),
+                  Radius.circular(width * 5),
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -161,7 +139,7 @@ class _EndGamePageState extends State<EndGame>
                         width: width * 10,
                       ),
                       Text(
-                        '${turkish.toUpperCase(wordOfDayTraining)}',
+                        turkish.toUpperCase(wordOfDayTraining),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Color(0xff2bb429),
@@ -190,165 +168,127 @@ class _EndGamePageState extends State<EndGame>
                               right: width * 8),
                         ),
                         SizedBox(
-                          width: width * 44,
+                          width: width * 45,
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
                                     HomePage()), (Route<dynamic> route) => false);
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
+                              style: roundedButtonStyle,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: width * 3),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      Icons.home,
+                                      size: width * 7,
+                                      color: green,
                                     ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    Icons.home,
-                                    size: width * 7,
-                                    color: green,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Ana Menü",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Ana Menü",
+                                          style: TextStyle(
+                                              fontSize: height * 3.5,
+                                              color: green),
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )),
                         ),
                         SizedBox(
-                          width: width * 44,
+                          width: width * 45,
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
                                 startNewTrainingGame = true;
                                 try {
-                                  _interstitialAd?.show();
+                                  interstitialAd?.show();
                                 } catch (e) {
                                 }
                                 Navigator.pop(context);
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
+                              style: roundedButtonStyle,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: width * 3),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      Icons.refresh,
+                                      size: width * 7,
+                                      color: green,
                                     ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    Icons.refresh,
-                                    size: width * 7,
-                                    color: green,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Yeni Oyun",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Yeni Oyun",
+                                          style: TextStyle(
+                                              fontSize: height * 3.5,
+                                              color: green),
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )),
                         ),
                         SizedBox(
-                          width: width * 44,
+                          width: width * 45,
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
                                 SystemChannels.platform.invokeMethod(
                                     'SystemNavigator.pop');
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
-                                    ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Transform.rotate(
-                                      angle: 180 * pi / 180,
-                                      child: Icon(
-                                        Icons.exit_to_app_rounded,
-                                        size: width * 5.5,
-                                        color: green,
-                                      )),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Çıkış",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                              style: roundedButtonStyle,
+                              child: Padding(
+
+                                padding: EdgeInsets.only(left: width * 3),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Transform.rotate(
+                                        angle: 180 * pi / 180,
+                                        child: Icon(
+                                          Icons.exit_to_app_rounded,
+                                          size: width * 5.5,
+                                          color: green,
+                                        )),
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Çıkış",
+                                          style: TextStyle(
+                                              fontSize: height * 3.5,
+                                              color: green),
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )),
                         ),
                       ],

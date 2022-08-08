@@ -7,7 +7,6 @@ import 'package:first_project/endgame.dart';
 import 'package:first_project/helper.dart';
 import 'package:first_project/homePage/homePage.dart';
 import 'package:first_project/howToPlay.dart';
-import 'package:first_project/internetConnectionDialog.dart';
 import 'package:first_project/mainGame/mainSquare.dart';
 import 'package:first_project/mainpage_controller.dart';
 import 'package:first_project/my_flutter_app_icons.dart';
@@ -22,7 +21,6 @@ import 'package:first_project/new_deneme.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +29,7 @@ import 'package:turkish/turkish.dart';
 import 'package:confetti/confetti.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'ad_helper.dart';
+import 'containerForBadConnection.dart';
 import 'design.dart';
 import 'firebase_options.dart';
 import 'generalStatistic.dart';
@@ -97,26 +96,18 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
     prefs = await SharedPreferences.getInstance();
 
     // The following lines are the same as previously explained in "Handling uncaught errors"
 
-    //FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    await Future.delayed(Duration(seconds: 1), () {
-/*      runApp(
-          DevicePreview(
-            builder: (context) => MyApp(),
-            enabled: true,
-            tools: [
-              ...DevicePreview.defaultTools,
-            ],
-          )
-      );*/
+
 
       runApp(Phoenix(child: MyApp()));
-    });
+
   },
       (error, stack) =>
           FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
@@ -168,14 +159,6 @@ class MyApp extends StatelessWidget {
                     EdgeInsets.only(left: width * 30, right: width * 30);
               }
             })();
-
-            Future<InitializationStatus> _initGoogleMobileAds() {
-              return MobileAds.instance.initialize();
-            }
-
-            _initGoogleMobileAds();
-
-            AdHelper().loadInterstitialAd();
 
             return HomePage();
           },
@@ -230,13 +213,6 @@ class MyHomePage extends StatelessWidget {
   late Map<String, bool> mapOfSetUserWord;
   ConfettiController confettiController = ConfettiController();
 
-/*  @override
-  void dispose() {
-    interstitialAd?.dispose();
-
-    super.dispose();
-  }*/
-
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -255,35 +231,138 @@ class MyHomePage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: width, right: width),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: grey,
-                    width: 0.5,
+        body: WillPopScope(
+          onWillPop: () async {
+            PushPage().pushPage(HomePage());
+            return false;
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: width, right: width),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: grey,
+                      width: 0.5,
+                    ),
                   ),
                 ),
-              ),
-              height: height * 9.4,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: width * 25,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
+                height: height * 9.4,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: width * 25,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                              onTap: () {
+                                if (isAnimationCompleted &&
+                                    isFirstBuildCompleted) {
+                                  PushPage().pushPage(HomePage());
+
+                                }
+                              },
+                              customBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  height * 2,
+                                ),
+                              ),
+                              child: SizedBox(
+                                height: height * 5,
+                                width: height * 5,
+                                child: Icon(
+                                  Icons.home_rounded,
+                                  color: Colors.black45,
+                                  size: height * 4,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                              onTap: () {
+                                if (isAnimationCompleted &&
+                                    isFirstBuildCompleted) {
+                                  PushPage().pushDialog(HowToPlay());
+                                }
+                              },
+                              customBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  height * 2,
+                                ),
+                              ),
+                              child: SizedBox(
+                                height: height * 5,
+                                width: height * 5,
+                                child: Icon(
+                                  Icons.info_outline_rounded,
+                                  color: Colors.black45,
+                                  size: height * 4,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: height * 5.5,
+                      width: width * 44,
+                      child: Align(
+                        child: AutoSizeText(
+                          title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: height * 5.5,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          maxLines: 1,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: width * 25,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding:
+                                EdgeInsets.only(left: width * 2, right: width),
+                            child: InkWell(
+                              onTap: () {
+                                if (isAnimationCompleted &&
+                                    isFirstBuildCompleted) {
+                                  PushPage().pushDialog(GeneralStatistic());
+
+                                }
+                              },
+                              customBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  height * 2,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.bar_chart_rounded,
+                                color: Colors.black45,
+                                size: height * 5,
+                              ),
+                            ),
+                          ),
+                          InkWell(
                             onTap: () {
-                              if (isAnimationCompleted &&
-                                  isFirstBuildCompleted) {
-                                PushPage().pushPage(HomePage());
+                              if (isAnimationCompleted && isFirstBuildCompleted) {
+                                try {
+                                  interstitialAd?.show();
+                                } catch (e) {}
+                                PushPage().pushDialog(ScorePage());
 
                               }
                             },
@@ -296,174 +375,77 @@ class MyHomePage extends StatelessWidget {
                               height: height * 5,
                               width: height * 5,
                               child: Icon(
-                                Icons.home_rounded,
+                                MyFlutterApp.cup,
                                 color: Colors.black45,
-                                size: height * 4,
+                                size: height * 3,
                               ),
                             ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () {
-                              if (isAnimationCompleted &&
-                                  isFirstBuildCompleted) {
-                                PushPage().pushDialog(HowToPlay());
-                              }
-                            },
-                            customBorder: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                height * 2,
-                              ),
-                            ),
-                            child: SizedBox(
-                              height: height * 5,
-                              width: height * 5,
-                              child: Icon(
-                                Icons.info_outline_rounded,
-                                color: Colors.black45,
-                                size: height * 4,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 5.5,
-                    width: width * 44,
-                    child: Align(
-                      child: AutoSizeText(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: height * 5.5,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                        maxLines: 1,
+                        ],
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: width * 25,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding:
-                              EdgeInsets.only(left: width * 2, right: width),
-                          child: InkWell(
-                            onTap: () {
-                              if (isAnimationCompleted &&
-                                  isFirstBuildCompleted) {
-                                PushPage().pushDialog(GeneralStatistic());
-
-                              }
-                            },
-                            customBorder: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                height * 2,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.bar_chart_rounded,
-                              color: Colors.black45,
-                              size: height * 5,
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            if (isAnimationCompleted && isFirstBuildCompleted) {
-                              try {
-                                interstitialAd?.show();
-                              } catch (e) {}
-                              PushPage().pushDialog(ScorePage());
-
-                            }
-                          },
-                          customBorder: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              height * 2,
-                            ),
-                          ),
-                          child: SizedBox(
-                            height: height * 5,
-                            width: height * 5,
-                            child: Icon(
-                              MyFlutterApp.cup,
-                              color: Colors.black45,
-                              size: height * 3,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
 
-                  BannerAdWidget(),
-                  Stack(children: [
-                    mainSquare(),
-                    Align(
-                      child: Obx(
-                        () => AnimatedOpacity(
-                          // If the widget is visible, animate to 0.0 (invisible).
-                          // If the widget is hidden, animate to 1.0 (fully visible).
-                          opacity: isWordExist.value ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 500),
-                          // The green box must be a child of the AnimatedOpacity widget.
-                          child: Padding(
-                            padding: EdgeInsets.only(top: height * 25),
-                            child: Container(
-                              width: width * 60,
-                              height: height * 8,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: AutoSizeText(
-                                'Kelime listesinde yok.',
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontSize: height * 3.64,
-                                    color: Colors.white),
+                    BannerAdWidget(),
+                    Stack(children: [
+                      mainSquare(),
+                      Align(
+                        child: Obx(
+                          () => AnimatedOpacity(
+                            // If the widget is visible, animate to 0.0 (invisible).
+                            // If the widget is hidden, animate to 1.0 (fully visible).
+                            opacity: isWordExist.value ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 500),
+                            // The green box must be a child of the AnimatedOpacity widget.
+                            child: Padding(
+                              padding: EdgeInsets.only(top: height * 25),
+                              child: Container(
+                                width: width * 60,
+                                height: height * 8,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: AutoSizeText(
+                                  'Kelime listesinde yok.',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      fontSize: height * 3.64,
+                                      color: Colors.white),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    winAnimationWidget(),
-                  ]),
-                  Keyboard(
-                      letterButtonFunc: letterButtonFunc,
-                      deleteButtonFunc: deleteButtonFunc,
-                      enterButtonFunc: enterButtonFunc),
-                  /*       Padding(
-                    padding: EdgeInsets.only(bottom: height * 1.2),
-                    child: Column(
-                      children: [
-                        firstRow(),
-                        secondRow(),
-                        thirdRow(),
-                      ],
-                    ),
-                  ),*/
-                ],
+                      winAnimationWidget(),
+                    ]),
+                    Keyboard(
+                        letterButtonFunc: letterButtonFunc,
+                        deleteButtonFunc: deleteButtonFunc,
+                        enterButtonFunc: enterButtonFunc),
+                    /*       Padding(
+                      padding: EdgeInsets.only(bottom: height * 1.2),
+                      child: Column(
+                        children: [
+                          firstRow(),
+                          secondRow(),
+                          thirdRow(),
+                        ],
+                      ),
+                    ),*/
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -769,9 +751,8 @@ class MyHomePage extends StatelessWidget {
             barrierDismissible: false,
             context: context,
             builder: (context) => ConnectionDialog());*/
-        Get.dialog(ConnectionDialog(),
-            barrierColor: Colors.black.withOpacity(0.5),
-            barrierDismissible: false);
+        Get.dialog(BadConnection(),
+            barrierColor: Colors.black.withOpacity(0.5),);
         return false;
       }
 
@@ -1004,8 +985,8 @@ class MyHomePage extends StatelessWidget {
 
       if ((Get.currentRoute == "/MyHomePage")) {
         await Get.dialog(TimeIsUpAlert());
-        Get.offAll(HomePage());
-        Get.to(() => MyHomePage());
+        PushPage().pushPage(HomePage());
+        PushPage().pushPage(MyHomePage());
       }
     });
 
@@ -1159,8 +1140,6 @@ class MyHomePage extends StatelessWidget {
     }
     userScore = dayScore;
     prefs.setInt("userScore", dayScore);
-
-    String? userName = prefs.getString('userName');
 
     /// Update user's general info
     database.ref('users/$userName').once().then((event) {

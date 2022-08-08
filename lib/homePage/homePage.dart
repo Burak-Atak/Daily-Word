@@ -21,80 +21,77 @@ class _HomePageState extends State<HomePage> {
       if (userName == null) {
         await _registerScreen();
       }
+
+      AdHelper().loadInterstitialAd();
+
+      BannerAd(
+        adUnitId: AdHelper.bannerAdUnitId,
+        request: AdRequest(),
+        size: AdSize(width: (width * 100).round(), height: (height * 9).round()),
+        listener: BannerAdListener(
+          onAdLoaded: (ad) {
+            setState(() {
+              _bannerAd = ad as BannerAd;
+            });
+          },
+          onAdFailedToLoad: (ad, err) {
+            ad.dispose();
+          },
+        ),
+      ).load();
     });
-
-    _initGoogleMobileAds();
-
-    BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      request: AdRequest(),
-      size: AdSize(width: (width * 100).round(), height:( height * 9).round()),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _bannerAd = ad as BannerAd;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          ad.dispose();
-        },
-      ),
-    ).load();
   }
 
   BannerAd? _bannerAd;
 
-
-  Future<InitializationStatus> _initGoogleMobileAds() {
-    return MobileAds.instance.initialize();
-  }
-
   @override
   void dispose() {
     _bannerAd?.dispose();
-
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Image(
-                image: AssetImage('assets/images/bgForHomeScreen.png'),
-                alignment: Alignment.center,
-                fit: BoxFit.fill,
-              ),
-            ),
-            if (userName != null)
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FlipCardWidget(),
-                  ],
-                ),
-              ),
-            if (_bannerAd != null)
-              Padding(
-                padding:     EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    width: _bannerAd!.size.width.toDouble(),
-                    height: _bannerAd!.size.height.toDouble(),
-                    child: AdWidget(ad: _bannerAd!),
+        body: FutureBuilder<void>(
+            future: _initGoogleMobileAds(),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              return Stack(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Image(
+                      image: AssetImage('assets/images/bgForHomeScreen.png'),
+                      alignment: Alignment.center,
+                      fit: BoxFit.fill,
+                    ),
                   ),
-                ),
-              ),
-          ],
-        ),
-      );
+                  if (userName != null)
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          FlipCardWidget(),
+                        ],
+                      ),
+                    ),
+                  if (_bannerAd != null)
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).padding.top),
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          width: _bannerAd!.size.width.toDouble(),
+                          height: _bannerAd!.size.height.toDouble(),
+                          child: AdWidget(ad: _bannerAd!),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            }));
   }
 
   Future<void> _registerScreen() async {
@@ -104,5 +101,9 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (context) => AddPlayer());
     return;
+  }
+
+  Future<InitializationStatus> _initGoogleMobileAds() {
+    return MobileAds.instance.initialize();
   }
 }

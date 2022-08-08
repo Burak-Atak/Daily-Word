@@ -72,8 +72,8 @@ class _HowToPlayState extends State<HowToPlay>
                       ],
                       color: green,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(width * 3),
-                        topRight: Radius.circular(width * 3),
+                        topLeft: Radius.circular(width * 5),
+                        topRight: Radius.circular(width * 5),
                       ),
                     ),
                     child: Row(
@@ -124,8 +124,8 @@ class _HowToPlayState extends State<HowToPlay>
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.zero,
                           topRight: Radius.zero,
-                          bottomLeft: Radius.circular(width * 3),
-                          bottomRight: Radius.circular(width * 3),
+                          bottomLeft: Radius.circular(width * 5),
+                          bottomRight: Radius.circular(width * 5),
                         ),
                         boxShadow: [
                           BoxShadow(
@@ -285,7 +285,7 @@ class _HowToPlayState extends State<HowToPlay>
                     front: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Colors.white38,
+                        color: white,
                         border: Border.all(
                           color: grey,
                           width: 0.9,
@@ -317,7 +317,7 @@ class _HowToPlayState extends State<HowToPlay>
                 : Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.white38,
+                      color: white,
                       border: Border.all(
                         color: grey,
                         width: 0.9,

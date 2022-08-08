@@ -7,7 +7,6 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'design.dart';
 import 'helper.dart';
 import 'homePage/homePage.dart';
-import 'howToPlay.dart';
 import 'main.dart';
 
 /// This page used to create new players
@@ -29,6 +28,7 @@ class _AddPlayerPageState extends State<AddPlayer>
   bool _isButtonChildChanged = false;
   bool _isServerError = false;
   bool _showWarningForValidation = false;
+  bool _isRegisterCompleted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +107,6 @@ class _AddPlayerPageState extends State<AddPlayer>
                                 ),
                                 TextField(
                                   onChanged: (value) async {
-                                    await Future.delayed(
-                                        Duration(milliseconds: 100));
                                     await _checkLengthAndUsername();
                                     setState(() {});
                                   },
@@ -206,13 +204,15 @@ class _AddPlayerPageState extends State<AddPlayer>
                           ),
                           onPressed: _isButtonEnabled
                               ? () async {
-                                    _RegisterUser(_controller.text);
+                                    _registerUser(_controller.text);
                                   }
                               : null,
                           child: _isButtonChildChanged ?       LoadingAnimationWidget.inkDrop(
                             color: green,
                             size: height * 3,
-                          ) : AutoSizeText("Kaydet",
+                          ) : _isRegisterCompleted ? AutoSizeText("✔",
+                              style: TextStyle(
+                                  fontSize: height * 3, color: green)): AutoSizeText("Kaydet",
                               style: TextStyle(
                                   fontSize: height * 3, color: green)),
                         ),
@@ -228,7 +228,7 @@ class _AddPlayerPageState extends State<AddPlayer>
     );
   }
 
-  Future<void> _RegisterUser(String chosenName) async {
+  Future<void> _registerUser(String chosenName) async {
     setState(() {
       _isButtonChildChanged = true;
       _isButtonEnabled = false;
@@ -266,32 +266,16 @@ class _AddPlayerPageState extends State<AddPlayer>
     }
 
     FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _isButtonChildChanged = false;
+      _isRegisterCompleted = true;
+    });
 
-
-    Widget howToPlay = await buildPageAsync(HowToPlay());
-
-
-    await showGeneralDialog(
-        context: context,
-        pageBuilder: (ctx, a1, a2) {
-          return Container();
-        },
-        transitionBuilder: (ctx, a1, a2, child) {
-          var curve = Curves.easeInOut.transform(a1.value);
-          return Transform.scale(
-            scale: curve,
-            child: howToPlay,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 500),
-      );
+    await Future.delayed(Duration(seconds: 1));
 
     userName = chosenName;
-    print(123);
 
     PushPage().pushPage(HomePage());
-    print(123567);
-
 
   }
 
@@ -302,27 +286,13 @@ class _AddPlayerPageState extends State<AddPlayer>
     _showWarningForUsername = false;
     _showWarningForLength = false;
     _showWarningForValidation = false;
-    _isButtonEnabled = true;
 
-    if (_controller.text.contains(" ")) {
-      _showWarningForValidation = true;
-      _isButtonEnabled = false;
-      return false;
-    }
 
     bool isTrue = false;
-    if (_controller.text.isEmpty || _controller.text.length > 12) {
-      _showWarningForLength = true;
-      _isButtonEnabled = false;
-      return false;
-    }
-
-
-
-
     await database.ref('userNames').get().then((value) async {
       if (value.value == null) {
         isTrue = true;
+        _isButtonEnabled = true;
         return;
       }
       Map userName = value.value as Map;
@@ -335,6 +305,22 @@ class _AddPlayerPageState extends State<AddPlayer>
       }
     });
 
+    if (_controller.text.contains(" ")) {
+      _showWarningForValidation = true;
+      _isButtonEnabled = false;
+      return false;
+    }
+
+    if (_controller.text.isEmpty || _controller.text.length > 12) {
+      _showWarningForLength = true;
+      _isButtonEnabled = false;
+      return false;
+    }
+
+    if (isTrue && !_isButtonChildChanged) {
+      _isButtonEnabled = true;
+      return true;
+    }
 
     return isTrue;
   }

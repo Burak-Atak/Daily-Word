@@ -38,7 +38,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
   @override
   Widget build(BuildContext context) {
     Future<Map?> getSeries() async {
-      await database.ref('series/${userName}').get().timeout(Duration(seconds: 5),
+      await database.ref('series/$userName').get().timeout(Duration(seconds: 5),
           onTimeout: (() {
             throw Exception("series is null");
           })).then((snapshot) {
@@ -52,7 +52,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
     }
 
     Future<Map?> getGeneralStatistic() async {
-      await database.ref('users/${userName}').get().timeout(Duration(seconds: 5),
+      await database.ref('users/$userName').get().timeout(Duration(seconds: 5),
           onTimeout: (() {
             throw Exception("generalStatistic is null");
           })).then((snapshot) {
@@ -68,7 +68,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
     }
 
     Future<Map?> getWhichWord() async {
-      await database.ref('whichWord/${userName}').get().timeout(Duration(seconds: 5),
+      await database.ref('whichWord/$userName').get().timeout(Duration(seconds: 5),
           onTimeout: (() {
             throw Exception("whichWord is null");
           })).then((snapshot) {
@@ -144,8 +144,8 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                 ),
               ],
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(width * 3),
-                topRight: Radius.circular(width *3),
+                topLeft: Radius.circular(width * 5),
+                topRight: Radius.circular(width *5),
               ),
             ),
             child: Row(
@@ -196,8 +196,8 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.zero,
                   topRight: Radius.zero,
-                  bottomLeft: Radius.circular(width * 3),
-                  bottomRight: Radius.circular(width * 3),
+                  bottomLeft: Radius.circular(width * 5),
+                  bottomRight: Radius.circular(width * 5),
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -288,7 +288,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                                         color: colorBlack, fontSize: height * 3),
                                   ),
                                 ),
-                                center: new Text(
+                                center: Text(
                                   generalStatistic!["totalGame"].toString(),
                                   style: TextStyle(
                                       color: colorBlack, fontSize: height * 3),
@@ -317,7 +317,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                                         color: colorBlack, fontSize: height * 3),
                                   ),
                                 ),
-                                center: new Text(
+                                center: Text(
                                   generalStatistic!["totalWin"].toString(),
                                   style: TextStyle(
                                       color: colorBlack, fontSize: height * 3),
@@ -350,7 +350,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                                         color: colorBlack, fontSize: height * 3),
                                   ),
                                 ),
-                                center: new Text(
+                                center: Text(
                                   series!["seriesRecord"].toString(),
                                   style: TextStyle(
                                       color: colorBlack, fontSize: height * 3),
@@ -379,7 +379,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                                         color: colorBlack, fontSize: height * 3),
                                   ),
                                 ),
-                                center: new Text(
+                                center: Text(
                                   series!["gameSeries"].toString(),
                                   style: TextStyle(
                                       color: colorBlack, fontSize: height * 3),
@@ -412,7 +412,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                                         color: colorBlack, fontSize: height * 3),
                                   ),
                                 ),
-                                center: new Text(
+                                center: Text(
                                   series!["winSeriesRecord"].toString(),
                                   style: TextStyle(
                                       color: colorBlack, fontSize: height * 3),
@@ -441,7 +441,7 @@ class _GeneralStatisticState extends State<GeneralStatistic>
                                         color: colorBlack, fontSize: height * 3),
                                   ),
                                 ),
-                                center: new Text(
+                                center: Text(
                                   series!["winSeries"].toString(),
                                   style: TextStyle(
                                       color: colorBlack, fontSize: height * 3),

@@ -62,6 +62,9 @@ class _EndGamePageState extends State<EndGame>
   }
 
 
+  TextStyle buttonTextStyle = TextStyle(
+      fontSize: height * 3.5,
+      color: green);
 
   String myTime = timeFormat(totalSeconds, isEndTime: true);
   var textSizeGroup = AutoSizeGroup();
@@ -112,12 +115,12 @@ class _EndGamePageState extends State<EndGame>
           children: [
             Container(
               padding: EdgeInsets.only(top: height, bottom: height),
-              width: width * 80,
+              width: width * 75,
               height: height * 70,
               decoration: BoxDecoration(
                 color: lightGreen,
                 borderRadius: BorderRadius.all(
-                  Radius.circular(width * 3),
+                  Radius.circular(width * 5),
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -248,48 +251,33 @@ class _EndGamePageState extends State<EndGame>
                                 PushPage().pushDialog(ScorePage());
 
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
+                              style: roundedButtonStyle,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left : width * 2),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      MyFlutterApp.cup,
+                                      color: green,
+                                      size: width * 4.5,
                                     ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    MyFlutterApp.cup,
-                                    color: green,
-                                    size: width * 4.5,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Skor Tablosu ",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Skor Tablosu ",
+                                          style: buttonTextStyle,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )),
                         ),
                         SizedBox(
@@ -300,48 +288,33 @@ class _EndGamePageState extends State<EndGame>
                                 PushPage().pushDialog(GeneralStatistic());
 
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
+                              style: roundedButtonStyle,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left : width * 2),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      Icons.bar_chart_rounded,
+                                      color: green,
+                                      size: width * 7,
                                     ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    Icons.bar_chart_rounded,
-                                    color: green,
-                                    size: width * 7,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "İstatistik ",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "İstatistik ",
+                                          style: buttonTextStyle,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )),
                         ),
                         SizedBox(
@@ -351,48 +324,33 @@ class _EndGamePageState extends State<EndGame>
                               onPressed: () async {
                                 Share.share(_prepareShareText());
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
+                              style: roundedButtonStyle,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left : width * 2),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      Icons.share,
+                                      color: green,
+                                      size: width * 5.5,
                                     ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    Icons.share,
-                                    color: green,
-                                    size: width * 5.5,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Paylaş",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Paylaş",
+                                          style: buttonTextStyle,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )),
                         ),
                         SizedBox(
@@ -403,50 +361,35 @@ class _EndGamePageState extends State<EndGame>
                                 SystemChannels.platform
                                     .invokeMethod('SystemNavigator.pop');
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
-                                    ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Transform.rotate(
-                                      angle: 180 * pi / 180,
-                                      child: Icon(
-                                        Icons.exit_to_app_rounded,
-                                        size: width * 5.5,
-                                        color: green,
-                                      )),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Çıkış ",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                              style:roundedButtonStyle,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left : width * 2),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Transform.rotate(
+                                        angle: 180 * pi / 180,
+                                        child: Icon(
+                                          Icons.exit_to_app_rounded,
+                                          size: width * 5.5,
+                                          color: green,
+                                        )),
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Çıkış ",
+                                          style: buttonTextStyle,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )),
                         ),
                       ],
@@ -466,12 +409,15 @@ class _EndGamePageState extends State<EndGame>
                           textAlign: TextAlign.end,
                         ),
                       ),
-                      CountdownTimerDemo(
-                        remainingTime: remainingTime,
-                        textStyle: TextStyle(
-                            color: colorBlack,
-                            fontSize: height * 3.5,
-                            fontWeight: FontWeight.bold),
+                      SizedBox(
+                        height: height * 4,
+                        child: CountdownTimerDemo(
+                          remainingTime: remainingTime,
+                          textStyle: TextStyle(
+                              color: colorBlack,
+                              fontSize: height * 3.5,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   )
@@ -502,12 +448,12 @@ class _EndGamePageState extends State<EndGame>
           children: [
             Container(
               padding: EdgeInsets.only(top: height, bottom: height),
-              width: width * 80,
+              width: width * 75,
               height: height * 70,
               decoration: BoxDecoration(
                 color: lightGreen,
                 borderRadius: BorderRadius.all(
-                  Radius.circular(width * 3),
+                  Radius.circular(width * 5),
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -629,115 +575,42 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () {
+
                                 try {
                                   interstitialAd?.show();
                                 } catch (e) {
                                 }
+
                                 PushPage().pushDialog(ScorePage());
 
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
+                              style: roundedButtonStyle,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left : width * 2),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      MyFlutterApp.cup,
+                                      color: green,
+                                      size: width * 4.5,
                                     ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    MyFlutterApp.cup,
-                                    color: green,
-                                    size: width * 4.5,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Skor Tablosu ",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Skor Tablosu ",
+                                          style: buttonTextStyle,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              )),
-                        ),
-                        SizedBox(
-                          width: width * 44,
-                          height: height * 7,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                try {
-                                  interstitialAd?.show();
-                                } catch (e) {
-                                }
-                                showDialog(
-                                  barrierColor: Colors.black.withOpacity(0.5),
-                                  context: context,
-                                  builder: (context) =>
-                                      const GeneralStatistic(),
-                                );
-                              },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
-                                    ),
-                                  ),
+                                  ],
                                 ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    Icons.bar_chart_rounded,
-                                    color: green,
-                                    size: width * 7,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "İstatistik ",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
-                                      ),
-                                    ),
-                                  ),
-                                ],
                               )),
                         ),
                         SizedBox(
@@ -745,54 +618,72 @@ class _EndGamePageState extends State<EndGame>
                           height: height * 7,
                           child: ElevatedButton(
                               onPressed: () async {
-                                try {
-                                  interstitialAd?.show();
-                                } catch (e) {
-                                }
-                                Share.share(_prepareShareText());
+                                PushPage().pushDialog(GeneralStatistic());
+
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
+                              style: roundedButtonStyle,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left : width * 2),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      Icons.bar_chart_rounded,
+                                      color: green,
+                                      size: width * 7,
                                     ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(
-                                    Icons.share,
-                                    color: green,
-                                    size: width * 5.5,
-                                  ),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Paylaş",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "İstatistik ",
+                                          style: buttonTextStyle,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                              )),
+                        ),
+                        SizedBox(
+                          width: width * 44,
+                          height: height * 7,
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                Share.share(_prepareShareText());
+                              },
+                              style: roundedButtonStyle,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left : width * 2),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Icon(
+                                      Icons.share,
+                                      color: green,
+                                      size: width * 5.5,
+                                    ),
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Paylaş",
+                                          style: buttonTextStyle,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               )),
                         ),
                         SizedBox(
@@ -803,67 +694,56 @@ class _EndGamePageState extends State<EndGame>
                                 SystemChannels.platform
                                     .invokeMethod('SystemNavigator.pop');
                               },
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(width * 2),
-                                    ),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(white),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 3, vertical: 0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Transform.rotate(
-                                      angle: 180 * pi / 180,
-                                      child: Icon(
-                                        Icons.exit_to_app_rounded,
-                                        size: width * 5.5,
-                                        color: green,
-                                      )),
-                                  SizedBox(
-                                    width: width * 33.5,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: AutoSizeText(
-                                        "Çıkış ",
-                                        style: TextStyle(
-                                            fontSize: height * 3.64,
-                                            color: green),
-                                        maxLines: 1,
-                                        group: textSizeGroup,
+                              style:roundedButtonStyle,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left : width * 2),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Transform.rotate(
+                                        angle: 180 * pi / 180,
+                                        child: Icon(
+                                          Icons.exit_to_app_rounded,
+                                          size: width * 5.5,
+                                          color: green,
+                                        )),
+                                    SizedBox(
+                                      width: width * 33.5,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          "Çıkış ",
+                                          style: buttonTextStyle,
+                                          maxLines: 1,
+                                          group: textSizeGroup,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )),
                         ),
                       ],
                     ),
                   ),
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Sonraki kelimeye kalan süre\n",
-                        style: TextStyle(
-                            color: colorBlack,
-                            fontSize: height * 2.5,
-                            fontWeight: FontWeight.bold),
+                      SizedBox(
+                        height: height * 4,
+                        child: AutoSizeText(
+                          "Sonraki kelimeye kalan süre\n",
+                          style: TextStyle(
+                              color: colorBlack,
+                              fontSize: height * 2.5,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.end,
+                        ),
                       ),
-                      Text(
-                        "",
-                        style: TextStyle(fontSize: height * 3.5),
+                      SizedBox(
+                        height: height * 4,
                       )
                     ],
                   )

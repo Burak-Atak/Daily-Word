@@ -55,6 +55,7 @@ class mainSquare extends StatelessWidget {
           );
           Widget back = Obx(
             () => Container(
+              padding: EdgeInsets.zero,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: squaresColors[row][column].value,

@@ -3,9 +3,7 @@ import 'dart:collection';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:first_project/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'ad_helper.dart';
 import 'containerForBadConnection.dart';
 import 'design.dart';
 import 'main.dart';
@@ -184,8 +182,8 @@ class _ScorePageState extends State<ScorePage> {
                           decoration: BoxDecoration(
                             color: chosenColor,
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(width * 3),
-                              topRight: Radius.circular(width * 3),
+                              topLeft: Radius.circular(width * 5),
+                              topRight: Radius.circular(width * 5),
                             ),
                           ),
                           child: Row(
@@ -467,6 +465,7 @@ class _ScorePageState extends State<ScorePage> {
                             ),
                           ),
 
+                      if (chosenScoreTable != null)
                         if (chosenScoreTable!.keys.toList().contains(userName)
                             && (chosenScoreTable!.keys
                             .toList()
@@ -475,10 +474,6 @@ class _ScorePageState extends State<ScorePage> {
                             Container(
                                 decoration: BoxDecoration(
                                   color: playerColor,
-                                  /*             borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(width * 5),
-                                  bottomRight: Radius.circular(width * 5),
-                                ),*/
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
@@ -489,8 +484,8 @@ class _ScorePageState extends State<ScorePage> {
                                       width: width * 15,
                                       child: Align(
                                         child: Text(
-                                          (chosenScoreTable!.keys.toList().indexOf(userName) + 1)
-                                              .toString(),
+                                          "${(chosenScoreTable!.keys.toList().indexOf(userName) + 1)
+                                              .toString()}.",
                                           textAlign: TextAlign.center,
                                           style: scoreStyle,
                                         ),
@@ -554,7 +549,7 @@ class _ScorePageState extends State<ScorePage> {
                                 shape: MaterialStateProperty.all(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(width * 3),
+                                      bottomLeft: Radius.circular(width * 5),
                                     ),
                                   ),
                                 ),
@@ -593,7 +588,7 @@ class _ScorePageState extends State<ScorePage> {
                                 shape: MaterialStateProperty.all(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(width * 3),
+                                      bottomRight: Radius.circular(width * 5),
                                     ),
                                   ),
                                 ),

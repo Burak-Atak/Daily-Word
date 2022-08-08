@@ -136,147 +136,153 @@ class _TrainingPageState extends State<TrainingPage>
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: width, right: width),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: grey,
-                    width: 0.5,
+        body: WillPopScope(
+          onWillPop: () async {
+            PushPage().pushPage(HomePage());
+            return false;
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: width, right: width),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: grey,
+                      width: 0.5,
+                    ),
                   ),
                 ),
-              ),
-              height: height * 9.4,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: width * 20,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                        onTap: () {
-                          if (isAnimationCompleted && isFirstBuildCompleted) {
-                            PushPage().pushPage(HomePage());
-                          }
-                        },
-                        customBorder: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            height * 2,
-                          ),
-                        ),
-                        child: SizedBox(
-                          height: height * 5,
-                          width: height * 5,
-                          child: Icon(
-                            Icons.home_rounded,
-                            color: Colors.black45,
-                            size: height * 4,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 9,
-                    width: width * 54,
-                    child: Align(
-                      child: AutoSizeText(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: height * 7,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                        maxLines: 1,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 20,
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (_bannerAd != null)
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Container(
-                        width: _bannerAd!.size.width.toDouble(),
-                        height: _bannerAd!.size.height.toDouble(),
-                        child: AdWidget(ad: _bannerAd!),
-                      ),
-                    )
-                  else
+                height: height * 9.4,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     SizedBox(
-                      height: (height * 9).roundToDouble(),
-                    ),
-                  Stack(children: [
-                    createMainSquare(),
-                    Align(
-                      child: Obx(
-                        () => AnimatedOpacity(
-                          // If the widget is visible, animate to 0.0 (invisible).
-                          // If the widget is hidden, animate to 1.0 (fully visible).
-                          opacity: isWordExist.value ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 500),
-                          // The green box must be a child of the AnimatedOpacity widget.
-                          child: Padding(
-                            padding: EdgeInsets.only(top: height * 25),
-                            child: Container(
-                              width: width * 60,
-                              height: height * 8,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: AutoSizeText(
-                                'Kelime listesinde yok.',
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontSize: height * 3.64,
-                                    color: Colors.white),
-                              ),
+                      width: width * 20,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () {
+                            if (isAnimationCompleted && isFirstBuildCompleted) {
+                              PushPage().pushPage(HomePage());
+                            }
+                          },
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              height * 2,
+                            ),
+                          ),
+                          child: SizedBox(
+                            height: height * 5,
+                            width: height * 5,
+                            child: Icon(
+                              Icons.home_rounded,
+                              color: Colors.black45,
+                              size: height * 4,
                             ),
                           ),
                         ),
                       ),
                     ),
-                    Align(
-                      child: Obx(
-                        () => Lottie.asset(
-                          'assets/win.json',
-                          height: height * 50,
-                          width: width * 75.67,
-                          controller: winController.value,
-                          repeat: false,
+                    SizedBox(
+                      height: height * 9,
+                      width: width * 54,
+                      child: Align(
+                        child: AutoSizeText(
+                          title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: height * 7,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          maxLines: 1,
                         ),
                       ),
                     ),
-                  ]),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 1.2),
-                    child: Column(
-                      children: [
-                        firstRow(),
-                        secondRow(),
-                        thirdRow(),
-                      ],
+                    SizedBox(
+                      width: width * 20,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (_bannerAd != null)
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          width: _bannerAd!.size.width.toDouble(),
+                          height: _bannerAd!.size.height.toDouble(),
+                          child: AdWidget(ad: _bannerAd!),
+                        ),
+                      )
+                    else
+                      SizedBox(
+                        height: (height * 9).roundToDouble(),
+                      ),
+                    Stack(children: [
+                      createMainSquare(),
+                      Align(
+                        child: Obx(
+                          () => AnimatedOpacity(
+                            // If the widget is visible, animate to 0.0 (invisible).
+                            // If the widget is hidden, animate to 1.0 (fully visible).
+                            opacity: isWordExist.value ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 500),
+                            // The green box must be a child of the AnimatedOpacity widget.
+                            child: Padding(
+                              padding: EdgeInsets.only(top: height * 25),
+                              child: Container(
+                                width: width * 60,
+                                height: height * 8,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: AutoSizeText(
+                                  'Kelime listesinde yok.',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      fontSize: height * 3.64,
+                                      color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        child: Obx(
+                          () => Lottie.asset(
+                            'assets/win.json',
+                            height: height * 50,
+                            width: width * 75.67,
+                            controller: winController.value,
+                            repeat: false,
+                          ),
+                        ),
+                      ),
+                    ]),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: height * 1.2),
+                      child: Column(
+                        children: [
+                          firstRow(),
+                          secondRow(),
+                          thirdRow(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

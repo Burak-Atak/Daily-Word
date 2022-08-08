@@ -16,40 +16,34 @@ class _BadConnectionState extends State<BadConnection> {
     return  Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
-        child:          Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: height * 8,
-              width: width * 70,
-              decoration: BoxDecoration(
-                color: green,
-                boxShadow: [
-                  BoxShadow(
-                    color: white.withOpacity(0.3),
-                    blurRadius: 25,
-                    spreadRadius: 1,
-                  ),
-                ],
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(width * 3),
-                  topRight: Radius.circular(width *3),
-                ),
+        child:          Container(
+          padding: EdgeInsets.only(bottom: height * 2, left: width * 2, right: width * 2),
+          width: width * 70,
+          height: height * 43,
+          decoration: BoxDecoration(
+            color: green,
+            borderRadius: BorderRadius.all(
+             Radius.circular(width * 5),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: white.withOpacity(0.3),
+                blurRadius: 25,
+                spreadRadius: 1,
               ),
-              child: Row(
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
                     width: width * 10,
                   ),
                   SizedBox(
-                    width: width * 50,
-                    child: AutoSizeText("Bağlantı Hatası",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: colorBlack,
-                            fontSize: height * 4,
-                            fontWeight: FontWeight.bold)),
+                    width: width * 46,
                   ),
                   SizedBox(
                     width: width * 10,
@@ -76,59 +70,44 @@ class _BadConnectionState extends State<BadConnection> {
                   ),
                 ],
               ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: height, bottom: height, left: width * 2, right: width * 2),
-              width: width * 70,
-              height: height * 35,
-              decoration: BoxDecoration(
-                color: lightGreen,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.zero,
-                  topRight: Radius.zero,
-                  bottomLeft: Radius.circular(width * 3),
-                  bottomRight: Radius.circular(width * 3),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: white.withOpacity(0.3),
-                    blurRadius: 25,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    height: height * 6,
-                  ),
-                  SizedBox(
-                    height: height * 10,
-                    child: AutoSizeText("Lütfen daha sonra tekrar deneyiniz.",
-                        style: TextStyle(
-                            fontSize: height * 3, color: colorBlack),
-                        maxLines: 2,
-                        textAlign: TextAlign.center),
+              SizedBox(
+                height: height * 10,
+                child: AutoSizeText("Oops! bir sorun oluştu. Lütfen daha sonra tekrar deneyiniz.",
+                    style: TextStyle(
+                        fontSize: height * 3, color: white),
+                    maxLines: 2,
+                    textAlign: TextAlign.center),
 
-                  ),
-                  SizedBox(
-                    height: height * 6,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: white,
-                        ),
-                        child: Text("Tamam",
-                            style: TextStyle(
-                                fontSize: height * 3, color: green))),
-                  )
-                ],
               ),
-            ),
-          ],
+              SizedBox(
+                height: height * 6,
+                width: width * 20,
+                child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                      overlayColor: MaterialStateProperty.all(
+                          Colors.grey.withOpacity(0.2)),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(width * 2),
+                          ),
+                        ),
+                      ),
+                      backgroundColor: MaterialStateProperty.all(white),
+                      padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 0),
+                      ),
+                    ),
+                    child: Text("Tamam",
+                        style: TextStyle(
+                            fontSize: height * 3, color: green))),
+              ),
+            ],
+          ),
         ),
 
       ),
