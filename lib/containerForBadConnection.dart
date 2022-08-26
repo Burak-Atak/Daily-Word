@@ -19,7 +19,7 @@ class _BadConnectionState extends State<BadConnection> {
         child:          Container(
           padding: EdgeInsets.only(bottom: height * 2, left: width * 2, right: width * 2),
           width: width * 70,
-          height: height * 43,
+          height: height * 35,
           decoration: BoxDecoration(
             color: green,
             borderRadius: BorderRadius.all(
@@ -72,7 +72,7 @@ class _BadConnectionState extends State<BadConnection> {
               ),
               SizedBox(
                 height: height * 10,
-                child: AutoSizeText("Oops! bir sorun oluştu. Lütfen daha sonra tekrar deneyiniz.",
+                child: AutoSizeText("Oops! Bir sorun oluştu. Lütfen daha sonra tekrar deneyiniz.",
                     style: TextStyle(
                         fontSize: height * 3, color: white),
                     maxLines: 2,
@@ -80,28 +80,13 @@ class _BadConnectionState extends State<BadConnection> {
 
               ),
               SizedBox(
-                height: height * 6,
+                height: height * 7,
                 width: width * 20,
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(
-                          Colors.grey.withOpacity(0.2)),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(width * 2),
-                          ),
-                        ),
-                      ),
-                      backgroundColor: MaterialStateProperty.all(white),
-                      padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 0),
-                      ),
-                    ),
+                    style: roundedButtonStyle,
                     child: Text("Tamam",
                         style: TextStyle(
                             fontSize: height * 3, color: green))),

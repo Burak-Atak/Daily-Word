@@ -6,6 +6,7 @@ import 'package:first_project/training_mode/trainingWordsList.dart';
 import 'package:first_project/training_mode/training_controller.dart';
 import 'package:first_project/training_mode/training_endgame.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
@@ -14,10 +15,12 @@ import 'dart:math';
 import 'package:turkish/turkish.dart';
 import 'package:confetti/confetti.dart';
 import '../ad_helper.dart';
+import '../audioClass.dart';
 import '../design.dart';
 import 'package:get/get.dart';
 import '../helper.dart';
 import '../main.dart';
+import '../shared/keyboard.dart';
 
 String wordOfDayTraining = "-----";
 bool trainingIsBack = false;
@@ -55,14 +58,11 @@ class _TrainingPageState extends State<TrainingPage>
     super.initState();
 
 
-      AdHelper().loadInterstitialAd();
-
     trainingController.initAnimationController();
     winController = trainingController.winController;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (trainingIsBack) {
-
         if (trainingIsGameEnd == true) {
           await Future.delayed(Duration(milliseconds: 600));
           _goEndPage();
@@ -104,7 +104,6 @@ class _TrainingPageState extends State<TrainingPage>
   List flipKeys = trainingController.flipKeys;
 
   List isFlipped = trainingController.isFlipped;
-
 
   /// Klavye harflerini ve renklerini tutan map
   Map<String, dynamic> rowLettersMap = trainingController.rowLettersMap;
@@ -259,7 +258,7 @@ class _TrainingPageState extends State<TrainingPage>
                       Align(
                         child: Obx(
                           () => Lottie.asset(
-                            'assets/win.json',
+                            'assets/animations/win.json',
                             height: height * 50,
                             width: width * 75.67,
                             controller: winController.value,
@@ -268,15 +267,11 @@ class _TrainingPageState extends State<TrainingPage>
                         ),
                       ),
                     ]),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: height * 1.2),
-                      child: Column(
-                        children: [
-                          firstRow(),
-                          secondRow(),
-                          thirdRow(),
-                        ],
-                      ),
+                    Keyboard(
+                      letterButtonFunc: letterButtonFunc,
+                      deleteButtonFunc: deleteButtonFunc,
+                      enterButtonFunc: enterButtonFunc,
+                      rowLettersMap: rowLettersMap,
                     ),
                   ],
                 ),
@@ -321,7 +316,7 @@ class _TrainingPageState extends State<TrainingPage>
         ),
       ),
       child: Obx(
-            () => AutoSizeText(
+        () => AutoSizeText(
           textBoxes[row][column].value,
           style: TextStyle(fontSize: height * 6, color: Colors.black),
           textAlign: TextAlign.center,
@@ -329,7 +324,7 @@ class _TrainingPageState extends State<TrainingPage>
       ),
     );
     Widget back = Obx(
-          () => Container(
+      () => Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: squaresColors[row][column].value,
@@ -340,13 +335,15 @@ class _TrainingPageState extends State<TrainingPage>
             textAlign: TextAlign.center,
           )),
     );
-    return Obx(() => (isFlipped[row][column].value) ? back : FlipCard(
-      speed: 650,
-      key: flipKeys[index ~/ 5][index % 5].value,
-      flipOnTouch: false,
-      front:front,
-      back: back,
-    ));
+    return Obx(() => (isFlipped[row][column].value)
+        ? back
+        : FlipCard(
+            speed: 650,
+            key: flipKeys[index ~/ 5][index % 5].value,
+            flipOnTouch: false,
+            front: front,
+            back: back,
+          ));
   }
 
   /// Klavyenin ilk satırını oluşturuyor
@@ -405,7 +402,6 @@ class _TrainingPageState extends State<TrainingPage>
             child: Obx(
               () => ElevatedButton(
                   style: ButtonStyle(
-                    enableFeedback: false,
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -444,7 +440,6 @@ class _TrainingPageState extends State<TrainingPage>
             child: Obx(
               () => ElevatedButton(
                   style: ButtonStyle(
-                    enableFeedback: false,
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -483,7 +478,6 @@ class _TrainingPageState extends State<TrainingPage>
             child: Obx(
               () => ElevatedButton(
                   style: ButtonStyle(
-                    enableFeedback: false,
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -575,6 +569,7 @@ class _TrainingPageState extends State<TrainingPage>
 
   /// Delete butonu için fonksiyon
   void deleteButtonFunc() {
+    Audio().playSound("backspace");
     if (trainingChosenLetter != 0 &&
         trainingIsGameEnd == null &&
         isAnimationCompleted) {
@@ -586,6 +581,7 @@ class _TrainingPageState extends State<TrainingPage>
 
   /// Enter butonuna basıldığında çalışacak fonksiyon
   Future<bool> enterButtonFunc() async {
+    Audio().playSound("enter");
     if (trainingIsGameEnd == null &&
         isAnimationCompleted &&
         trainingChosenLetter % 5 == 0 &&
@@ -597,7 +593,6 @@ class _TrainingPageState extends State<TrainingPage>
 
       if (!words.contains(wordOfUser)) {
         trainingController.changeIsWordExist(true);
-
         Future.delayed(const Duration(seconds: 1)).then((_) {
           trainingController.changeIsWordExist(false);
         });
@@ -651,6 +646,7 @@ class _TrainingPageState extends State<TrainingPage>
 
   /// Harf butunlarına basınca gerçeklleşek işlemler
   void letterButtonFunc(int i) {
+    Audio().playSound("letters2");
     if (trainingChosenLetter < 5 &&
         trainingIsGameEnd == null &&
         isAnimationCompleted &&
@@ -783,7 +779,11 @@ class _TrainingPageState extends State<TrainingPage>
     } else {
       wordOfDayTraining = lastWordInLocal;
     }
-
+    if (kDebugMode) {
+      print("##############################");
+      print(wordOfDayTraining);
+      print("##############################");
+    }
     List<String> userSavedWords =
         prefs.getStringList('trainingUserWords') ?? [];
 
@@ -818,7 +818,6 @@ class _TrainingPageState extends State<TrainingPage>
     for (int a = 0; a < userSavedWords.length; a++) {
       for (int i = 0; i < 5; i++) {
         trainingController.changeIsFlipped(a, i);
-
       }
     }
 
@@ -864,6 +863,7 @@ class _TrainingPageState extends State<TrainingPage>
       prefs.setBool('trainingIsGameEnd', true);
       prefs.setBool('trainingIsWin', true);
       trainingIsGameEnd = true;
+      Audio().playWinSound();
       await _controlWinAnimation();
       _goEndPage();
     } else {

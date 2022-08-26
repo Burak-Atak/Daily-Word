@@ -23,20 +23,8 @@ class _FlipCardWidgetState extends State<FlipCardWidget> {
   EdgeInsetsGeometry paddingForButtons = EdgeInsets.only(left: width * 2, right: width * 2);
 
 
-
-  @override
-  void initState() {
-    super.initState();
-
-      AdHelper().loadInterstitialAd();
-
-    _connectDbAndMakeAuth();
-  }
-
-
   @override
   void dispose() {
-    interstitialAd?.dispose();
     super.dispose();
   }
 
@@ -157,10 +145,11 @@ class _FlipCardWidgetState extends State<FlipCardWidget> {
                   height: height * 7,
                   child: ElevatedButton(
                       onPressed: () async {
-                        try {
+                  /*      try {
                           interstitialAd?.show();
                         } catch (e) {
-                        }
+                        }*/
+                        AdHelper().showAdIfAvailable();
 
                         PushPage().pushDialog(ScorePage());
 
@@ -337,7 +326,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget> {
             insetPadding: EdgeInsets.all(0),
             content: Container(
               padding: EdgeInsets.only(bottom: height * 2, top: height, left: width * 2, right: width * 2),
-              height: height * 45,
+              height: height * 36,
               width: width * 70,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
@@ -390,27 +379,12 @@ class _FlipCardWidgetState extends State<FlipCardWidget> {
                   ),
                   SizedBox(
                     width: width * 40,
-                    height: height * 6,
+                    height: height * 7,
                     child: ElevatedButton(
                         onPressed: () {
                           PushPage().pushPage(TrainingPage());
                         },
-                        style: ButtonStyle(
-                          overlayColor: MaterialStateProperty.all(
-                              Colors.grey.withOpacity(0.2)),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(width * 2),
-                              ),
-                            ),
-                          ),
-                          backgroundColor: MaterialStateProperty.all(white),
-                          padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(
-                                horizontal: 0, vertical: 0),
-                          ),
-                        ),
+                        style: roundedButtonStyle,
                         child: Padding(
                           padding: EdgeInsets.only(left: width,right: width),
                           child: Row(
@@ -447,19 +421,5 @@ class _FlipCardWidgetState extends State<FlipCardWidget> {
         );
       },
     );
-  }
-
-  void _connectDbAndMakeAuth() async {
-    bool isConnected = await checkInternet();
-    if (!isConnected) {
-      return;
-    } else {
-      /*   if (FirebaseAuth.instance.currentUser == null) {
-        await FirebaseAuth.instance.signInAnonymously();
-      }
-      database = FirebaseDatabase.instance;
-      isDbReady = true;*/
-    }
-    return;
   }
 }

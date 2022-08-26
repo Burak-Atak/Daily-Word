@@ -483,11 +483,13 @@ class _ScorePageState extends State<ScorePage> {
                                       height: height * 7,
                                       width: width * 15,
                                       child: Align(
-                                        child: Text(
+                                        child: AutoSizeText(
                                           "${(chosenScoreTable!.keys.toList().indexOf(userName) + 1)
                                               .toString()}.",
                                           textAlign: TextAlign.center,
                                           style: scoreStyle,
+                                          group: textSizeGroup,
+                                          maxLines: 1,
                                         ),
                                       ),
                                     ),

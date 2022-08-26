@@ -34,10 +34,6 @@ class _EndGamePageState extends State<EndGame>
   void initState() {
     super.initState();
 
-
-      AdHelper().loadInterstitialAd();
-
-
     final quick = const Duration(milliseconds: 200);
     final scaleTween = Tween(begin: 1.0, end: 0.8);
     controller = AnimationController(duration: quick, vsync: this);
@@ -72,7 +68,6 @@ class _EndGamePageState extends State<EndGame>
 
   @override
   void dispose() {
-    interstitialAd?.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -243,11 +238,7 @@ class _EndGamePageState extends State<EndGame>
                           child: ElevatedButton(
                               onPressed: () {
 
-                                try {
-                                  interstitialAd?.show();
-                                } catch (e) {
-                                }
-
+                                AdHelper().showAdIfAvailable();
                                 PushPage().pushDialog(ScorePage());
 
                               },
@@ -800,7 +791,7 @@ class _EndGamePageState extends State<EndGame>
 
 
   String _prepareShareText() {
-    String shareText = " T O K A T L A N D I N\n\n";
+    String shareText = "Daily Word: Kelime Oyunu'nda bana katıl!\n\n";
     for (int i = 0; i < whichWordUserFound + 1; i++) {
       for (int j = 0; j < 5; j++) {
         if (lastSquaresColors[i][j] == green) {
@@ -811,8 +802,10 @@ class _EndGamePageState extends State<EndGame>
           shareText += "⬛";
         }
       }
-      shareText += "\n";
+
     }
+    shareText += "\n\n";
+    shareText += "https://play.google.com/store/apps/details?id=com.burak.daily_word";
     return shareText;
   }
 

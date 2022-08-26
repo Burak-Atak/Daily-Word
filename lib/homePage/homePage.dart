@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:first_project/main.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:in_app_update/in_app_update.dart';
 import '../ad_helper.dart';
 import '../register.dart';
 import 'flipCardWidget.dart';
@@ -15,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
     database = FirebaseDatabase.instance;
     userName = prefs.getString("userName");
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -22,7 +25,15 @@ class _HomePageState extends State<HomePage> {
         await _registerScreen();
       }
 
-      AdHelper().loadInterstitialAd();
+      if (!kDebugMode) {
+        try {
+          AppUpdateInfo isThereUpdate = await InAppUpdate.checkForUpdate();
+          if (isThereUpdate.updateAvailability ==
+              UpdateAvailability.updateAvailable) {
+            InAppUpdate.performImmediateUpdate();
+          }
+        } catch (e) {}
+      }
 
       BannerAd(
         adUnitId: AdHelper.bannerAdUnitId,
@@ -40,6 +51,8 @@ class _HomePageState extends State<HomePage> {
         ),
       ).load();
     });
+
+
   }
 
   BannerAd? _bannerAd;
@@ -53,10 +66,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder<void>(
-            future: _initGoogleMobileAds(),
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              return Stack(
+        body:  Stack(
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height,
@@ -90,8 +100,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                 ],
-              );
-            }));
+              )
+            );
   }
 
   Future<void> _registerScreen() async {
@@ -103,7 +113,4 @@ class _HomePageState extends State<HomePage> {
     return;
   }
 
-  Future<InitializationStatus> _initGoogleMobileAds() {
-    return MobileAds.instance.initialize();
-  }
 }

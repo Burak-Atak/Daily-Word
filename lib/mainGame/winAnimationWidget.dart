@@ -26,7 +26,7 @@ class _winAnimationWidgetState extends State<winAnimationWidget> with SingleTick
     return Align(
       child: Obx(
             () => Lottie.asset(
-          'assets/win.json',
+              'assets/animations/win.json',
           height: height * 50,
           width: width * 75.67,
           controller: winController.value,

@@ -1,9 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.first_project">
     <application
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:label="Daily Word"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        tools:targetApi="donut">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9252032103073248~8871674114"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

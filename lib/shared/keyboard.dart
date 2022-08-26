@@ -1,3 +1,4 @@
+import 'package:first_project/training_mode/trainingHomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
@@ -9,14 +10,14 @@ class Keyboard extends StatelessWidget {
   final  Function letterButtonFunc;
   final  Function enterButtonFunc;
   final  Function deleteButtonFunc;
-
+  Map<String, dynamic> rowLettersMap;
   Keyboard({
     required this.letterButtonFunc,
     required this.enterButtonFunc,
     required this.deleteButtonFunc,
-  });
+    required this.rowLettersMap,
 
-  Map<String, dynamic> rowLettersMap = mainController.rowLettersMap;
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +34,11 @@ class Keyboard extends StatelessWidget {
                   height: height * 10,
                   width: width * 8.9,
                   child: Obx(
-                    () => ElevatedButton(
+                        () => ElevatedButton(
                         style: ButtonStyle(
                           enableFeedback: false,
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                          MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
@@ -78,7 +79,7 @@ class Keyboard extends StatelessWidget {
                     height: height * 10,
                     width: width * 7.6,
                     child: Obx(
-                      () => ElevatedButton(
+                          () => ElevatedButton(
                           style: ButtonStyle(
                             enableFeedback: false,
                             shape: MaterialStateProperty.all<
@@ -128,8 +129,8 @@ class Keyboard extends StatelessWidget {
                       builder: (BuildContext context, TapDebouncerFunc? onTap) {
                         return ElevatedButton(
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all(Colors.white),
                               enableFeedback: false,
+                              foregroundColor: MaterialStateProperty.all(Colors.white),
                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0),
@@ -158,7 +159,7 @@ class Keyboard extends StatelessWidget {
                     height: height * 10,
                     width: width * 7.785,
                     child: Obx(
-                      () => ElevatedButton(
+                          () => ElevatedButton(
                           style: ButtonStyle(
                             enableFeedback: false,
                             shape: MaterialStateProperty.all<
@@ -183,8 +184,8 @@ class Keyboard extends StatelessWidget {
                             ),
                           ),
                           onPressed: () => letterButtonFunc(
-                                i,
-                              )),
+                            i,
+                          )),
                     ),
                   ),
                 ),

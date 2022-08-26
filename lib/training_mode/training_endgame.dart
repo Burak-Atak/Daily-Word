@@ -31,7 +31,6 @@ class _EndGamePageState extends State<EndGame>
   @override
   void initState() {
     super.initState();
-    AdHelper().loadInterstitialAd();
 
     final quick = const Duration(milliseconds: 200);
     final scaleTween = Tween(begin: 1.0, end: 0.8);
@@ -55,7 +54,6 @@ class _EndGamePageState extends State<EndGame>
 
   @override
   void dispose() {
-    interstitialAd?.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -212,10 +210,7 @@ class _EndGamePageState extends State<EndGame>
                           child: ElevatedButton(
                               onPressed: () {
                                 startNewTrainingGame = true;
-                                try {
-                                  interstitialAd?.show();
-                                } catch (e) {
-                                }
+                                AdHelper().showAdIfAvailable();
                                 Navigator.pop(context);
                               },
                               style: roundedButtonStyle,

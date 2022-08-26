@@ -21,7 +21,7 @@ import 'package:first_project/new_deneme.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:in_app_update/in_app_update.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
@@ -35,7 +35,7 @@ import 'firebase_options.dart';
 import 'generalStatistic.dart';
 import 'package:get/get.dart';
 import 'mainGame/bannerAdWidget.dart';
-import 'mainGame/keyboard.dart';
+import 'shared/keyboard.dart';
 import 'mainGame/winAnimationWidget.dart';
 
 // TODO: oyun sonudna çarpıyı köşeye al
@@ -97,6 +97,9 @@ Future<void> main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
+    MobileAds.instance.initialize();
+    await AdHelper().loadInterstitialAd();
+
     prefs = await SharedPreferences.getInstance();
 
     // The following lines are the same as previously explained in "Handling uncaught errors"
@@ -104,6 +107,10 @@ Future<void> main() async {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    RequestConfiguration configuration =
+    RequestConfiguration(testDeviceIds: ["3CD8F64E685BEF141DFD63D24114876B"]);
+    MobileAds.instance.updateRequestConfiguration(configuration);
 
 
       runApp(Phoenix(child: MyApp()));
@@ -359,9 +366,7 @@ class MyHomePage extends StatelessWidget {
                           InkWell(
                             onTap: () {
                               if (isAnimationCompleted && isFirstBuildCompleted) {
-                                try {
-                                  interstitialAd?.show();
-                                } catch (e) {}
+                                AdHelper().showAdIfAvailable();
                                 PushPage().pushDialog(ScorePage());
 
                               }
@@ -430,17 +435,9 @@ class MyHomePage extends StatelessWidget {
                     Keyboard(
                         letterButtonFunc: letterButtonFunc,
                         deleteButtonFunc: deleteButtonFunc,
-                        enterButtonFunc: enterButtonFunc),
-                    /*       Padding(
-                      padding: EdgeInsets.only(bottom: height * 1.2),
-                      child: Column(
-                        children: [
-                          firstRow(),
-                          secondRow(),
-                          thirdRow(),
-                        ],
-                      ),
-                    ),*/
+                        enterButtonFunc: enterButtonFunc,
+                      rowLettersMap: rowLettersMap,
+                    ),
                   ],
                 ),
               ),
@@ -971,14 +968,6 @@ class MyHomePage extends StatelessWidget {
     }
 
     /// checks internet connection
-
-    try {
-      AppUpdateInfo isThereUpdate = await InAppUpdate.checkForUpdate();
-      if (isThereUpdate.updateAvailability ==
-          UpdateAvailability.updateAvailable) {
-        InAppUpdate.performImmediateUpdate();
-      }
-    } catch (e) {}
 
     database.ref('word').onChildChanged.listen((event) async {
       _startNewGame();
